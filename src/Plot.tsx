@@ -53,10 +53,10 @@ export default function Plot({grid:g,setup:s,fill,overlay,levels,scale,units,phy
    const known=Number.isFinite(value)&&r.status!=='invalid';
    ctx.fillStyle=!known?'#283443':fill==='constraint'?constraintInfo[r.limiting.key].color:fill==='zone'?zoneInfo[r.zone].color:heatColor((value-scale.min)/(scale.max-scale.min));
    ctx.globalAlpha=fill==='constraint'||fill==='zone'?.8:1;ctx.fillRect(x,y,w/NX+.5,h/NY+.5);
-   // Soft-limit zones use texture, not a second hue: sparse 45° lines beyond a soft limit, a sparse stipple in the caution band.
+   // Soft-limit zones use texture in the colour of their boundary line: sparse 45° lines (red) beyond a soft limit, a sparse stipple (amber) in the caution band.
    const col=i%NX,row=Math.floor(i/NX),cw=w/NX,ch=h/NY;
-   if(fill!=='zone'&&r.zone==='beyond'&&((col-row)%3+3)%3===0){ctx.globalAlpha=.5;ctx.strokeStyle='#f3e9dc';ctx.lineWidth=.9;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+cw,y+ch);ctx.stroke();}
-   if(fill!=='zone'&&r.zone==='caution'&&col%3===1&&row%3===1){ctx.globalAlpha=.55;ctx.fillStyle='#f3e9dc';ctx.beginPath();ctx.arc(x+cw/2,y+ch/2,1.2,0,2*Math.PI);ctx.fill();}
+   if(fill!=='zone'&&r.zone==='beyond'&&((col-row)%3+3)%3===0){ctx.globalAlpha=.65;ctx.strokeStyle='#e8694f';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+cw,y+ch);ctx.stroke();}
+   if(fill!=='zone'&&r.zone==='caution'&&col%3===1&&row%3===1){ctx.globalAlpha=.8;ctx.fillStyle='#e8b85a';ctx.beginPath();ctx.arc(x+cw/2,y+ch/2,1.3,0,2*Math.PI);ctx.fill();}
    if(r.status==='invalid'||r.status==='no-cut'||!r.hardOk||r.unknown.length){ctx.globalAlpha=.52;ctx.fillStyle='#0b1722';ctx.fillRect(x,y,w/NX+.5,h/NY+.5);ctx.globalAlpha=.22;ctx.strokeStyle='#e1e7dc';ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(x,y+h/NY);ctx.lineTo(x+w/NX,y);ctx.stroke();}
   }ctx.globalAlpha=1;
  },[g,fill,scale,width,w,h,left,top]);
