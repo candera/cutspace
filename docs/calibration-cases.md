@@ -42,3 +42,9 @@ The screenshot's displayed power and bending are reproduced without changing the
 Further calibration needs actual machine configuration, tool identity and geometry, plywood product, cut quality/tolerance, cutting load and observed deflection. A successful cut alone does not identify Kc, spindle capacity or the acceptable bending threshold independently. General router-bit geometry remains deferred.
 
 Load either JSON from `examples/`, use **About → Load 300 IPM example / Load 200 IPM example**, or load them as recipes from the built-in library. Their settings and assumptions remain separate. Loading is undoable.
+
+## RC4 aluminum slot · 30 October 2026
+
+Reported by the user as a cut they run routinely on the Nova Labs ShopSabre RC4: 4 mm single-flute carbide end mill, 6061 aluminum, 16,000 RPM, 40 IPM (1016 mm/min), full-width slot, 2 mm depth. Stickout and flute length were not reported.
+
+With the model unchanged, chipload is 0.0635 mm/tooth and estimated bending is 130 µm at the default 20 mm stickout (55 µm at 15 mm, 28 µm at 12 mm); power is 169 W against 1125 W usable and surface speed 201 m/min. Before this change the aluminum/carbide preset gave a 0.037 mm chipload ceiling (two-flute band scaled to 4 mm) and a 25 µm allowance, so the cut read 173% and 519%. The ceiling was the two-flute band applied to a single-flute cutter, and the allowance was a finishing tolerance applied to slotting. After the change the roughing preset for this tool gives 0.066 mm and 100 µm; the cut passes the chip band and its deflection reading depends on the actual stickout, which should be measured before this becomes a saved recipe. The estimate itself is unchanged and remains conservative (×1.3 force, 0.45 section factor).

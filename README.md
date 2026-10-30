@@ -137,28 +137,30 @@ Choosing carbide loads a representative 600 GPa elastic modulus; choosing HSS lo
 
 At identical geometry and force, the HSS bending estimate is 600/219 ≈ 2.74 times the carbide estimate. Geometric outputs, MRR and estimated cutting power/force are unchanged: no unsupported substrate multiplier is applied. Cutter-material changes preserve diameter, flutes, stickout, engagement ratios, RPM and feed. Snapshots retain the material and modulus override.
 
-Surface-speed and chip-thickness limits cannot be derived from elastic modulus. Each cutter/workpiece combination has an explicit **provisional preset** referenced to a 6 mm flat end mill; when a preset is applied the chipload band is scaled linearly with cutter diameter (bounded to 0.4–2.5×), so a 1/2 in tool receives roughly double the 6 mm band. Changing either material loads its chip band, surface-speed ceiling and deflection allowance, replacing prior limit overrides; Undo restores the previous configuration. Geometry, cut and machine settings remain unchanged. The Tool inspector still permits modulus overrides. Editing a limit clears the preset label to `Saved / custom limits`. Explicitly disabled cutting checks still stay unknown until enabled or replaced by a preset.
+Surface-speed and chip-thickness limits cannot be derived from elastic modulus. Each cutter/workpiece combination has an explicit **provisional preset** referenced to a 6 mm two-flute flat end mill in a finishing cut. When a preset is applied the chipload band is scaled linearly with cutter diameter (bounded to 0.4–2.5×) and by flute count (single flute ×1.8, two or three flutes ×1, four or more ×0.8), and the deflection allowance is scaled by the **Operation** chosen in the setup strip: Finishing uses the base allowance, Roughing allows 4×. Operation is a multiplier, not a second set of numbers; switching it re-applies the preset, or scales a custom allowance by the same ratio. Changing either material loads its chip band, surface-speed ceiling and deflection allowance, replacing prior limit overrides; Undo restores the previous configuration. Geometry, cut and machine settings remain unchanged. The Tool inspector still permits modulus overrides. Editing a limit clears the preset label to `Saved / custom limits`. Explicitly disabled cutting checks still stay unknown until enabled or replaced by a preset.
 
 Saved experiments and pins retain their numbers and availability when loaded; no existing values are silently replaced. To update an older setup, open **Model & limits → Limits → Use provisional preset**. A disabled-checks notice also has that action. Numeric results remain derived from unchanged formulas (model illustrative-static-3); optional `limits.preset` identifies provisional-1. This version adds presets, not a physical-model calibration.
 
 ### Provisional limit catalog
 
-These values are deliberately editable engineering placeholders for exploration, not tool-maker recommendations. Chip bands are stated for 6 mm and scale with diameter when applied; nothing scales with depth, and changing diameter afterwards keeps the current limits until Use provisional preset is chosen again. Wood values allow more chip thickness and roughing deflection than the generic metal starter, and use a deliberately high surface-speed ceiling because wood routing is governed by chipload, burning and the bit's maximum RPM rating (enter it as Tool max RPM) rather than by surface speed. The low-chip thresholds are illustrative, not measured minimum chip thicknesses. A deflection allowance expresses an assumed tolerance, not a breakage threshold.
+These values are deliberately editable engineering placeholders for exploration, not tool-maker recommendations. Chip bands are stated for 6 mm and scale with diameter when applied; nothing scales with depth, and changing diameter afterwards keeps the current limits until Use provisional preset is chosen again. Wood values allow more chip thickness than the generic metal starter, and use a deliberately high surface-speed ceiling because wood routing is governed by chipload, burning and the bit's maximum RPM rating (enter it as Tool max RPM) rather than by surface speed. The low-chip thresholds are illustrative, not measured minimum chip thicknesses. A deflection allowance expresses an assumed tolerance, not a breakage threshold.
 
-| Workpiece | Cutter | Chip band (mm) | Bending allowance (µm) | Surface ceiling (m/min) |
+| Workpiece | Cutter | Chip band (mm, 6 mm two-flute) | Finishing bending allowance (µm; roughing ×4) | Surface ceiling (m/min) |
 |---|---|---|---|---|
 | Aluminum | Carbide | 0.008–0.055 | 25 | 450 |
 | Aluminum | HSS | 0.008–0.055 | 25 | 120 |
-| Plywood | Carbide | 0.025–0.30 | 100 | 1500 |
-| Plywood | HSS | 0.025–0.25 | 100 | 1000 |
-| Soft wood | Carbide | 0.025–0.35 | 100 | 1500 |
-| Soft wood | HSS | 0.025–0.28 | 100 | 1000 |
-| Hard wood | Carbide | 0.020–0.25 | 75 | 1500 |
-| Hard wood | HSS | 0.020–0.20 | 75 | 1000 |
+| Plywood | Carbide | 0.025–0.30 | 25 | 1500 |
+| Plywood | HSS | 0.025–0.25 | 25 | 1000 |
+| Soft wood | Carbide | 0.025–0.35 | 25 | 1500 |
+| Soft wood | HSS | 0.025–0.28 | 25 | 1000 |
+| Hard wood | Carbide | 0.020–0.25 | 20 | 1500 |
+| Hard wood | HSS | 0.020–0.20 | 20 | 1000 |
 | Mild steel | Carbide | 0.005–0.040 | 25 | 120 |
 | Mild steel | HSS | 0.005–0.040 | 25 | 30 |
 | Brass | Carbide | 0.008–0.070 | 25 | 200 |
 | Brass | HSS | 0.008–0.070 | 25 | 70 |
+
+Example: a 4 mm single-flute carbide cutter in aluminum, roughing, receives a chip band of 0.005–0.066 mm and a 100 µm bending allowance; the same cutter finishing keeps the band and drops the allowance to 25 µm.
 
 Big Blue is a separately selectable profile with the exact ShopSabre RC4 numerical defaults, at the user's request. It is not independently measured. Two reported successful plywood cuts can be loaded from **Assumptions** or imported from `examples/big-blue-plywood-300-ipm.json` and `examples/big-blue-plywood-shared-200-ipm.json`. [Reference-case notes](docs/calibration-cases.md) distinguish reported settings from assumptions and reproduce the previous failures. Both pass the provisional plywood preset without changing estimated forces or spindle capacity. The examples do not qualify the full operating envelope.
 

@@ -37,9 +37,9 @@ test('caution fraction persists, defaults for older files, and does not clear pr
 });
 test('provisional chip bands scale with cutter diameter within bounds, and wood ceilings do not flag common router speeds',async()=>{
  const {cuttingPreset,chipScale}=await import('../src/cuttingPresets.ts');
- const six=cuttingPreset('plywood','carbide'),half=cuttingPreset('plywood','carbide',.75,12.7),tiny=cuttingPreset('plywood','carbide',.75,1);
+ const six=cuttingPreset('plywood','carbide'),half=cuttingPreset('plywood','carbide',{diameter:12.7}),tiny=cuttingPreset('plywood','carbide',{diameter:1});
  assert.ok(Math.abs(half.chipMax-six.chipMax*12.7/6)<1e-9);assert.equal(tiny.chipMax,Number((six.chipMax*.4).toPrecision(6)));assert.equal(chipScale(60),2.5);
- const s=cloneDefaults();s.tool.diameter=12.7;s.cut.rpm=18000;s.cut.woc=12.7;s.cut.doc=6;s.cut.feed=7620;s.material.kc=100;s.limits=cuttingPreset('plywood','carbide',.75,12.7);
+ const s=cloneDefaults();s.tool.diameter=12.7;s.cut.rpm=18000;s.cut.woc=12.7;s.cut.doc=6;s.cut.feed=7620;s.material.kc=100;s.limits=cuttingPreset('plywood','carbide',{diameter:12.7});
  const r=calculate(s.cut,s);
  assert.ok(r.constraints.find(c=>c.key==='surface')!.ratio<1);
  const e=fresh();e.config.tool.diameter=12.7;applyCuttingPreset(e);assert.ok(Math.abs(e.config.limits.chipMax-.055*12.7/6)<1e-5);
@@ -47,4 +47,27 @@ test('provisional chip bands scale with cutter diameter within bounds, and wood 
 test('every limit explains what the operator would notice',async()=>{
  const {limitGuidance}=await import('../src/limitGuidance.ts');
  for(const g of Object.values(limitGuidance))assert.ok(g.notice.length>20);
+});
+test('single-flute cutters get a heavier chip band and roughing a larger deflection allowance; the RC4 aluminum slot then reads sensibly',async()=>{
+ const {cuttingPreset,fluteScale,OPERATION_INFO}=await import('../src/cuttingPresets.ts');
+ const {setOperation,editLimit:edit}=await import('../src/experiment.ts');
+ const {MACHINES}=await import('../src/experiment.ts');
+ assert.equal(fluteScale(1),1.8);assert.equal(fluteScale(2),1);assert.equal(fluteScale(3),1);assert.equal(fluteScale(4),.8);
+ const single=cuttingPreset('aluminum','carbide',{diameter:4,flutes:1}),twin=cuttingPreset('aluminum','carbide',{diameter:4,flutes:2});
+ assert.ok(Math.abs(single.chipMax/twin.chipMax-1.8)<1e-3);assert.equal(single.chipMin,twin.chipMin);
+ assert.equal(cuttingPreset('aluminum','carbide',{operation:'finishing'}).deflection,25);assert.equal(cuttingPreset('aluminum','carbide').deflection,100);
+ assert.equal(OPERATION_INFO.roughing.deflection/OPERATION_INFO.finishing.deflection,4);
+ // Reported RC4 cut: 4 mm single-flute carbide, 6061, 16,000 RPM, 40 IPM, 2 mm deep slot.
+ const e=fresh();e.machineId='rc4';e.config.machine={...MACHINES.rc4};Object.assign(e.config.tool,{diameter:4,flutes:1,stickout:15,fluteLength:12});applyCuttingPreset(e);
+ e.point={rpm:16000,feed:40*25.4,docRatio:.5,wocRatio:1};
+ const {setupFor}=await import('../src/experiment.ts');
+ const r=calculate(setupFor(e).cut,setupFor(e));
+ assert.ok(r.constraints.find(c=>c.key==='chipHigh')!.ratio<1);assert.equal(r.hardOk,true);assert.notEqual(r.status,'invalid');
+ // Operation switching keeps one set of numbers: preset re-applies, custom values scale by the same ratio.
+ setOperation(e,'finishing');assert.equal(e.config.limits.deflection,25);assert.equal(e.config.limits.preset,'provisional-1');
+ edit(e,'deflection',40);setOperation(e,'roughing');assert.equal(e.config.limits.deflection,160);assert.equal(e.config.limits.preset,undefined);
+ setOperation(e,'roughing');assert.equal(e.config.limits.deflection,160);
+ assert.equal(parseExperiment(JSON.stringify(e)).config.limits.operation,'roughing');
+ const old=JSON.parse(JSON.stringify(e));delete old.config.limits.operation;assert.equal(parseExperiment(JSON.stringify(old)).config.limits.operation,'roughing');
+ old.config.limits.operation='polishing';assert.throws(()=>parseExperiment(JSON.stringify(old)));
 });

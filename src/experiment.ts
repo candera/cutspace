@@ -1,6 +1,6 @@
-import {cuttingPreset,CUTTING_PRESET_VERSION} from './cuttingPresets.ts';
+import {cuttingPreset,CUTTING_PRESET_VERSION,OPERATION_INFO} from './cuttingPresets.ts';
 import {cloneDefaults, MODEL_VERSION, CUTTER_MATERIALS} from './model.ts';
-import type {Setup, Metric, CutterMaterial} from './model.ts';
+import type {Setup, Metric, CutterMaterial, Operation} from './model.ts';
 import type {Units} from './units.ts';
 const RC4_PROFILE={name:'ShopSabre RC4',rpmMin:6000,rpmMax:24000,feedMax:10000,power:1500,torque:.9,utilization:.75,known:true};
 export const MACHINES={
@@ -31,14 +31,21 @@ export type ContourDensity='coarse'|'standard'|'fine';
 export interface View {fill:Metric;overlay:Overlay;contourDensity?:ContourDensity;physicalAxes:boolean;fixed:boolean;scaleMin:number;scaleMax:number;rpmMin:number;rpmMax:number;feedMax:number;wocMax:number;docMax:number;feedMin?:number;wocMin?:number;docMin?:number}
 export interface Experiment extends Snapshot {schemaVersion:2;modelVersion:typeof MODEL_VERSION;name:string;units:Units;view:View;pins:Snapshot[];provenance:'illustrative / user overrides';}
 export function fresh():Experiment{
- const s=cloneDefaults();s.limits=cuttingPreset('aluminum','carbide');const {cut,...config}=s;
+ const s=cloneDefaults();s.limits=cuttingPreset('aluminum','carbide',{diameter:s.tool.diameter,flutes:s.tool.flutes});const {cut,...config}=s;
  return {schemaVersion:2,modelVersion:MODEL_VERSION,name:'Untitled exploration',machineId:'dmc2',materialId:'aluminum',config,point:{rpm:cut.rpm,feed:cut.feed,docRatio:.5,wocRatio:.2},units:'metric',view:{fill:'mrr',overlay:'utilization',contourDensity:'standard',physicalAxes:true,fixed:false,scaleMin:0,scaleMax:10,rpmMin:1500,rpmMax:19800,feedMax:3600,wocMax:100,docMax:275},pins:[],provenance:'illustrative / user overrides'};
 }
 /** Switching a material loads explicit provisional limits; existing snapshots remain unchanged. */
-export function applyCuttingPreset(e:Experiment){e.config.limits=cuttingPreset(e.materialId,e.config.tool.material,e.config.limits.caution,e.config.tool.diameter);}
+export function applyCuttingPreset(e:Experiment){e.config.limits=cuttingPreset(e.materialId,e.config.tool.material,{caution:e.config.limits.caution,diameter:e.config.tool.diameter,flutes:e.config.tool.flutes,operation:e.config.limits.operation});}
+/** Switching operation rescales the deflection allowance; a preset is re-applied, custom values keep their ratio. */
+export function setOperation(e:Experiment,operation:Operation){
+ const previous=e.config.limits.operation;if(previous===operation)return;
+ e.config.limits.operation=operation;
+ if(e.config.limits.preset)applyCuttingPreset(e);
+ else e.config.limits.deflection=Number((e.config.limits.deflection*OPERATION_INFO[operation].deflection/OPERATION_INFO[previous].deflection).toPrecision(6));
+}
 export function editLimit(e:Experiment,key:keyof Configuration['limits'],value:number|boolean){
  (e.config.limits as unknown as Record<string,unknown>)[key]=value;
- if(key!=='caution')delete e.config.limits.preset;
+ if(key!=='caution'&&key!=='operation')delete e.config.limits.preset;
 }
 export function setCutterMaterial(e:Experiment,material:CutterMaterial){
  if(e.config.tool.material===material)return;
@@ -75,7 +82,8 @@ export function readSnapshot(value:unknown,legacy=false):Snapshot{
  if(machine.rpmMin>=machine.rpmMax)throw Error('Minimum RPM must be less than maximum RPM.');
  const material={name:MATERIALS[materialId].name,kc:num(a,'kc',1,10000),powerFactor:num(a,'powerFactor',1,5),forceFactor:num(a,'forceFactor',1,5),known:known(a)};
  if(l.preset!==undefined&&l.preset!==CUTTING_PRESET_VERSION)throw Error('Unknown cutting-limit preset version.');
- const limits={...(l.preset===CUTTING_PRESET_VERSION?{preset:CUTTING_PRESET_VERSION}:{}),cuttingDataKnown:legacy?true:l.cuttingDataKnown as boolean,chipMin:num(l,'chipMin',.00001,1),chipMax:num(l,'chipMax',.00002,5),deflection:num(l,'deflection',.01,5000),surfaceMax:num(l,'surfaceMax',1,10000),caution:l.caution===undefined?.75:num(l,'caution',.1,.99)};
+ const limits={...(l.preset===CUTTING_PRESET_VERSION?{preset:CUTTING_PRESET_VERSION}:{}),cuttingDataKnown:legacy?true:l.cuttingDataKnown as boolean,chipMin:num(l,'chipMin',.00001,1),chipMax:num(l,'chipMax',.00002,5),deflection:num(l,'deflection',.01,5000),surfaceMax:num(l,'surfaceMax',1,10000),caution:l.caution===undefined?.75:num(l,'caution',.1,.99),operation:(l.operation===undefined?'roughing':l.operation) as Operation};
+ if(limits.operation!=='roughing'&&limits.operation!=='finishing')throw Error('Operation must be roughing or finishing.');
  if(limits.chipMin>=limits.chipMax)throw Error('Minimum chip thickness must be less than maximum.');
  return {machineId,materialId,config:{tool,machine,material,limits},point:{rpm:num(p,'rpm',1,200000),feed:num(p,'feed',0,200000),docRatio:num(p,'docRatio',0,100),wocRatio:num(p,'wocRatio',0,2)}};
 }

@@ -15,7 +15,8 @@ test('HSS changes static bending by the modulus ratio without changing cutting g
  assert.ok(Math.abs(after.deflection/before.deflection-600/219)<1e-12);
  for(const k of ['surface','chip','chipMax','thinning','mrr','power','torque','force'] as const)assert.equal(after[k],before[k]);
  assert.deepEqual(e.config.limits,cuttingPreset('aluminum','hss'));
- assert.equal(after.status,'outside');assert.equal(after.limiting.key,'deflection');
+ assert.equal(after.status,'outside');assert.equal(after.limiting.key,'surface');
+ const ratio=(r:ReturnType<typeof result>)=>r.constraints.find(c=>c.key==='deflection')!.ratio;assert.ok(Math.abs(ratio(after)/ratio(before)-600/219)<1e-9);
  assert.deepEqual(after.unknown,[]);
 });
 

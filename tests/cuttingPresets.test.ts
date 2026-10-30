@@ -34,7 +34,7 @@ test('reported Big Blue plywood cut exposes inherited chip and deflection thresh
  assert.ok(Math.abs(r.chip/25.4-300/(18000*2))<1e-12);
  assert.ok(Math.abs(r.power-320.05984375)<1e-8);assert.ok(Math.abs(r.deflection-36.48828890747707)<1e-8);
  assert.equal(r.status,'inside');
- const inherited=calculate(s.cut,{...s,limits:cuttingPreset('aluminum','carbide')});
+ const inherited=calculate(s.cut,{...s,limits:cuttingPreset('aluminum','carbide',{operation:'finishing'})});
  assert.deepEqual(inherited.constraints.filter(c=>c.ratio>1).map(c=>c.key),['chipHigh','deflection']);
  assert.equal(inherited.power,r.power);assert.equal(inherited.force,r.force);assert.equal(inherited.deflection,r.deflection);
  // The provisional allowances do not erase machine-capacity failures or larger loads.
