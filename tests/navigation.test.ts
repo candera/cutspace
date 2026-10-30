@@ -37,3 +37,16 @@ test('nonzero plot minima map to the right cuts and survive file round trips',()
  assert.equal(fitView(e).docMin,0);assert.equal(fitView(e).feedMin,0);
  e.view.feedMin=e.view.feedMax;assert.throws(()=>parseExperiment(JSON.stringify(e)));
 });
+test('zoom buttons scale an axis about the focus, stay inside the supported bounds and never collapse',async()=>{
+ const {zoomRange}=await import('../src/plots.ts');
+ const inward=zoomRange(1500,19800,.8,10000,1,200000,100);
+ assert.ok(Math.abs((inward.max-inward.min)-(19800-1500)*.8)<1e-9);
+ assert.ok(Math.abs((10000-inward.min)/(inward.max-inward.min)-(10000-1500)/(19800-1500))<1e-9);
+ const outward=zoomRange(1500,19800,1.25,10000,1,200000,100);
+ assert.ok(outward.min<1500&&outward.max>19800&&outward.min>=1);
+ const atFloor=zoomRange(0,100,1.25,20,0,200,1);assert.equal(atFloor.min,0);assert.equal(atFloor.max,125);
+ const capped=zoomRange(0,190,1.25,100,0,200,1);assert.equal(capped.min,0);assert.equal(capped.max,200);
+ let r={min:0,max:100};for(let i=0;i<60;i++)r=zoomRange(r.min,r.max,.8,50,0,200,1);
+ assert.ok(r.max-r.min>=1-1e-9);assert.ok(r.min<=50&&r.max>=50);
+ const outsideFocus=zoomRange(1000,2000,.8,5000,1,200000,100);assert.ok(outsideFocus.max<=2000&&outsideFocus.min>=1000);
+});

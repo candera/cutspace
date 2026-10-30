@@ -64,3 +64,12 @@ export function envelopeBounds(g:Grid,c:Cut){
  const padX=Math.max(dx,(x1-x0)*.06),padY=Math.max(dy,(y1-y0)*.06);
  return {xMin:Math.max(g.xMin,x0-padX),xMax:Math.min(g.xMax,x1+padX),yMin:Math.max(g.yMin,y0-padY),yMax:Math.min(g.yMax,y1+padY)};
 }
+
+/** Zoom a plot axis about a focus value: factor < 1 zooms in, > 1 zooms out. The span is clamped to [minSpan, hi-lo] and the window is shifted back inside [lo, hi]. */
+export function zoomRange(min:number,max:number,factor:number,focus:number,lo:number,hi:number,minSpan:number){
+ const span=Math.min(hi-lo,Math.max(minSpan,(max-min)*factor));
+ const t=clamp((focus-min)/(max-min),0,1);
+ let next=clamp(focus,min,max)-t*span;
+ next=Math.max(lo,Math.min(next,hi-span));
+ return {min:next,max:next+span};
+}

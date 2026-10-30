@@ -1,4 +1,5 @@
 import {useEffect,useMemo,useRef,useState,useId} from 'react';
+import {ZoomIn,ZoomOut} from 'lucide-react';
 import type {KeyboardEvent,PointerEvent} from 'react';
 import {calculate,clamp,constraintInfo,metricValue,zoneInfo} from './model';
 import type {Cut,Metric,Setup} from './model';
@@ -14,8 +15,8 @@ import type {Quantity,Units} from './units';
 export const metricQuantity=(m:Metric):Quantity=>m==='mrr'?'mrr':m==='power'?'power':m==='chip'?'chip':m==='chipMax'?'length':m==='deflection'?'deflection':m==='utilization'||m==='margin'?'percent':'none';
 export const metricDisplay=(v:number,m:Metric,u:Units)=>m==='utilization'||m==='margin'?v*100:toDisplay(v,metricQuantity(m),u);
 export const metricUnit=(m:Metric,u:Units)=>unit(metricQuantity(m),u);
-interface Props {grid:Grid;setup:Setup;fill:Metric;overlay:Overlay;levels:ContourLevels;scale:Scale;units:Units;physical:boolean;pins:Snapshot[];onSelect:(c:Cut)=>void;onBegin:()=>void;onEnd:()=>void;onFit:()=>void;onReset:()=>void;}
-export default function Plot({grid:g,setup:s,fill,overlay,levels,scale,units,physical,pins,onSelect,onBegin,onEnd,onFit,onReset}:Props){
+interface Props {grid:Grid;setup:Setup;fill:Metric;overlay:Overlay;levels:ContourLevels;scale:Scale;units:Units;physical:boolean;pins:Snapshot[];onSelect:(c:Cut)=>void;onBegin:()=>void;onEnd:()=>void;onFit:()=>void;onReset:()=>void;onZoom:(factor:number)=>void;}
+export default function Plot({grid:g,setup:s,fill,overlay,levels,scale,units,physical,pins,onSelect,onBegin,onEnd,onFit,onReset,onZoom}:Props){
  const host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),drag=useRef<Cut|null>(null);
  const [width,setWidth]=useState(500),[hover,setHover]=useState<Cut|null>(null);
  const id=useId().replace(/:/g,'');
@@ -79,7 +80,7 @@ export default function Plot({grid:g,setup:s,fill,overlay,levels,scale,units,phy
  const xHelp=speed?'Spindle revolutions per minute (RPM), increasing to the right. Machine RPM bounds are checked separately.':'Stepover, also called radial width of cut (WOC), as a percentage of cutter diameter, increasing to the right. 100%D is a full-width slot.';
  const yHelp=speed?'Tool advance per minute in the selected measurement system, increasing upward.':'Depth of cut (DOC, depth per pass) as a percentage of cutter diameter, increasing upward. 100%D equals one cutter diameter; flute length and stickout limit reach.';
  return <section data-help={plotHelp} className="plot-card" aria-label={speed?'Speed and feed view':'Engagement view'}>
-  <header><strong data-help={plotHelp}>{speed?'Speed / feed':'Engagement'}</strong><span data-help="These are the two inputs held fixed while exploring this plot. Changing them updates the slice shown here.">{speed?`DOC ${fmt(s.cut.doc/s.tool.diameter*100)}%D · WOC ${fmt(s.cut.woc/s.tool.diameter*100)}%D`:`${fmt(s.cut.rpm,0)} RPM · ${fmt(toDisplay(s.cut.feed,'feed',units),1)} ${unit('feed',units)}`}</span><div className="plot-view-actions"><button {...explain("Zoom this plot to its sampled passing envelope, keeping the selected cut visible even if it fails a check. Cutting inputs do not change. Auto range refits the visible colors; an explicitly fixed scale stays fixed.")} onClick={onFit}>Fit envelope</button><button {...explain("Restore the broader machine/tool view for this plot without changing the cut.")} onClick={onReset}>Reset view</button></div></header>
+  <header><strong data-help={plotHelp}>{speed?'Speed / feed':'Engagement'}</strong><span data-help="These are the two inputs held fixed while exploring this plot. Changing them updates the slice shown here.">{speed?`DOC ${fmt(s.cut.doc/s.tool.diameter*100)}%D · WOC ${fmt(s.cut.woc/s.tool.diameter*100)}%D`:`${fmt(s.cut.rpm,0)} RPM · ${fmt(toDisplay(s.cut.feed,'feed',units),1)} ${unit('feed',units)}`}</span><div className="plot-view-actions"><button {...explain("Zoom in on this plot by a quarter, centred on the selected cut when it is in view. The cut itself does not change; axis bounds stay within the supported range.")} aria-label="Zoom in" onClick={()=>onZoom(.8)}><ZoomIn size={13}/></button><button {...explain("Zoom out on this plot by a quarter, centred on the selected cut when it is in view. The cut itself does not change; axis bounds stay within the supported range.")} aria-label="Zoom out" onClick={()=>onZoom(1.25)}><ZoomOut size={13}/></button><button {...explain("Zoom this plot to its sampled passing envelope, keeping the selected cut visible even if it fails a check. Cutting inputs do not change. Auto range refits the visible colors; an explicitly fixed scale stays fixed.")} onClick={onFit}>Fit envelope</button><button {...explain("Restore the broader machine/tool view for this plot without changing the cut.")} onClick={onReset}>Reset view</button></div></header>
   <div className="plot-host" ref={host} style={{height}}>
    <canvas ref={canvas} style={{width,height}} aria-hidden="true"/>
    <svg {...explain(plotHelp)} width={width} height={height} role="img" aria-label={speed?'RPM versus feedrate':'Radial WOC horizontal and axial DOC vertical, percent of cutter diameter'}>

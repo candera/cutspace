@@ -316,7 +316,7 @@ Every meaningful control, numeric field, output, status, legend, plot axis and c
 
 Desktop explanations must float adjacent to their target, including in Brave, and stay within the visual viewport under scrolling or browser zoom. Phone access must not depend on hovering: an explicit Help mode allows tapping a control, output or plot for a persistent explanation without triggering its action. Include close/Done controls and keep ordinary editing and scrolling available outside Help mode.
 
-Each plot needs a Fit envelope action and a Reset view action. Fitting uses passing samples in the broader machine/tool domain with padding, includes the selected point even when outside the envelope, and never changes the cutting point. No passing samples or unknown required data must produce an explanation instead of a fabricated region. Preserve the shared color bounds during the view change. Wheel/pinch navigation remains optional; the prototype implements the explicit buttons.
+Each plot needs a Fit envelope action and a Reset view action. Fitting uses passing samples in the broader machine/tool domain with padding, includes the selected point even when outside the envelope, and never changes the cutting point. No passing samples or unknown required data must produce an explanation instead of a fabricated region. Preserve the shared color bounds during the view change. Wheel/pinch navigation remains optional; the prototype implements the explicit buttons, and (30 October 2026) per-plot zoom in/out buttons that step the range by a quarter about the selected cut, clamped to supported bounds.
 
 
 ## Help and limit explanations update — 2026-10-28
