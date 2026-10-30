@@ -1,0 +1,87 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {builtinLibrary,parseLibrary,parseStoredLibraries,personalLibrary,withItem,removeItem,machineItem,toolItem,recipeItem,exportLibrary,conflictsBetween,mergeLibrary,asShared,upsertLibrary,machineRefId,findMachine,machineFromItem,uniqueId,slug} from '../src/library.ts';
+import {fresh,parseExperiment,setupFor,snapshot,MACHINES} from '../src/experiment.ts';
+import {calculate} from '../src/model.ts';
+
+test('built-in library keeps the named machines, adds generic starters, and round-trips through its own parser',()=>{
+ const lib=builtinLibrary();
+ const ids=lib.machines.map(m=>m.id);
+ for(const id of ['dmc2','rc4','bigblue','desktop-mill-example','hobby-router-example','industrial-router-example'])assert.ok(ids.includes(id));
+ assert.equal(lib.machines.find(m=>m.id==='rc4')?.name,'ShopSabre RC4');
+ assert.match(lib.machines.find(m=>m.id==='rc4')?.provenance.note??'',/nameplate/);
+ assert.ok(lib.tools.length>=5);assert.ok(lib.tools.every(t=>t.provenance.source==='illustrative'));
+ assert.equal(lib.readOnly,true);
+ assert.deepEqual(parseLibrary(JSON.stringify(lib)),lib);
+ assert.deepEqual(machineFromItem(lib.machines[1]),MACHINES.rc4);
+});
+test('library files are validated: schema, ids, duplicates, physics bounds and recipe snapshots',()=>{
+ const good=exportLibrary(builtinLibrary());
+ const bad=(mutate:(l:any)=>void)=>{const l=structuredClone(good) as any;mutate(l);assert.throws(()=>parseLibrary(JSON.stringify(l)));};
+ bad(l=>l.schemaVersion=2);
+ bad(l=>l.id='has space');
+ bad(l=>l.kind='team');
+ bad(l=>l.machines.push(structuredClone(l.machines[0])));
+ bad(l=>l.machines[0].machine.rpmMin=l.machines[0].machine.rpmMax);
+ bad(l=>l.tools[0].tool.flutes=2.5);
+ bad(l=>l.tools[0].provenance.source='guess');
+ bad(l=>l.recipes=[{id:'r',name:'r',provenance:{source:'user'},snapshot:{nope:true}}]);
+ const withRecipe={...good,recipes:[{id:'seed',name:'Seed cut',provenance:{source:'user'},snapshot:snapshot(fresh()),notes:'ok',units:'metric'}]};
+ assert.equal(parseLibrary(JSON.stringify(withRecipe)).recipes[0].snapshot.point.rpm,10000);
+});
+test('personal libraries add, remove and export items with unique ids; read-only libraries refuse edits',()=>{
+ let lib=personalLibrary();
+ const e=fresh();
+ lib=withItem(lib,'machines',machineItem(lib,'My mill',MACHINES.dmc2));
+ lib=withItem(lib,'machines',machineItem(lib,'My mill',MACHINES.rc4));
+ lib=withItem(lib,'tools',toolItem(lib,'Favourite 1/4',e.config.tool));
+ lib=withItem(lib,'recipes',recipeItem(lib,'Plywood slot',snapshot(e),'imperial','worked well'));
+ assert.deepEqual(lib.machines.map(m=>m.id),['my-mill','my-mill-2']);
+ assert.equal(lib.machines[1].machine.power,MACHINES.rc4.power);
+ const part=exportLibrary(lib,{machines:['my-mill-2'],tools:[]});
+ assert.equal(part.machines.length,1);assert.equal(part.tools.length,0);assert.equal(part.recipes.length,1);
+ lib=removeItem(lib,'machines','my-mill');assert.equal(lib.machines.length,1);
+ assert.throws(()=>withItem(builtinLibrary(),'machines',lib.machines[0]));
+ assert.equal(uniqueId('a',['a','a-2']),'a-3');assert.equal(slug('ShopSabre RC4 (Nova Labs)'),'shopsabre-rc4-nova-labs');
+});
+test('imports merge with replace, keep-both or skip, and report conflicts first',()=>{
+ let target=personalLibrary();
+ target=withItem(target,'machines',{...machineItem(target,'Shared mill',MACHINES.dmc2),id:'x'});
+ let incoming=personalLibrary();
+ incoming=withItem(incoming,'machines',{...machineItem(incoming,'Shared mill v2',MACHINES.rc4),id:'x'});
+ incoming=withItem(incoming,'machines',{...machineItem(incoming,'Other',MACHINES.bigblue),id:'y'});
+ assert.deepEqual(conflictsBetween(target,incoming),['machines:x']);
+ const replaced=mergeLibrary(target,incoming,'replace');
+ assert.equal(replaced.replaced,1);assert.equal(replaced.added,1);assert.equal(replaced.library.machines.find(m=>m.id==='x')?.name,'Shared mill v2');
+ const both=mergeLibrary(target,incoming,'keep-both');
+ assert.deepEqual(both.library.machines.map(m=>m.id).sort(),['x','x-2','y']);assert.equal(both.library.machines.find(m=>m.id==='x')?.name,'Shared mill');
+ const skipped=mergeLibrary(target,incoming,'skip');
+ assert.equal(skipped.skipped,1);assert.deepEqual(skipped.library.machines.map(m=>m.id),['x','y']);
+ assert.throws(()=>mergeLibrary(builtinLibrary(),incoming,'replace'));
+});
+test('shared libraries are read-only, keep their source, and never displace the personal or built-in ids',()=>{
+ const shared=asShared({...personalLibrary(),id:'personal',name:'Nova Labs'},'https://example.org/novalabs.json');
+ assert.equal(shared.readOnly,true);assert.equal(shared.kind,'shared');
+ const libs=upsertLibrary([builtinLibrary(),personalLibrary()],shared);
+ assert.deepEqual(libs.map(l=>l.id),['builtin','personal','personal-2']);
+ const refreshed=upsertLibrary(libs,{...shared,id:'personal-2',name:'Nova Labs v2'});
+ assert.equal(refreshed.length,3);assert.equal(refreshed[2].name,'Nova Labs v2');
+ assert.deepEqual(parseStoredLibraries(null),[]);
+ assert.equal(parseStoredLibraries(JSON.stringify({schemaVersion:1,libraries:[builtinLibrary(),personalLibrary()]})).length,1);
+ assert.throws(()=>parseStoredLibraries('{"schemaVersion":3}'));
+});
+test('experiments can reference library machines by name, reject unnamed foreign machines, and honour tool max RPM',()=>{
+ const e=fresh();
+ e.machineId=machineRefId('personal','my-mill');e.config.machine={...MACHINES.rc4,name:'My mill'};
+ const read=parseExperiment(JSON.stringify(e));
+ assert.equal(read.machineId,'lib:personal/my-mill');assert.equal(read.config.machine.name,'My mill');
+ const lib=withItem(personalLibrary(),'machines',{...machineItem(personalLibrary(),'My mill',MACHINES.rc4),id:'my-mill'});
+ assert.equal(findMachine([builtinLibrary(),lib],'lib:personal/my-mill')?.item.name,'My mill');
+ assert.equal(findMachine([builtinLibrary(),lib],'rc4')?.item.name,'ShopSabre RC4');
+ assert.equal(findMachine([builtinLibrary(),lib],'lib:nova/none'),null);
+ e.machineId='hobby-router-example';e.config.machine.name='renamed in file';
+ assert.equal(parseExperiment(JSON.stringify(e)).config.machine.name,'Hobby router (example)');
+ const t=fresh();t.config.tool.maxRpm=12000;t.point.rpm=15000;
+ const s=setupFor(parseExperiment(JSON.stringify(t))),r=calculate(s.cut,s);
+ assert.equal(s.tool.maxRpm,12000);assert.ok(Math.abs(r.constraints.find(c=>c.key==='rpm')!.ratio-1.25)<1e-12);assert.equal(r.status,'outside');
+});

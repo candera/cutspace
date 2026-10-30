@@ -1,0 +1,28 @@
+{
+  "name": "cutspace",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc -b && vite build",
+    "build:site": "npm run build -- --base=/software/cutspace/",
+    "deploy:site": "bash scripts/deploy-site.sh",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "node --experimental-strip-types --test tests/*.test.ts"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "d3-contour": "^4.0.2",
+    "lucide-react": "^0.468.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@types/d3-contour": "^3.0.6",
+    "@vitejs/plugin-react": "^5.0.4",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.12"
+  }
+}

@@ -1,0 +1,12 @@
+import {useEffect,useRef,useState,useId} from 'react';
+import {toDisplay,fromDisplay,unit,parseNumeric,displayPlaces} from './units';
+import {fieldHelp,explain} from './help';
+import type {Units,Quantity} from './units';
+export default function Field({label,value,onChange,units='metric',quantity='none',suffix,min=0,max=1e9,integer=false}:{label:string;value:number;onChange:(n:number)=>string|null;units?:Units;quantity?:Quantity;suffix?:string;min?:number;max?:number;integer?:boolean}){
+ const description=`${fieldHelp[label]??label} Enter a number or simple fraction; Enter or leaving the field applies it. Escape cancels an unfinished edit. In Help mode, press Enter or Space to read an explanation instead of editing.`;
+ const shown=toDisplay(value,quantity,units);const display=Number(shown.toFixed(displayPlaces(shown,quantity,units))).toString();
+ const [draft,setDraft]=useState(display),[error,setError]=useState('');const dirty=useRef(false);const id=useId();
+ useEffect(()=>{setDraft(display);dirty.current=false;setError('');},[display,units]);
+ function commit(){if(!dirty.current)return;const parsed=parseNumeric(draft);if(parsed===null){setError('Enter a number or fraction.');return;}const n=fromDisplay(parsed,quantity,units);if(n<min||n>max||integer&&!Number.isInteger(n)){setError(integer?'Enter a whole number in range.':`Allowed: ${Number(toDisplay(min,quantity,units).toPrecision(5))}–${Number(toDisplay(max,quantity,units).toPrecision(5))} ${suffix??unit(quantity,units)}`);return;}const message=onChange(n);if(message){setError(message);return;}dirty.current=false;setError('');const back=toDisplay(n,quantity,units);setDraft(Number(back.toFixed(displayPlaces(back,quantity,units))).toString());}
+ return <label className="field" data-help={description}><span>{label}</span><div className={`input-wrap ${error?'bad-input':''}`}><input {...explain(description)} aria-label={label} aria-invalid={!!error} aria-describedby={error?id:undefined} inputMode="decimal" value={draft} onChange={e=>{dirty.current=true;setDraft(e.target.value);setError('');}} onBlur={commit} onKeyDown={e=>{if(e.key==='Enter')e.currentTarget.blur();if(e.key==='Escape'){dirty.current=false;setDraft(display);setError('');e.currentTarget.blur();}}}/><small>{suffix??unit(quantity,units)}</small></div>{error&&<span id={id} className="field-error" role="alert" data-help="This entry was not applied. The graphs and outputs still use the last accepted value. Correct the entry or press Escape to restore it.">Not applied. {error}</span>}</label>;
+}

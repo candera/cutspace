@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 2,
+  "modelVersion": "illustrative-static-3",
+  "name": "Big Blue · shared plywood cut · 200 IPM",
+  "machineId": "bigblue",
+  "materialId": "plywood",
+  "config": {
+    "tool": {
+      "material": "carbide",
+      "diameter": 6.35,
+      "flutes": 4,
+      "stickout": 25.4,
+      "fluteLength": 20.32,
+      "modulus": 600,
+      "stiffness": 0.45
+    },
+    "material": {
+      "name": "Plywood",
+      "kc": 100,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+    },
+    "machine": {
+      "name": "Big Blue",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 1500,
+      "torque": 0.9,
+      "utilization": 0.75,
+      "known": true
+    },
+    "limits": {
+      "chipMin": 0.025,
+      "chipMax": 0.3,
+      "deflection": 100,
+      "surfaceMax": 650,
+      "cuttingDataKnown": true,
+      "preset": "provisional-1"
+    }
+  },
+  "point": {
+    "rpm": 10000,
+    "feed": 5080,
+    "docRatio": 1.5,
+    "wocRatio": 1
+  },
+  "units": "imperial",
+  "view": {
+    "fill": "mrr",
+    "overlay": "utilization",
+    "contourDensity": "standard",
+    "physicalAxes": true,
+    "fixed": false,
+    "scaleMin": 0,
+    "scaleMax": 10,
+    "rpmMin": 3000,
+    "rpmMax": 26400.000000000004,
+    "feedMax": 12000,
+    "wocMax": 105,
+    "docMax": 352,
+    "feedMin": 0,
+    "wocMin": 0,
+    "docMin": 0
+  },
+  "pins": [],
+  "provenance": "illustrative / user overrides"
+}

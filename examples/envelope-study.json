@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 2,
+  "modelVersion": "illustrative-static-2",
+  "name": "6061 · envelope study",
+  "machineId": "dmc2",
+  "materialId": "aluminum",
+  "config": {
+    "tool": {
+      "diameter": 6,
+      "flutes": 3,
+      "stickout": 20,
+      "fluteLength": 15,
+      "modulus": 600,
+      "stiffness": 0.45
+    },
+    "material": {
+      "name": "Aluminum · 6061",
+      "kc": 1000,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+    },
+    "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 3000,
+      "rpmMax": 18000,
+      "feedMax": 3000,
+      "power": 250,
+      "torque": 0.3,
+      "utilization": 0.75,
+      "known": true
+    },
+    "limits": {
+      "chipMin": 0.008,
+      "chipMax": 0.055,
+      "deflection": 25,
+      "surfaceMax": 450
+    }
+  },
+  "point": {
+    "rpm": 10000,
+    "feed": 1200,
+    "docRatio": 0.5,
+    "wocRatio": 0.2
+  },
+  "units": "metric",
+  "view": {
+    "fill": "mrr",
+    "overlay": "utilization",
+    "physicalAxes": true,
+    "fixed": false,
+    "scaleMin": 0,
+    "scaleMax": 10,
+    "rpmMin": 1500,
+    "rpmMax": 19800,
+    "feedMax": 3600,
+    "wocMax": 100,
+    "docMax": 275
+  },
+  "pins": [
+    {
+      "machineId": "dmc2",
+      "materialId": "aluminum",
+      "config": {
+        "tool": {
+          "diameter": 6,
+          "flutes": 3,
+          "stickout": 20,
+          "fluteLength": 15,
+          "modulus": 600,
+          "stiffness": 0.45
+        },
+        "material": {
+          "name": "Aluminum · 6061",
+          "kc": 1000,
+          "powerFactor": 1.25,
+          "forceFactor": 1.3,
+          "known": true
+        },
+        "machine": {
+          "name": "DMC2 Mini",
+          "rpmMin": 3000,
+          "rpmMax": 18000,
+          "feedMax": 3000,
+          "power": 250,
+          "torque": 0.3,
+          "utilization": 0.75,
+          "known": true
+        },
+        "limits": {
+          "chipMin": 0.008,
+          "chipMax": 0.055,
+          "deflection": 25,
+          "surfaceMax": 450
+        }
+      },
+      "point": {
+        "rpm": 10000,
+        "feed": 1200,
+        "docRatio": 0.5,
+        "wocRatio": 0.2
+      }
+    },
+    {
+      "machineId": "dmc2",
+      "materialId": "aluminum",
+      "config": {
+        "tool": {
+          "diameter": 6,
+          "flutes": 3,
+          "stickout": 20,
+          "fluteLength": 15,
+          "modulus": 600,
+          "stiffness": 0.45
+        },
+        "material": {
+          "name": "Aluminum · 6061",
+          "kc": 1000,
+          "powerFactor": 1.25,
+          "forceFactor": 1.3,
+          "known": true
+        },
+        "machine": {
+          "name": "DMC2 Mini",
+          "rpmMin": 3000,
+          "rpmMax": 18000,
+          "feedMax": 3000,
+          "power": 250,
+          "torque": 0.3,
+          "utilization": 0.75,
+          "known": true
+        },
+        "limits": {
+          "chipMin": 0.008,
+          "chipMax": 0.055,
+          "deflection": 25,
+          "surfaceMax": 450
+        }
+      },
+      "point": {
+        "rpm": 10000,
+        "feed": 1500,
+        "docRatio": 0.5,
+        "wocRatio": 0.2
+      }
+    }
+  ],
+  "provenance": "illustrative / user overrides"
+}
