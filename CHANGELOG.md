@@ -6,6 +6,12 @@ Cutspace remains an illustrative exploration tool, not a source of validated cut
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-10-31
+
+### Added
+
+- Added an in-app Changelog tab and footer shortcut, rendered directly from this file so release notes have one canonical source.
+
 ## [0.2.1] - 2026-10-31
 
 ### Added

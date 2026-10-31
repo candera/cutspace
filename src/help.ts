@@ -74,6 +74,7 @@ export const sectionHelp:Record<string,string>={
  View:'Change plot ranges and fixed color-scale bounds without changing the selected cut.',
  Library:'Save, load, import, export and share machines, tools and cut recipes. Shared libraries are read-only; your own library is editable.',
  About:'Read the formulas, assumptions, example cuts, model limitations and references behind the displayed results.',
+ Changelog:'Read release notes sourced directly from the project changelog.',
 };
 export const help={
  cutterMaterial:'Material of the flat end mill, distinct from the workpiece. Carbide loads a representative 600 GPa elastic modulus; high-speed steel (HSS) loads 219 GPa, giving more static bending under the same load. Switching replaces a modulus override, preserves geometry, RPM, feed and %DOC/WOC, and loads provisional chip, surface-speed and deflection limits for the new combination, replacing limit overrides. Undo restores the previous setup. This does not model coatings, heat, edge strength or router-bit profiles.',

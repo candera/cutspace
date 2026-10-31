@@ -57,3 +57,4 @@
 .contour-key .caution-swatch{width:12px;height:11px;margin-left:2px;border-radius:1px;background:radial-gradient(circle,#c9983a 1.1px,transparent 1.6px) 0 0/4px 4px,#e7eee1}.contour-key .beyond-swatch{width:12px;height:11px;margin-left:2px;border-radius:1px;background:repeating-linear-gradient(45deg,#e7eee1,#e7eee1 3px,#c75a43 3.5px,#c75a43 4.5px)}
 .plot-view-actions button[aria-label^="Zoom"]{padding:3px 6px;min-width:28px}
 .gradient.safety{background:linear-gradient(90deg,#000 0%,#006937 25%,#41aa49 50%,#f2cd36 75%,#cd2d24 100%)}
+.changelog-panel .changelog-title{font-size:20px}.changelog-panel h3:not(:first-child){margin-top:26px}.changelog-panel h4{margin-top:18px}.changelog-panel ul{margin:8px 0 18px;padding-left:20px;color:#5f735f}.changelog-panel li{font-size:13px;line-height:1.55;margin:7px 0}.changelog-panel code{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;background:#edf2e8;border-radius:3px;padding:1px 4px;color:#45604d}
