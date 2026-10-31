@@ -3,11 +3,11 @@ import {ZoomIn,ZoomOut} from 'lucide-react';
 import type {KeyboardEvent,PointerEvent} from 'react';
 import {calculate,clamp,constraintInfo,metricValue,zoneInfo} from './model';
 import type {Cut,Metric,Setup} from './model';
-import {contourPath,contourSegments,segmentsPath,cutAt,heatColor,NX,NY} from './plots';
+import {contourPath,contourSegments,segmentsPath,cutAt,heatColor,scalePosition,zonePaletteEntry,NX,NY} from './plots';
 import {contourLabel,contourValue,placeContourLabels} from './contours';
 import type {ContourLevels} from './contours';
 import type {Grid,Scale} from './plots';
-import type {Overlay,Snapshot} from './experiment';
+import type {ColorScheme,Overlay,Snapshot} from './experiment';
 import {setupFor} from './experiment';
 import {explain,help} from './help';
 import {fmt,toDisplay,unit} from './units';
@@ -15,8 +15,8 @@ import type {Quantity,Units} from './units';
 export const metricQuantity=(m:Metric):Quantity=>m==='mrr'?'mrr':m==='power'?'power':m==='chip'?'chip':m==='chipMax'?'length':m==='deflection'?'deflection':m==='utilization'||m==='margin'?'percent':'none';
 export const metricDisplay=(v:number,m:Metric,u:Units)=>m==='utilization'||m==='margin'?v*100:toDisplay(v,metricQuantity(m),u);
 export const metricUnit=(m:Metric,u:Units)=>unit(metricQuantity(m),u);
-interface Props {grid:Grid;setup:Setup;fill:Metric;overlay:Overlay;levels:ContourLevels;scale:Scale;units:Units;physical:boolean;pins:Snapshot[];onSelect:(c:Cut)=>void;onBegin:()=>void;onEnd:()=>void;onFit:()=>void;onReset:()=>void;onZoom:(factor:number)=>void;}
-export default function Plot({grid:g,setup:s,fill,overlay,levels,scale,units,physical,pins,onSelect,onBegin,onEnd,onFit,onReset,onZoom}:Props){
+interface Props {grid:Grid;setup:Setup;fill:Metric;overlay:Overlay;colorScheme:ColorScheme;levels:ContourLevels;scale:Scale;units:Units;physical:boolean;pins:Snapshot[];onSelect:(c:Cut)=>void;onBegin:()=>void;onEnd:()=>void;onFit:()=>void;onReset:()=>void;onZoom:(factor:number)=>void;}
+export default function Plot({grid:g,setup:s,fill,overlay,colorScheme,levels,scale,units,physical,pins,onSelect,onBegin,onEnd,onFit,onReset,onZoom}:Props){
  const host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),drag=useRef<Cut|null>(null);
  const [width,setWidth]=useState(500),[hover,setHover]=useState<Cut|null>(null);
  const id=useId().replace(/:/g,'');
@@ -52,7 +52,7 @@ export default function Plot({grid:g,setup:s,fill,overlay,levels,scale,units,phy
   for(let i=0;i<g.samples.length;i++){
    const r=g.samples[i],value=metricValue(r,fill),x=left+(i%NX)/NX*w,y=top+Math.floor(i/NX)/NY*h;
    const known=Number.isFinite(value)&&r.status!=='invalid';
-   ctx.fillStyle=!known?'#283443':fill==='constraint'?constraintInfo[r.limiting.key].color:fill==='zone'?zoneInfo[r.zone].color:heatColor((value-scale.min)/(scale.max-scale.min));
+   ctx.fillStyle=!known?'#283443':fill==='constraint'?constraintInfo[r.limiting.key].color:fill==='zone'?zonePaletteEntry(r,colorScheme,s.limits.caution).color:heatColor(scalePosition(value,scale,s.limits.caution),colorScheme);
    ctx.globalAlpha=fill==='constraint'||fill==='zone'?.8:1;ctx.fillRect(x,y,w/NX+.5,h/NY+.5);
    // Soft-limit zones use texture in the colour of their boundary line: sparse 45° lines (red) beyond a soft limit, a sparse stipple (amber) in the caution band.
    const col=i%NX,row=Math.floor(i/NX),cw=w/NX,ch=h/NY;
@@ -60,7 +60,7 @@ export default function Plot({grid:g,setup:s,fill,overlay,levels,scale,units,phy
    if(fill!=='zone'&&r.zone==='caution'&&col%3===1&&row%3===1){ctx.globalAlpha=.8;ctx.fillStyle='#e8b85a';ctx.beginPath();ctx.arc(x+cw/2,y+ch/2,1.3,0,2*Math.PI);ctx.fill();}
    if(r.status==='invalid'||r.status==='no-cut'||!r.hardOk||r.unknown.length){ctx.globalAlpha=.52;ctx.fillStyle='#0b1722';ctx.fillRect(x,y,w/NX+.5,h/NY+.5);ctx.globalAlpha=.22;ctx.strokeStyle='#e1e7dc';ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(x,y+h/NY);ctx.lineTo(x+w/NX,y);ctx.stroke();}
   }ctx.globalAlpha=1;
- },[g,fill,scale,width,w,h,left,top]);
+ },[g,fill,colorScheme,scale,s.limits.caution,width,w,h,left,top]);
  const read=(e:PointerEvent<SVGRectElement>)=>{const b=e.currentTarget.getBoundingClientRect();return cutAt(g,s.cut,clamp((e.clientX-b.left)/b.width,0,1),clamp((e.clientY-b.top)/b.height,0,1));};
  function key(e:KeyboardEvent<SVGRectElement>){
   if(e.key==='Escape'&&drag.current){onSelect(drag.current);drag.current=null;onEnd();return;}
@@ -107,6 +107,6 @@ export default function Plot({grid:g,setup:s,fill,overlay,levels,scale,units,phy
    </svg>
   </div>
   {overlayData.note&&<div className="contour-note" role="status" data-help="This describes the selected contour metric in this plot slice. Constant values have no separate contour curves; unavailable estimates cannot be contoured.">{overlayData.note}</div>}
-  <footer data-help="The probe reports the position under the pointer without changing the selected cut. Click or drag to select it. Saved markers appear only when their configuration and held inputs match this plot slice. Constant contours mean that metric does not change across this slice.">{probe&&hover?<span>Probe · {speed?`${fmt(hover.rpm,0)} RPM / ${fmt(toDisplay(hover.feed,'feed',units),1)} ${unit('feed',units)}`:`WOC ${fmt(hover.woc/s.tool.diameter*100)}%D / DOC ${fmt(hover.doc/s.tool.diameter*100)}%D`} · {fill==='constraint'?constraintInfo[probe.limiting.key].label:fill==='zone'?zoneInfo[probe.zone].label:`${fmt(metricDisplay(metricValue(probe,fill),fill,units),fill==='chip'||fill==='chipMax'?5:2)} ${metricUnit(fill,units)}`}{fill!=='zone'&&probe.zone!=='unknown'&&` · ${zoneInfo[probe.zone].label}`}{overlay!=='none'&&` · Contour ${contourLabel(contourValue(probe,overlay,s),overlay,units)}`}</span>:<span>{!inView?'Selection outside view · use Reset view':'Drag to explore · arrow keys to adjust'}</span>}<span>{pinPoints.length?`${pinPoints.length} saved here`:'Linked'}</span></footer>
+  <footer data-help="The probe reports the position under the pointer without changing the selected cut. Click or drag to select it. Saved markers appear only when their configuration and held inputs match this plot slice. Constant contours mean that metric does not change across this slice.">{probe&&hover?<span>Probe · {speed?`${fmt(hover.rpm,0)} RPM / ${fmt(toDisplay(hover.feed,'feed',units),1)} ${unit('feed',units)}`:`WOC ${fmt(hover.woc/s.tool.diameter*100)}%D / DOC ${fmt(hover.doc/s.tool.diameter*100)}%D`} · {fill==='constraint'?constraintInfo[probe.limiting.key].label:fill==='zone'?zonePaletteEntry(probe,colorScheme,s.limits.caution).label:`${fmt(metricDisplay(metricValue(probe,fill),fill,units),fill==='chip'||fill==='chipMax'?5:2)} ${metricUnit(fill,units)}`}{fill!=='zone'&&probe.zone!=='unknown'&&` · ${zoneInfo[probe.zone].label}`}{overlay!=='none'&&` · Contour ${contourLabel(contourValue(probe,overlay,s),overlay,units)}`}</span>:<span>{!inView?'Selection outside view · use Reset view':'Drag to explore · arrow keys to adjust'}</span>}<span>{pinPoints.length?`${pinPoints.length} saved here`:'Linked'}</span></footer>
  </section>;
 }

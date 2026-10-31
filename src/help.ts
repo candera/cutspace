@@ -5,7 +5,7 @@ import {limitGuidance} from './limitGuidance';
 export const explain=(text:string)=>({'data-help':text,'aria-description':text});
 export const fieldHelp:Record<string,string>={
  'Diameter':'Cutting diameter of the tool. Changing it preserves DOC and WOC as percentages of diameter, so their physical distances change. RPM, feed and stickout stay unchanged.',
- 'Flutes':'Number of cutting edges. At the same RPM and feedrate, more flutes mean a smaller chipload per edge. Also affects the approximate number of engaged teeth used to estimate force.',
+ 'Flutes':'Number of cutting edges. At the same RPM and feedrate, more flutes mean a smaller chipload per edge. The force estimate resolves each straight flute through one tooth-passing period and vector-sums simultaneous loads.',
  'Stickout':'Unsupported tool length measured from the holder to the tip. Longer stickout sharply increases the static bending estimate; it does not predict chatter.',
  'Flute length':'Usable cutting-edge length. DOC beyond this length fails the engagement check. This is a simple reach limit, not a collision check.',
  'Spindle speed':'Tool revolutions per minute (RPM). Changing RPM changes surface speed, feed per tooth and spindle torque demand while holding feedrate and engagement fixed.',
@@ -45,10 +45,10 @@ export const metricHelp:Record<Metric,string>={
  power:'Estimated mechanical spindle power needed by the cut, from material removal, the illustrative cutting coefficient and power allowance. It is not electrical input power.',
  chip:'Chipload, also called feed per tooth: feedrate divided by RPM and flute count. This is the advance per cutting edge, before radial chip thinning.',
  chipMax:'Maximum chip thickness after ideal radial chip thinning. At less than half-diameter stepover it is smaller than the chipload. No automatic feed increase is applied.',
- deflection:'Estimated static tool-tip bending, using a simplified cantilever and cutting-force estimate. Longer stickout increases it sharply. It does not predict chatter or include holder/machine flexibility.',
+ deflection:'Estimated static tool-tip bending, using a simplified cantilever and the peak phase-resolved tangential cutter load. Longer stickout increases it sharply. It does not model helix, runout, radial/axial force components, chatter or holder/machine flexibility.',
  utilization:'Estimated power demand divided by usable spindle output at the selected RPM. 100% reaches the assumed capacity; higher values exceed it. An unknown capacity makes this unavailable.',
  margin:'Remaining margin to the most-used known constraint: 1 minus its ratio. Zero reaches a limit; negative values exceed one. Unknown checks are still unknown, even if this known-check margin is positive.',
- zone:'Soft-limit zone: Comfortable below the caution fraction, Caution between it and the limit, Beyond above it. Hard-limit failures, invalid and unknown points are dark. Zones describe editable allowances, not measured risk.',
+ zone:'Soft-limit zone: black is at or below half the caution threshold, green continues through caution, yellow continues through the configured limit, and red is beyond it. The teal–gold choice uses the same four thresholds with alternate colors. Hard-limit failures, invalid and unknown points stay dark and hatched. Zones describe editable allowances, not measured risk.',
  constraint:'The known constraint with the highest demand-to-limit ratio. Inside the envelope it is the nearest configured limit; outside it is the largest relative exceedance. Hatching also marks unknown or invalid regions.',
 };
 const constraintRatios:Record<ConstraintKey,string>={
@@ -90,8 +90,8 @@ export const help={
  caution:'The amber dashed line is where the most-used soft limit (chipload, power, torque, deflection or surface speed) enters its caution band, by default 75% of the limit; the band itself carries a sparse amber dot pattern in the same colour. Edit the fraction in Model & limits → Limits.',
  beyond:'The red line is where a soft limit is exceeded; beyond it the plot shows sparse red diagonal lines in the same colour, at the opposite angle to the dense white hatching of hard-limit failures. Soft limits are editable allowances; crossing one does not mean instant failure, it means the estimate has passed the margin you set.',
  hatch:'Hatching marks hard-limit failures (RPM range, machine feed, tool reach), invalid engagement, no material removal or unknown required model data. An unhatched point is not a safety guarantee.',
- scale:'The same color means the same value in both plots. Auto range spans all finite, geometrically valid samples visible in both plots, including points outside the configured limits. Fixed scale retains its bounds; values beyond them saturate. Bounds freeze during a drag and update when it ends. Fit/Reset view and pinning keep your chosen scaling mode. Switching machine, workpiece or cutter material returns to Auto range.',
+ scale:'The same color means the same value in both plots. Tool deflection is automatically anchored from zero to its configured limit, and spindle utilization from zero to 100% capacity, so zooming does not recolor a point. Other numerical fills use the finite, geometrically valid values visible in both plots. Fixed scale overrides either behavior; values beyond it saturate. Bounds freeze during a drag. Fit/Reset view and pinning keep your chosen scaling mode. Switching machine, workpiece or cutter material returns to automatic mode.',
  capacity:'Use the fictional spindle-output curve for capacity checks. Turning it off marks capacity-dependent checks unknown; it does not imply unlimited spindle power.',
- force:'Use the illustrative material model to estimate force, power, torque and deflection. Turning it off leaves geometry and removal outputs available but those estimates unknown.',
+ force:'Use the illustrative material model to estimate force, power, torque and deflection. Static force is the peak vector sum of instantaneous straight-flute tangential loads over one tooth-passing period. Turning the model off leaves geometry and removal outputs available but those estimates unknown.',
  curve:'Assumed available spindle output versus RPM: constant torque at lower speed, then constant power, reduced by the usable-output percentage. RPM-range checks separately reject disallowed speeds.',
 };

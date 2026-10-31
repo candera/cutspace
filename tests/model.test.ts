@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { availablePower, calculate, cloneDefaults } from '../src/model.ts';
+import { availablePower, calculate, cloneDefaults, peakCutterLoadFactor } from '../src/model.ts';
 const close = (actual: number, expected: number, tolerance = 1e-9) => assert.ok(Math.abs(actual - expected) < tolerance, `${actual} != ${expected}`);
 
 test('reference cut: units for speed, feed, chip thinning, MRR, power and torque', () => {
@@ -35,6 +35,23 @@ test('beam bending scales with stickout cubed and effective stiffness inversely'
   close(calculate(s.cut, {...s, tool: {...s.tool, stiffness: s.tool.stiffness / 2}}).deflection, r.deflection * 2);
   // Independent reference for the illustrative cut: F=124.8 N; I=.45*pi*6^4/64 mm^4.
   close(r.force, 124.8); close(r.deflection, 124.8 * 20 ** 3 / (3 * 600000 * (.45 * Math.PI * 6 ** 4 / 64)) * 1000);
+});
+test('phase-resolved cutter load is continuous as a second flute enters at 75 percent WOC', () => {
+  const s = cloneDefaults(); s.tool.flutes = 3;
+  const below = calculate({...s.cut, woc: s.tool.diameter * (.75 - 1e-6)}, s);
+  const at = calculate({...s.cut, woc: s.tool.diameter * .75}, s);
+  const above = calculate({...s.cut, woc: s.tool.diameter * (.75 + 1e-6)}, s);
+  assert.ok(Math.abs(above.force - below.force) / at.force < 1e-4);
+  close(peakCutterLoadFactor(.75, 3), 1, 1e-12);
+});
+test('single-flute force retains the chip-thickness model and simultaneous flute forces are vector summed', () => {
+  const s = cloneDefaults(); s.tool.flutes = 1;
+  for(const engagement of [.1, .2, .5, .75, 1]){
+    const r=calculate({...s.cut,woc:s.tool.diameter*engagement},s);
+    close(r.force,s.material.kc*s.cut.doc*r.chipMax*s.material.forceFactor,1e-8);
+  }
+  close(peakCutterLoadFactor(1,4),1,1e-12);
+  close(peakCutterLoadFactor(1,6),1.5,1e-12);
 });
 test('zero engagement removes no material and cannot enter the feasible envelope', () => {
   const s = cloneDefaults(); const r = calculate({...s.cut, woc: 0}, s);

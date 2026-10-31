@@ -1,8 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {builtinLibrary,parseLibrary,parseStoredLibraries,personalLibrary,withItem,removeItem,machineItem,toolItem,recipeItem,exportLibrary,conflictsBetween,mergeLibrary,asShared,upsertLibrary,machineRefId,findMachine,machineFromItem,uniqueId,slug} from '../src/library.ts';
-import {fresh,parseExperiment,setupFor,snapshot,MACHINES} from '../src/experiment.ts';
+import {readFileSync} from 'node:fs';
+import {builtinLibrary,parseLibrary,parseStoredLibraries,personalLibrary,withItem,removeItem,machineItem,materialItem,limitsFromMaterialItem,toolItem,recipeItem,exportLibrary,conflictsBetween,mergeLibrary,asShared,upsertLibrary,machineRefId,findMachine,findMaterial,machineFromItem,materialFromItem,uniqueId,slug} from '../src/library.ts';
+import {fitView,fresh,parseExperiment,setupFor,snapshot,MACHINES} from '../src/experiment.ts';
 import {calculate} from '../src/model.ts';
+import {envelopeBounds,gridFor} from '../src/plots.ts';
 
 test('built-in library keeps the named machines, adds generic starters, and round-trips through its own parser',()=>{
  const lib=builtinLibrary();
@@ -84,4 +86,23 @@ test('experiments can reference library machines by name, reject unnamed foreign
  const t=fresh();t.config.tool.maxRpm=12000;t.point.rpm=15000;
  const s=setupFor(parseExperiment(JSON.stringify(t))),r=calculate(s.cut,s);
  assert.equal(s.tool.maxRpm,12000);assert.ok(Math.abs(r.constraints.find(c=>c.key==='rpm')!.ratio-1.25)<1e-12);assert.equal(r.status,'outside');
+});
+test('materials import with provenance and cutter-specific starters while snapshots retain custom references',()=>{
+ const file=readFileSync(new URL('../examples/onefinity-elite-journeyman-polycarbonate-library.json',import.meta.url),'utf8'),lib=parseLibrary(file);
+ assert.equal(lib.machines.length,3);assert.equal(lib.materials.length,1);assert.equal(lib.tools.length,2);assert.equal(lib.recipes.length,4);
+ const item=lib.materials[0],material=materialFromItem(item),e=fresh(),id=machineRefId(lib.id,item.id);
+ assert.equal(material.name,'Polycarbonate · carbide O-flute starter');assert.equal(material.kc,230);
+ e.materialId=id;e.config.material=material;e.config.limits=limitsFromMaterialItem(item,'carbide',e.config.limits);
+ assert.equal(e.config.limits.chipMin,.075);assert.equal(e.config.limits.chipMax,.3048);assert.equal(e.config.limits.deflection,100);
+ assert.deepEqual(parseExperiment(JSON.stringify(e)),e);
+ assert.equal(findMaterial([lib],id)?.item.id,item.id);
+ const hss=limitsFromMaterialItem(item,'hss',e.config.limits);assert.equal(hss.cuttingDataKnown,false);
+ let mine=personalLibrary();mine=withItem(mine,'materials',materialItem(mine,'Saved PC',material,e.config.limits,'carbide'));
+ assert.equal(mine.materials[0].cutting?.carbide?.deflection,25);
+ for(const recipe of lib.recipes){const experiment={...fresh(),...structuredClone(recipe.snapshot)};experiment.view=fitView(experiment);const setup=setupFor(experiment);
+  assert.equal(calculate(setup.cut,setup).feasible,true);assert.ok(envelopeBounds(gridFor(setup,'speed',experiment.view),setup.cut));assert.ok(envelopeBounds(gridFor(setup,'engagement',experiment.view),setup.cut));
+ }
+ const reported=lib.recipes.find(r=>r.id==='reported-polycarbonate-slot-makita-hozly-eighth')!;
+ assert.equal(reported.provenance.source,'user');assert.equal(reported.snapshot.config.tool.diameter,3.175);assert.equal(reported.snapshot.config.tool.flutes,1);
+ assert.equal(reported.snapshot.point.feed,1778);assert.equal(reported.snapshot.point.docRatio,1);assert.equal(reported.snapshot.point.wocRatio,1);
 });

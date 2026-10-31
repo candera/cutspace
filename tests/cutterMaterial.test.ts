@@ -53,6 +53,15 @@ test('legacy experiments and pins migrate to explicit carbide with identical num
  assert.doesNotThrow(()=>parseExperiment(readFileSync(new URL('../examples/envelope-study.json',import.meta.url),'utf8')));
 });
 
+test('model-3 experiments preserve entered setup while adopting the continuous cutter-load result',()=>{
+ const e=fresh();e.config.tool.flutes=4;e.point.wocRatio=1;e.point.docRatio=.5;
+ const old:any=structuredClone(e);old.modelVersion='illustrative-static-3';
+ const imported=parseExperiment(JSON.stringify(old));
+ assert.equal(imported.modelVersion,MODEL_VERSION);assert.deepEqual(snapshot(imported),snapshot(e));
+ const r=result(imported),s=setupFor(imported),oldIntegerToothForce=s.material.kc*s.cut.doc*r.chipMax*2*s.material.forceFactor;
+ assert.ok(Math.abs(r.force*2-oldIntegerToothForce)<1e-9);
+});
+
 test('current experiments reject unsupported or missing cutter materials and nonboolean applicability',()=>{
  for(const value of ['ceramic',null,42,{},undefined]){const e:any=fresh();e.config.tool.material=value;assert.throws(()=>parseExperiment(JSON.stringify(e)),/cutter material/);}
  for(const value of ['true',1,null,undefined]){const e:any=fresh();e.config.limits.cuttingDataKnown=value;assert.throws(()=>parseExperiment(JSON.stringify(e)),/availability/);}

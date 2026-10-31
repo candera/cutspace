@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {fresh,parseExperiment,setupFor,setWorkpieceMaterial,setCutterMaterial} from '../src/experiment.ts';
-import {autoScale,gridFor,heatColor} from '../src/plots.ts';
-import {metricValue} from '../src/model.ts';
+import {autoScale,automaticFillScale,gridFor,heatColor,safetyZoneColor,scalePosition,zonePaletteEntry} from '../src/plots.ts';
+import {calculate,metricValue} from '../src/model.ts';
 import type {Metric} from '../src/model.ts';
 
 test('plywood examples no longer clip valid visible values to the upper color',()=>{
@@ -37,4 +37,35 @@ test('material switches release old fixed ranges without changing numeric limits
  assert.deepEqual(parseExperiment(JSON.stringify(e)).view,e.view);
  setWorkpieceMaterial(e,'plywood');assert.equal(e.view.fixed,false);
  e.view.fixed=true;setCutterMaterial(e,'hss');assert.equal(e.view.fixed,false);
+});
+
+test('color schemes have distinct endpoints and persist with a safe default for older files',()=>{
+ assert.equal(heatColor(0,'safety'),'rgb(0,0,0)');assert.equal(heatColor(1,'safety'),'rgb(205,45,36)');
+ assert.notEqual(heatColor(.5,'safety'),heatColor(.5,'teal'));
+ const e=fresh();assert.equal(e.view.colorScheme,'safety');e.view.colorScheme='teal';assert.equal(parseExperiment(JSON.stringify(e)).view.colorScheme,'teal');
+ const older:any=structuredClone(e);delete older.view.colorScheme;assert.equal(parseExperiment(JSON.stringify(older)).view.colorScheme,'safety');
+ const bad:any=structuredClone(e);bad.view.colorScheme='rainbow';assert.throws(()=>parseExperiment(JSON.stringify(bad)),/color scheme/);
+});
+
+test('safety Limit zone colors have semantic thresholds',()=>{
+ const s=setupFor(fresh()),r=calculate(s.cut,s);
+ assert.equal(safetyZoneColor({...r,zone:'comfortable',softRatio:.2},.75),'#000000');
+ assert.equal(safetyZoneColor({...r,zone:'comfortable',softRatio:.6},.75),'#009148');
+ assert.equal(safetyZoneColor({...r,zone:'caution',softRatio:.8},.75),'#f2cd36');
+ assert.equal(safetyZoneColor({...r,zone:'beyond',softRatio:1.1},.75),'#cd2d24');
+ assert.equal(safetyZoneColor({...r,zone:'unknown',softRatio:0},.75),'#283443');
+ assert.equal(zonePaletteEntry({...r,zone:'beyond',softRatio:1.1},'teal',.75).color,'#eed184');
+});
+
+test('deflection and utilization colors stay anchored to configured limits while visible metrics rescale',()=>{
+ const e=fresh(),s=setupFor(e),broad=[gridFor(s,'speed',e.view),gridFor(s,'engagement',e.view)];
+ const narrowView={...e.view,feedMin:500,feedMax:900,docMin:20,docMax:80,wocMin:10,wocMax:60};
+ const narrow=[gridFor(s,'speed',narrowView),gridFor(s,'engagement',narrowView)];
+ const deflection=automaticFillScale(broad,'deflection',s),zoomedDeflection=automaticFillScale(narrow,'deflection',s);
+ assert.deepEqual(deflection,{min:0,max:s.limits.deflection,basis:'configured-limit'});
+ assert.deepEqual(zoomedDeflection,deflection);
+ assert.deepEqual(automaticFillScale(narrow,'utilization',s),{min:0,max:1,basis:'configured-limit'});
+ assert.notDeepEqual(automaticFillScale(broad,'mrr',s),automaticFillScale(narrow,'mrr',s));
+ assert.equal(scalePosition(s.limits.deflection*.75,deflection,.75),.75);
+ assert.equal(scalePosition(s.limits.deflection,deflection,.75),1);
 });

@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {fresh,fitView,setupFor,parseExperiment,snapshot,MACHINES,MATERIALS} from '../src/experiment.ts';
-import {calculate} from '../src/model.ts';
+import {fresh,fitView,setupFor,parseExperiment,snapshot,setWorkpieceMaterial,MACHINES,MATERIALS} from '../src/experiment.ts';
+import {calculate,MODEL_VERSION} from '../src/model.ts';
+import {gridFor} from '../src/plots.ts';
 import {toDisplay,fromDisplay,parseNumeric} from '../src/units.ts';
 const close=(a:number,b:number,t=1e-10)=>assert.ok(Math.abs(a-b)<t,`${a} != ${b}`);
 test('diameter changes preserve percentage DOC/WOC including imperial entries',()=>{
@@ -33,6 +34,18 @@ test('six material starters and six machine presets have explicit illustrative d
  assert.notEqual(MACHINES.dmc2.power,MACHINES.rc4.power);
  assert.equal(new Set(Object.values(MATERIALS).map(m=>m.kc)).size,6);
  for(const material of Object.values(MATERIALS)){const e=fresh();e.config.material.kc=material.kc;const s=setupFor(e);assert.ok(Number.isFinite(calculate(s.cut,s).power));}
+});
+test('DMC2 profile uses the published spindle ceiling, rating and rapid with the entered minimum and derived torque',()=>{
+ assert.deepEqual(MACHINES.dmc2,{name:'DMC2 Mini',rpmMin:10000,rpmMax:24000,feedMax:10000,power:2200,torque:.875,utilization:.75,known:true});
+});
+test('model-4 files upgrade an untouched DMC2 placeholder but preserve custom machine values',()=>{
+ const old:any=fresh();old.modelVersion='illustrative-static-4';old.config.machine={name:'DMC2 Mini',rpmMin:3000,rpmMax:18000,feedMax:3000,power:250,torque:.3,utilization:.75,known:true};old.pins=[snapshot(old)];
+ const upgraded=parseExperiment(JSON.stringify(old));assert.equal(upgraded.modelVersion,MODEL_VERSION);assert.deepEqual(upgraded.config.machine,MACHINES.dmc2);assert.deepEqual(upgraded.pins[0].config.machine,MACHINES.dmc2);
+ old.config.machine.power=251;const custom=parseExperiment(JSON.stringify(old));assert.equal(custom.config.machine.power,251);assert.equal(custom.config.machine.rpmMax,18000);
+});
+test('DMC2 and brass retain a visible operating envelope with a small carbide cutter',()=>{
+ const e=fresh();setWorkpieceMaterial(e,'brass');Object.assign(e.config.tool,{diameter:3.175,flutes:2,stickout:15,fluteLength:12.7});e.point={rpm:12000,feed:500,docRatio:.5,wocRatio:.3};e.view=fitView(e);const s=setupFor(e);
+ for(const kind of ['speed','engagement'] as const)assert.ok(gridFor(s,kind,e.view).samples.some(r=>r.feasible),`${kind} envelope`);
 });
 test('unknown capacity and unavailable force models never produce a complete passing envelope',()=>{
  const e=fresh();e.config.machine.known=false;let s=setupFor(e),r=calculate(s.cut,s);assert.equal(r.status,'unknown');assert.equal(r.feasible,false);assert.ok(Number.isNaN(r.capacity));

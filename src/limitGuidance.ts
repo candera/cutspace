@@ -43,7 +43,7 @@ export const limitGuidance:Record<ConstraintKey,{meaning:string;why:string;adjus
  surface:{
   meaning:'Surface speed is how fast the outside cutting edge travels through the material. It depends on both cutter diameter and RPM, so a larger cutter has a higher surface speed at the same RPM.',
   why:'Excessive speed for the tool and material can raise cutting temperature and accelerate edge wear. The suitable speed depends on the tool material, coating, work material and cooling.',
-  adjust:'Explore lower RPM, then recheck chip thickness and torque: keeping feed unchanged makes each tooth take a larger bite and raises twisting demand. Review feedrate together with RPM.',
+  adjust:'Explore lower RPM, then recheck chip thickness and torque: keeping feed unchanged makes each tooth take a larger bite and raises twisting demand. If the spindle cannot run slowly enough, use a smaller cutter or tooling rated for the resulting surface speed. Review feedrate together with RPM.',
   qualification:'The configured maximum is illustrative, not material-specific tooling guidance. This prototype does not calculate temperature.',
   notice:'Burning or glazing, smoke, discoloured chips, a cutting edge that dulls quickly.',
  },

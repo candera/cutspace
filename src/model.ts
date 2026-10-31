@@ -1,5 +1,5 @@
 /** Canonical units: mm, mm/min, RPM, N, W, Nm, µm. No empirical validation implied. */
-export const MODEL_VERSION = 'illustrative-static-3';
+export const MODEL_VERSION = 'illustrative-static-5';
 export const CUTTER_MATERIALS = {
  carbide:{name:'Carbide',modulus:600},
  hss:{name:'HSS',modulus:219},
@@ -16,7 +16,7 @@ export interface Setup { tool: Tool; material: Material; machine: Machine; limit
 export const defaults: Setup = {
  tool:{material:'carbide',diameter:6,flutes:3,stickout:20,fluteLength:15,modulus:600,stiffness:.45},
  material:{name:'Aluminum · 6061',kc:1000,powerFactor:1.25,forceFactor:1.3,known:true},
- machine:{name:'DMC2 Mini',rpmMin:3000,rpmMax:18000,feedMax:3000,power:250,torque:.3,utilization:.75,known:true},
+ machine:{name:'DMC2 Mini',rpmMin:10000,rpmMax:24000,feedMax:10000,power:2200,torque:.875,utilization:.75,known:true},
  limits:{cuttingDataKnown:true,chipMin:.008,chipMax:.055,deflection:25,surfaceMax:450,caution:.75,operation:'finishing'},
  cut:{rpm:10000,feed:1200,doc:3,woc:1.2},
 };
@@ -33,6 +33,35 @@ export const zoneInfo:Record<Zone,{label:string;color:string}>={comfortable:{lab
 export type ConstraintKey=keyof typeof constraintInfo;
 export interface Constraint {key:ConstraintKey;ratio:number}
 export function availablePower(rpm:number,m:Machine){return m.known===false ? NaN : Math.min(m.power,m.torque*2*Math.PI*rpm/60)*m.utilization;}
+const TAU=2*Math.PI,FORCE_PHASE_SAMPLES=96;
+const forceFactorCache=new Map<string,number>();
+/**
+ * Peak lateral cutter load, expressed as an equivalent multiple of feed per tooth.
+ * Each straight flute contributes its instantaneous chip thickness in its tangential
+ * direction; the resultant is sampled over one tooth-passing period. Helix, runout,
+ * radial/axial force coefficients and dynamic response are deliberately not modeled.
+ */
+export function peakCutterLoadFactor(engagement:number,flutes:number){
+ if(!Number.isFinite(engagement)||engagement<0||engagement>1||!Number.isInteger(flutes)||flutes<1)return NaN;
+ if(engagement===0)return 0;
+ const key=`${flutes}:${engagement}`,cached=forceFactorCache.get(key);if(cached!==undefined)return cached;
+ const exit=Math.acos(1-2*engagement),pitch=TAU/flutes;
+ const phases=Array.from({length:FORCE_PHASE_SAMPLES},(_,i)=>i*pitch/FORCE_PHASE_SAMPLES);
+ // Exact single-tooth maxima and engagement boundaries complement the uniform samples.
+ phases.push(exit%pitch,Math.min(exit,Math.PI/2)%pitch);
+ let peak=0;
+ for(const phase of phases){
+  let x=0,y=0;
+  for(let flute=0;flute<flutes;flute++){
+   const angle=phase+flute*pitch;if(angle>exit+Number.EPSILON*8)continue;
+   const thickness=Math.sin(angle);
+   x-=thickness*Math.sin(angle);y+=thickness*Math.cos(angle);
+  }
+  peak=Math.max(peak,Math.hypot(x,y));
+ }
+ if(forceFactorCache.size>=4096)forceFactorCache.clear();
+ forceFactorCache.set(key,peak);return peak;
+}
 export function calculate(c:Cut,s:Setup){
  const {tool:t,material:mat,machine:m,limits:l}=s;
  const inputValid=Object.values(c).every(v=>Number.isFinite(v)&&v>=0)&&c.rpm>0&&Object.hasOwn(CUTTER_MATERIALS,t.material)&&[t.diameter,t.flutes,t.stickout,t.fluteLength,t.modulus,t.stiffness].every(v=>Number.isFinite(v)&&v>0)&&Number.isInteger(t.flutes);
@@ -47,9 +76,8 @@ export function calculate(c:Cut,s:Setup){
  const power=mat.known===false?NaN:mrr*mat.kc/60*mat.powerFactor;
  const torque=power*60/(2*Math.PI*c.rpm);
  const capacity=availablePower(c.rpm,m);
- const phi=Math.acos(1-2*engagement);
- const teeth=Math.max(1,Math.ceil(t.flutes*phi/(2*Math.PI)));
- const force=mat.known===false?NaN:noCut?0:mat.kc*c.doc*chipMax*teeth*mat.forceFactor;
+ const cutterLoad=peakCutterLoadFactor(engagement,t.flutes);
+ const force=mat.known===false?NaN:noCut?0:mat.kc*c.doc*chip*cutterLoad*mat.forceFactor;
  const inertia=Math.PI*t.diameter**4/64*t.stiffness;
  const deflection=force*t.stickout**3/(3*t.modulus*1000*inertia)*1000;
  const constraints:Constraint[]=[

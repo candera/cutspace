@@ -1,8 +1,8 @@
 import {useRef,useState} from 'react';
 import {Copy,Download,RefreshCw,Trash2,Upload} from 'lucide-react';
 import {explain} from './help';
-import {ITEM_KINDS,PERSONAL_ID,PROVENANCE_LABEL,asShared,conflictsBetween,exportLibrary,fetchLibrary,machineFromItem,machineItem,machineRefId,mergeLibrary,parseLibrary,recipeItem,removeItem,replaceLibrary,toolItem,uniqueId,upsertLibrary,withItem} from './library';
-import type {ConflictPolicy,ItemBase,ItemKind,Library,MachineItem,RecipeItem,Selection,ToolItem} from './library';
+import {ITEM_KINDS,PERSONAL_ID,PROVENANCE_LABEL,asShared,conflictsBetween,exportLibrary,fetchLibrary,machineFromItem,machineItem,machineRefId,materialItem,mergeLibrary,parseLibrary,recipeItem,removeItem,replaceLibrary,toolItem,uniqueId,upsertLibrary,withItem} from './library';
+import type {ConflictPolicy,ItemBase,ItemKind,Library,MachineItem,MaterialItem,RecipeItem,Selection,ToolItem} from './library';
 import {snapshot} from './experiment';
 import type {Experiment} from './experiment';
 import {CUTTER_MATERIALS} from './model';
@@ -10,12 +10,12 @@ import type {Machine,Tool} from './model';
 import {fmt,toDisplay,unit} from './units';
 import type {Units} from './units';
 
-interface Props {libraries:Library[];experiment:Experiment;units:Units;onChange:(libraries:Library[])=>void;onUseMachine:(machineId:string,machine:Machine)=>void;onUseTool:(tool:Tool)=>void;onLoadRecipe:(recipe:RecipeItem)=>void;notify:(message:string)=>void}
+interface Props {libraries:Library[];experiment:Experiment;units:Units;onChange:(libraries:Library[])=>void;onUseMachine:(machineId:string,machine:Machine)=>void;onUseMaterial:(materialId:string,item:MaterialItem)=>void;onUseTool:(tool:Tool)=>void;onLoadRecipe:(recipe:RecipeItem)=>void;notify:(message:string)=>void}
 type Pending={incoming:Library;target:string;policy:ConflictPolicy;conflicts:string[]};
-const KIND_LABEL:Record<ItemKind,string>={machines:'Machines',tools:'Tools',recipes:'Cut recipes'};
+const KIND_LABEL:Record<ItemKind,string>={machines:'Machines',materials:'Workpiece materials',tools:'Tools',recipes:'Cut recipes'};
 const message=(err:unknown)=>err instanceof Error?err.message:String(err);
 
-export default function LibraryPanel({libraries,experiment:e,units:u,onChange,onUseMachine,onUseTool,onLoadRecipe,notify}:Props){
+export default function LibraryPanel({libraries,experiment:e,units:u,onChange,onUseMachine,onUseMaterial,onUseTool,onLoadRecipe,notify}:Props){
  const [name,setName]=useState(''),[url,setUrl]=useState(''),[busy,setBusy]=useState(false);
  const [selection,setSelection]=useState<Record<string,Selection>>({});
  const [pending,setPending]=useState<Pending|null>(null);
@@ -27,13 +27,14 @@ export default function LibraryPanel({libraries,experiment:e,units:u,onChange,on
  const toolName=(t:Tool)=>`${fmt(toDisplay(t.diameter,'length',u),u==='imperial'?4:2)} ${unit('length',u)} · ${t.flutes} flute ${CUTTER_MATERIALS[t.material].name}`;
  const describe=(kind:ItemKind,item:ItemBase)=>{
   if(kind==='machines'){const m=(item as MachineItem).machine;return `${fmt(m.rpmMin,0)}–${fmt(m.rpmMax,0)} RPM · ${fmt(toDisplay(m.power,'power',u),u==='imperial'?2:0)} ${unit('power',u)} · feed ≤ ${fmt(toDisplay(m.feedMax,'feed',u),0)} ${unit('feed',u)}`;}
+  if(kind==='materials'){const m=item as MaterialItem,cutters=Object.keys(m.cutting??{}).map(k=>CUTTER_MATERIALS[k as keyof typeof CUTTER_MATERIALS].name).join(' / ');return `Kc ${fmt(m.material.kc,0)} N/mm² · power ×${fmt(m.material.powerFactor,2)} · force ×${fmt(m.material.forceFactor,2)}${cutters?` · cutting starter: ${cutters}`:' · no cutting-data starter'}`;}
   if(kind==='tools'){const t=(item as ToolItem).tool;return `${toolName(t)} · stickout ${fmt(toDisplay(t.stickout,'length',u),u==='imperial'?3:1)} ${unit('length',u)}${t.maxRpm?` · max ${fmt(t.maxRpm,0)} RPM`:''}`;}
   const r=item as RecipeItem,s=r.snapshot;return `${s.config.machine.name} · ${s.config.material.name} · ${toolName(s.config.tool)} · ${fmt(s.point.rpm,0)} RPM · ${fmt(toDisplay(s.point.feed,'feed',u),0)} ${unit('feed',u)} · ${fmt(s.point.wocRatio*100)}%D / ${fmt(s.point.docRatio*100)}%D${r.notes?` · ${r.notes}`:''}`;
  };
  function save(kind:ItemKind){
   if(!personal)return;
   try{
-   const item=kind==='machines'?machineItem(personal,label(e.config.machine.name),e.config.machine):kind==='tools'?toolItem(personal,label(toolName(e.config.tool)),e.config.tool):recipeItem(personal,label(e.name||'Untitled cut'),snapshot(e),u);
+   const item=kind==='machines'?machineItem(personal,label(e.config.machine.name),e.config.machine):kind==='materials'?materialItem(personal,label(e.config.material.name),e.config.material,e.config.limits,e.config.tool.material):kind==='tools'?toolItem(personal,label(toolName(e.config.tool)),e.config.tool):recipeItem(personal,label(e.name||'Untitled cut'),snapshot(e),u);
    update(withItem(personal,kind,item as never));notify(`${item.name} saved to ${personal.name}.`);setName('');
   }catch(err){notify(message(err));}
  }
@@ -58,19 +59,20 @@ export default function LibraryPanel({libraries,experiment:e,units:u,onChange,on
  async function addFromUrl(refreshOf?:Library){
   const address=refreshOf?.sourceUrl??url.trim();if(!address)return;
   setBusy(true);
-  try{const lib=await fetchLibrary(address);onChange(upsertLibrary(libraries,refreshOf?{...lib,id:refreshOf.id}:lib));notify(`${refreshOf?'Refreshed':'Added'} shared library ${lib.name}: ${lib.machines.length} machines, ${lib.tools.length} tools, ${lib.recipes.length} recipes.`);if(!refreshOf)setUrl('');}
+  try{const lib=await fetchLibrary(address);onChange(upsertLibrary(libraries,refreshOf?{...lib,id:refreshOf.id}:lib));notify(`${refreshOf?'Refreshed':'Added'} shared library ${lib.name}: ${counts(lib)}.`);if(!refreshOf)setUrl('');}
   catch(err){notify(`Could not load library: ${message(err)}`);}
   finally{setBusy(false);}
  }
  const copyToMine=(kind:ItemKind,item:ItemBase)=>{if(!personal)return;const copy={...structuredClone(item),id:uniqueId(item.id,(personal[kind] as ItemBase[]).map(i=>i.id)),updatedAt:new Date().toISOString()};update(withItem(personal,kind,copy as never));notify(`Copied ${item.name} to ${personal.name}.`);};
- const use=(lib:Library,kind:ItemKind,item:ItemBase)=>{if(kind==='machines')onUseMachine(machineRefId(lib.id,item.id),machineFromItem(item as MachineItem));else if(kind==='tools')onUseTool((item as ToolItem).tool);else onLoadRecipe(item as RecipeItem);};
- const counts=(lib:Library)=>`${lib.machines.length} machines, ${lib.tools.length} tools, ${lib.recipes.length} recipes`;
+ const use=(lib:Library,kind:ItemKind,item:ItemBase)=>{if(kind==='machines')onUseMachine(machineRefId(lib.id,item.id),machineFromItem(item as MachineItem));else if(kind==='materials')onUseMaterial(machineRefId(lib.id,item.id),item as MaterialItem);else if(kind==='tools')onUseTool((item as ToolItem).tool);else onLoadRecipe(item as RecipeItem);};
+ const counts=(lib:Library)=>`${lib.machines.length} machines, ${lib.materials.length} materials, ${lib.tools.length} tools, ${lib.recipes.length} recipes`;
  return <div className="library-panel">
   <h3>Libraries</h3>
-  <p>Save machines, tools and cut recipes to reuse them or share them with others. Shared libraries are read-only; copy an item into your own library to edit it. Experiments keep their own values, so later library edits never change a saved cut or pin.</p>
-  <div className="library-tools" data-help="Saves the current machine, tool or whole cut into your personal library under the name you type, or a generated name when the box is empty.">
+  <p>Save machines, workpiece materials, tools and cut recipes to reuse them or share them with others. Shared libraries are read-only; copy an item into your own library to edit it. Experiments keep their own values, so later library edits never change a saved cut or pin.</p>
+  <div className="library-tools" data-help="Saves the current machine, workpiece material, tool or whole cut into your personal library under the name you type, or a generated name when the box is empty.">
    <input type="text" aria-label="Name for the saved item" placeholder="Name (optional)" maxLength={120} value={name} onChange={ev=>setName(ev.target.value)}/>
    <button {...explain('Save the active machine profile, including any edits made in the Machine tab, to your personal library.')} disabled={!personal} onClick={()=>save('machines')}>Save machine</button>
+   <button {...explain('Save the active workpiece coefficient and the current cutter material’s enabled chip, speed and finishing-deflection starter to your personal library.')} disabled={!personal} onClick={()=>save('materials')}>Save material</button>
    <button {...explain('Save the active tool geometry and cutter material to your personal library.')} disabled={!personal} onClick={()=>save('tools')}>Save tool</button>
    <button {...explain('Save the whole current cut as a recipe: machine, workpiece, tool, limits and the selected RPM, feed, stepover and depth. Loading a recipe later replaces the active experiment; Undo restores it.')} disabled={!personal} onClick={()=>save('recipes')}>Save cut as recipe</button>
   </div>
@@ -103,7 +105,7 @@ export default function LibraryPanel({libraries,experiment:e,units:u,onChange,on
      <label><input type="checkbox" aria-label={`Select ${item.name} for export`} checked={selection[lib.id]?.[kind]?.includes(item.id)??false} onChange={ev=>toggle(lib.id,kind,item.id,ev.target.checked)}/><span><b>{item.name}</b><small>{describe(kind,item)}</small><small>{PROVENANCE_LABEL[item.provenance.source]}{item.provenance.note?` · ${item.provenance.note}`:''}{item.provenance.url?<> · <a href={item.provenance.url} target="_blank" rel="noreferrer">source</a></>:null}</small></span></label>
      <div className="lib-actions"><button onClick={()=>use(lib,kind,item)}>{kind==='recipes'?'Load':'Use'}</button>{lib.readOnly?<button aria-label={`Copy ${item.name} to my library`} onClick={()=>copyToMine(kind,item)}><Copy size={12}/></button>:<button aria-label={`Delete ${item.name}`} onClick={()=>update(removeItem(lib,kind,item.id))}><Trash2 size={12}/></button>}</div>
     </li>)}</ul></div>;})}
-   {!lib.machines.length&&!lib.tools.length&&!lib.recipes.length&&<p className="small">Empty. Use the Save buttons above to add the current machine, tool or cut.</p>}
+   {!lib.machines.length&&!lib.materials.length&&!lib.tools.length&&!lib.recipes.length&&<p className="small">Empty. Use the Save buttons above to add the current machine, material, tool or cut.</p>}
   </section>)}
  </div>;
 }

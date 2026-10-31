@@ -59,10 +59,10 @@ test('Big Blue shares RC4 initial numbers but is a separate, restorable machine'
 });
 
 
-test('both reported plywood example files reproduce their geometry and unchanged estimated demand',()=>{
+test('both reported plywood example files reproduce their geometry and current estimated demand',()=>{
  for(const [file,flutes,rpm,feed,doc,stickout,deflection,power] of [
   ['big-blue-plywood-300-ipm',2,18000,7620,3.175,30,36.48828890747707,320.05984375],
-  ['big-blue-plywood-shared-200-ipm',4,10000,5080,9.525,25.4,79.72479007697555,640.1196875],
+  ['big-blue-plywood-shared-200-ipm',4,10000,5080,9.525,25.4,39.862395038487775,640.1196875],
  ] as const){
   const e=parseExperiment(readFileSync(new URL(`../examples/${file}.json`,import.meta.url),'utf8')),s=setupFor(e),r=calculate(s.cut,s);
   assert.equal(e.machineId,'bigblue');assert.equal(e.materialId,'plywood');assert.equal(s.tool.flutes,flutes);assert.equal(s.tool.stickout,stickout);

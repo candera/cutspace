@@ -1,10 +1,11 @@
 import {MACHINES,readSnapshot} from './experiment.ts';
 import type {MachineId,Snapshot} from './experiment.ts';
+import {OPERATION_INFO} from './cuttingPresets.ts';
 import {CUTTER_MATERIALS} from './model.ts';
-import type {CutterMaterial,Machine,Tool} from './model.ts';
+import type {CutterMaterial,Limits,Machine,Material,Tool} from './model.ts';
 import type {Units} from './units.ts';
 
-/** Libraries hold reusable machines, tools and cut recipes. Experiments keep their own value snapshots, so editing a library never changes a saved experiment or pin. */
+/** Libraries hold reusable machines, workpiece materials, tools and cut recipes. Experiments keep their own value snapshots, so editing a library never changes a saved experiment or pin. */
 export const LIBRARY_SCHEMA=1 as const;
 export const LIBRARIES_KEY='cutspace-libraries-v1';
 export const BUILTIN_ID='builtin',PERSONAL_ID='personal';
@@ -13,13 +14,16 @@ export const PROVENANCE_LABEL:Record<ProvenanceSource,string>={illustrative:'exa
 export interface Provenance {source:ProvenanceSource;note?:string;url?:string}
 export interface ItemBase {id:string;name:string;provenance:Provenance;updatedAt:string}
 export type MachineValues=Omit<Machine,'name'>;
+export type MaterialValues=Omit<Material,'name'>;
+export type MaterialCuttingValues=Pick<Limits,'chipMin'|'chipMax'|'deflection'|'surfaceMax'>;
 export interface MachineItem extends ItemBase {machine:MachineValues}
+export interface MaterialItem extends ItemBase {material:MaterialValues;cutting?:Partial<Record<CutterMaterial,MaterialCuttingValues>>}
 export interface ToolItem extends ItemBase {tool:Tool}
 export interface RecipeItem extends ItemBase {snapshot:Snapshot;notes:string;units:Units}
 export type LibraryKind='builtin'|'shared'|'personal';
-export interface Library {schemaVersion:typeof LIBRARY_SCHEMA;id:string;name:string;kind:LibraryKind;readOnly:boolean;sourceUrl?:string;updatedAt:string;machines:MachineItem[];tools:ToolItem[];recipes:RecipeItem[]}
-export type ItemKind='machines'|'tools'|'recipes';
-export const ITEM_KINDS:ItemKind[]=['machines','tools','recipes'];
+export interface Library {schemaVersion:typeof LIBRARY_SCHEMA;id:string;name:string;kind:LibraryKind;readOnly:boolean;sourceUrl?:string;updatedAt:string;machines:MachineItem[];materials:MaterialItem[];tools:ToolItem[];recipes:RecipeItem[]}
+export type ItemKind='machines'|'materials'|'tools'|'recipes';
+export const ITEM_KINDS:ItemKind[]=['machines','materials','tools','recipes'];
 export type ConflictPolicy='replace'|'keep-both'|'skip';
 export type Selection=Partial<Record<ItemKind,string[]>>;
 
@@ -48,6 +52,19 @@ export function parseMachineValues(v:unknown):MachineValues{
  if(machine.rpmMin>=machine.rpmMax)throw Error('Minimum RPM must be less than maximum RPM.');
  return machine;
 }
+export function parseMaterialValues(v:unknown):MaterialValues{
+ const m=object(v,'Material');return {kc:num(m,'kc',1,10000),powerFactor:num(m,'powerFactor',1,5),forceFactor:num(m,'forceFactor',1,5),known:bool(m,'known',true)};
+}
+function parseMaterialCutting(v:unknown):MaterialItem['cutting']{
+ if(v===undefined)return undefined;
+ const o=object(v,'Material cutting data'),cutting:MaterialItem['cutting']={};
+ for(const cutter of Object.keys(CUTTER_MATERIALS) as CutterMaterial[]){
+  if(o[cutter]===undefined)continue;const c=object(o[cutter],`${CUTTER_MATERIALS[cutter].name} cutting data`);
+  const values={chipMin:num(c,'chipMin',.00001,1),chipMax:num(c,'chipMax',.00002,5),deflection:num(c,'deflection',.01,5000),surfaceMax:num(c,'surfaceMax',1,10000)};
+  if(values.chipMin>=values.chipMax)throw Error('Minimum chip thickness must be less than maximum.');cutting[cutter]=values;
+ }
+ if(Object.keys(cutting).length===0)throw Error('Material cutting data must include Carbide or HSS values.');return cutting;
+}
 export function parseToolValues(v:unknown):Tool{
  const t=object(v,'Tool');
  if(typeof t.material!=='string'||!Object.hasOwn(CUTTER_MATERIALS,t.material))throw Error('Unsupported cutter material. Choose Carbide or HSS.');
@@ -70,13 +87,14 @@ export function parseLibrary(value:unknown):Library{
  const sourceUrl=str(o,'sourceUrl',500,false);
  return {schemaVersion:LIBRARY_SCHEMA,id,name:str(o,'name',120)!,kind,readOnly:bool(o,'readOnly',kind!=='personal'),...(sourceUrl===undefined?{}:{sourceUrl}),updatedAt:str(o,'updatedAt',40,false)??now(),
   machines:parseItems(o.machines,'machines',(item,base)=>({...base,machine:parseMachineValues(item.machine)})),
+  materials:parseItems(o.materials,'materials',(item,base)=>({...base,material:parseMaterialValues(item.material),...(item.cutting===undefined?{}:{cutting:parseMaterialCutting(item.cutting)})})),
   tools:parseItems(o.tools,'tools',(item,base)=>({...base,tool:parseToolValues(item.tool)})),
   recipes:parseItems(o.recipes,'recipes',(item,base)=>{const units=item.units??'metric';if(units!=='metric'&&units!=='imperial')throw Error('Recipe units must be metric or imperial.');return {...base,snapshot:readSnapshot(item.snapshot),notes:str(item,'notes',2000,false)??'',units};}),
  };
 }
 
 const MACHINE_NOTES:Record<MachineId,string>={
- dmc2:'Example capacities for a desktop metal-cutting mill, not manufacturer data.',
+ dmc2:'Shariff publishes a 2.2 kW, 24,000 RPM ER20 spindle and 10,000 mm/min rapids. The 10,000 RPM minimum is user-supplied; 0.875 N·m is derived from 2.2 kW at 24,000 RPM; the 75% usable-output reserve remains illustrative.',
  rc4:'Placeholder numbers, not a verified RC4 specification. Public resale listings describe RC4s with roughly 4 HP (3 kW) HSD spindles and 18,000 RPM maximum; confirm from the nameplate of the actual machine (for example the Nova Labs RC4) before relying on this profile.',
  bigblue:'Copies the ShopSabre RC4 example values at the user’s request; not independently measured.',
  'desktop-mill-example':'Generic starting point for a small benchtop mill. Edit to match your machine.',
@@ -89,6 +107,7 @@ const starterTool=(id:string,name:string,tool:Tool,note='Example geometry; measu
 export function builtinLibrary(recipes:RecipeItem[]=[]):Library{
  return {schemaVersion:LIBRARY_SCHEMA,id:BUILTIN_ID,name:'Built in',kind:'builtin',readOnly:true,updatedAt:'2026-10-30T00:00:00.000Z',
   machines:(Object.keys(MACHINES) as MachineId[]).map(id=>({id,name:MACHINES[id].name,machine:machineValues(MACHINES[id]),provenance:{source:'illustrative',note:MACHINE_NOTES[id]},updatedAt:'2026-10-30T00:00:00.000Z'})),
+  materials:[],
   tools:[
    starterTool('6mm-3f-carbide','6 mm · 3 flute carbide end mill',{material:'carbide',diameter:6,flutes:3,stickout:20,fluteLength:15,modulus:600,stiffness:.45}),
    starterTool('quarter-2f-carbide','1/4 in · 2 flute carbide upcut',{material:'carbide',diameter:6.35,flutes:2,stickout:25.4,fluteLength:19.05,modulus:600,stiffness:.45}),
@@ -99,7 +118,7 @@ export function builtinLibrary(recipes:RecipeItem[]=[]):Library{
   ],
   recipes};
 }
-export function personalLibrary():Library{return {schemaVersion:LIBRARY_SCHEMA,id:PERSONAL_ID,name:'My library',kind:'personal',readOnly:false,updatedAt:now(),machines:[],tools:[],recipes:[]};}
+export function personalLibrary():Library{return {schemaVersion:LIBRARY_SCHEMA,id:PERSONAL_ID,name:'My library',kind:'personal',readOnly:false,updatedAt:now(),machines:[],materials:[],tools:[],recipes:[]};}
 export function parseStoredLibraries(text:string|null):Library[]{
  if(!text)return [];
  const o=object(JSON.parse(text),'Stored libraries');
@@ -123,7 +142,17 @@ export function findMachine(libraries:Library[],machineId:string){
  for(const library of libraries)for(const item of library.machines)if(machineRefId(library.id,item.id)===machineId)return {library,item};
  return null;
 }
+export function findMaterial(libraries:Library[],materialId:string){
+ for(const library of libraries)for(const item of library.materials)if(machineRefId(library.id,item.id)===materialId)return {library,item};
+ return null;
+}
 export const machineFromItem=(item:MachineItem):Machine=>({...item.machine,name:item.name});
+export const materialFromItem=(item:MaterialItem):Material=>({...item.material,name:item.name});
+export function limitsFromMaterialItem(item:MaterialItem,cutter:CutterMaterial,current:Limits):Limits{
+ const values=item.cutting?.[cutter];
+ if(!values){const next={...current,cuttingDataKnown:false};delete next.preset;return next;}
+ return {...values,deflection:Number((values.deflection*OPERATION_INFO[current.operation].deflection).toPrecision(6)),cuttingDataKnown:true,caution:current.caution,operation:current.operation};
+}
 export function withItem<K extends ItemKind>(library:Library,kind:K,item:Library[K][number]):Library{
  if(library.readOnly)throw Error(`${library.name} is read-only. Copy items to your own library instead.`);
  return {...library,updatedAt:now(),[kind]:[...library[kind],item]};
@@ -134,6 +163,11 @@ export function removeItem(library:Library,kind:ItemKind,id:string):Library{
 }
 export function machineItem(library:Library,name:string,machine:Machine|MachineValues,provenance:Provenance={source:'user'}):MachineItem{
  const {name:_n,...values}=machine as Machine;return {id:uniqueId(slug(name),library.machines.map(m=>m.id)),name,machine:values,provenance,updatedAt:now()};
+}
+export function materialItem(library:Library,name:string,material:Material|MaterialValues,limits?:Limits,cutter?:CutterMaterial,provenance:Provenance={source:'user'}):MaterialItem{
+ const {name:_n,...values}=material as Material;let cutting:MaterialItem['cutting'];
+ if(limits?.cuttingDataKnown&&cutter)cutting={[cutter]:{chipMin:limits.chipMin,chipMax:limits.chipMax,deflection:Number((limits.deflection/OPERATION_INFO[limits.operation].deflection).toPrecision(6)),surfaceMax:limits.surfaceMax}};
+ return {id:uniqueId(slug(name),library.materials.map(m=>m.id)),name,material:values,...(cutting?{cutting}:{}),provenance,updatedAt:now()};
 }
 export function toolItem(library:Library,name:string,tool:Tool,provenance:Provenance={source:'user'}):ToolItem{return {id:uniqueId(slug(name),library.tools.map(t=>t.id)),name,tool:structuredClone(tool),provenance,updatedAt:now()};}
 export function recipeItem(library:Library,name:string,snapshot:Snapshot,units:Units,notes='',provenance:Provenance={source:'user'}):RecipeItem{return {id:uniqueId(slug(name),library.recipes.map(r=>r.id)),name,snapshot:structuredClone(snapshot),units,notes,provenance,updatedAt:now()};}

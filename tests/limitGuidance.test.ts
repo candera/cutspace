@@ -10,8 +10,8 @@ test('thin chips and low RPM identify a lower bound, not an overload',()=>{
  assert.match(reading.readings[0],/below minimum/);
  s.cut.rpm=1000;
  reading=limitReading('rpm',s,calculate(s.cut,s),'metric');
- assert.equal(reading.state,'Below minimum');assert.match(reading.readings[0],/1,000 RPM · range 3,000–18,000 RPM/);
- s.cut.rpm=20000;
+ assert.equal(reading.state,'Below minimum');assert.match(reading.readings[0],/1,000 RPM · range 10,000–24,000 RPM/);
+ s.cut.rpm=25000;
  assert.equal(limitReading('rpm',s,calculate(s.cut,s),'metric').state,'Above maximum');
 });
 test('no-cut points do not recommend correcting a thin-chip cutting problem',()=>{
@@ -41,10 +41,10 @@ test('geometry identifies each failing dimension and converts both sides to inch
  assert.notEqual(sr.limiting.key,'geometry');assert.ok(sr.constraints.find(c=>c.key==='geometry')!.ratio<1);assert.ok(sr.hardOk);
 });
 test('power compares against usable plateau and retains classification across units',()=>{
- const s=cloneDefaults();s.cut.feed=3000;
+ const s=cloneDefaults();s.cut.feed=24000;
  const r=calculate(s.cut,s);
  const metric=limitReading('power',s,r,'metric'),imperial=limitReading('power',s,r,'imperial');
  assert.equal(metric.exceeded,true);assert.equal(metric.state,imperial.state);
- assert.match(metric.readings[0],/225 W · maximum 187.5 W/);
- assert.match(imperial.readings[0],/0.302 hp · maximum 0.251 hp/);
+ assert.match(metric.readings[0],/1,800 W · maximum 1,650 W/);
+ assert.match(imperial.readings[0],/2.414 hp · maximum 2.213 hp/);
 });

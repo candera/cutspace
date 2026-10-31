@@ -4,7 +4,7 @@ import type {Setup, Metric, CutterMaterial, Operation} from './model.ts';
 import type {Units} from './units.ts';
 const RC4_PROFILE={name:'ShopSabre RC4',rpmMin:6000,rpmMax:24000,feedMax:10000,power:1500,torque:.9,utilization:.75,known:true};
 export const MACHINES={
- dmc2:{name:'DMC2 Mini',rpmMin:3000,rpmMax:18000,feedMax:3000,power:250,torque:.3,utilization:.75,known:true},
+ dmc2:{name:'DMC2 Mini',rpmMin:10000,rpmMax:24000,feedMax:10000,power:2200,torque:.875,utilization:.75,known:true},
  rc4:{...RC4_PROFILE},
  bigblue:{...RC4_PROFILE,name:'Big Blue'},
  'desktop-mill-example':{name:'Desktop mill (example)',rpmMin:2000,rpmMax:10000,feedMax:2500,power:500,torque:.6,utilization:.75,known:true},
@@ -24,18 +24,22 @@ export type MachineId=keyof typeof MACHINES;
 export type MaterialId=keyof typeof MATERIALS;
 export type Configuration=Omit<Setup,'cut'>;
 export interface Point {rpm:number;feed:number;docRatio:number;wocRatio:number}
-/** machineId is a built-in id, or lib:<library>/<item> for a library machine; the config snapshot always carries the values used. */
-export interface Snapshot {machineId:string;materialId:MaterialId;config:Configuration;point:Point}
+/** Machine and material ids are built-in ids, or lib:<library>/<item> references; the config snapshot always carries the values used. */
+export interface Snapshot {machineId:string;materialId:string;config:Configuration;point:Point}
 export type Overlay='none'|'mrr'|'utilization'|'chipMax'|'chip'|'deflection';
 export type ContourDensity='coarse'|'standard'|'fine';
-export interface View {fill:Metric;overlay:Overlay;contourDensity?:ContourDensity;physicalAxes:boolean;fixed:boolean;scaleMin:number;scaleMax:number;rpmMin:number;rpmMax:number;feedMax:number;wocMax:number;docMax:number;feedMin?:number;wocMin?:number;docMin?:number}
+export type ColorScheme='safety'|'teal';
+export interface View {fill:Metric;overlay:Overlay;colorScheme:ColorScheme;contourDensity?:ContourDensity;physicalAxes:boolean;fixed:boolean;scaleMin:number;scaleMax:number;rpmMin:number;rpmMax:number;feedMax:number;wocMax:number;docMax:number;feedMin?:number;wocMin?:number;docMin?:number}
 export interface Experiment extends Snapshot {schemaVersion:2;modelVersion:typeof MODEL_VERSION;name:string;units:Units;view:View;pins:Snapshot[];provenance:'illustrative / user overrides';}
 export function fresh():Experiment{
  const s=cloneDefaults();s.limits=cuttingPreset('aluminum','carbide',{diameter:s.tool.diameter,flutes:s.tool.flutes});const {cut,...config}=s;
- return {schemaVersion:2,modelVersion:MODEL_VERSION,name:'Untitled exploration',machineId:'dmc2',materialId:'aluminum',config,point:{rpm:cut.rpm,feed:cut.feed,docRatio:.5,wocRatio:.2},units:'metric',view:{fill:'mrr',overlay:'utilization',contourDensity:'standard',physicalAxes:true,fixed:false,scaleMin:0,scaleMax:10,rpmMin:1500,rpmMax:19800,feedMax:3600,wocMax:100,docMax:275},pins:[],provenance:'illustrative / user overrides'};
+ return {schemaVersion:2,modelVersion:MODEL_VERSION,name:'Untitled exploration',machineId:'dmc2',materialId:'aluminum',config,point:{rpm:cut.rpm,feed:cut.feed,docRatio:.5,wocRatio:.2},units:'metric',view:{fill:'mrr',overlay:'utilization',colorScheme:'safety',contourDensity:'standard',physicalAxes:true,fixed:false,scaleMin:0,scaleMax:10,rpmMin:1500,rpmMax:19800,feedMax:3600,wocMax:100,docMax:275},pins:[],provenance:'illustrative / user overrides'};
 }
-/** Switching a material loads explicit provisional limits; existing snapshots remain unchanged. */
-export function applyCuttingPreset(e:Experiment){e.config.limits=cuttingPreset(e.materialId,e.config.tool.material,{caution:e.config.limits.caution,diameter:e.config.tool.diameter,flutes:e.config.tool.flutes,operation:e.config.limits.operation});}
+/** Built-in materials load explicit provisional limits. A custom material needs its library cutting data supplied by the caller. */
+export function applyCuttingPreset(e:Experiment){
+ if(!Object.hasOwn(MATERIALS,e.materialId)){e.config.limits.cuttingDataKnown=false;delete e.config.limits.preset;return;}
+ e.config.limits=cuttingPreset(e.materialId as MaterialId,e.config.tool.material,{caution:e.config.limits.caution,diameter:e.config.tool.diameter,flutes:e.config.tool.flutes,operation:e.config.limits.operation});
+}
 /** Switching operation rescales the deflection allowance; a preset is re-applied, custom values keep their ratio. */
 export function setOperation(e:Experiment,operation:Operation){
  const previous=e.config.limits.operation;if(previous===operation)return;
@@ -69,10 +73,12 @@ function known(o:Record<string,unknown>){if(typeof o.known!=='boolean')throw Err
 export function readSnapshot(value:unknown,legacy=false):Snapshot{
  const s=object(value),c=object(s.config),t=object(c.tool),m=object(c.machine),a=object(c.material),l=object(c.limits),p=object(s.point);
  if(typeof s.machineId!=='string'||!s.machineId.trim()||s.machineId.length>200)throw Error('Unsupported machine reference.');
- if(typeof s.materialId!=='string'||!Object.hasOwn(MATERIALS,s.materialId))throw Error('Unsupported material category.');
- const machineId=s.machineId,materialId=s.materialId as MaterialId;
+ if(typeof s.materialId!=='string'||!s.materialId.trim()||s.materialId.length>200)throw Error('Unsupported material reference.');
+ const machineId=s.machineId,materialId=s.materialId;
  const machineName=Object.hasOwn(MACHINES,machineId)?MACHINES[machineId as MachineId].name:m.name;
  if(typeof machineName!=='string'||!machineName.trim()||machineName.length>120)throw Error('This machine is not built in and the file does not name it.');
+ const materialName=Object.hasOwn(MATERIALS,materialId)?MATERIALS[materialId as MaterialId].name:a.name;
+ if(typeof materialName!=='string'||!materialName.trim()||materialName.length>120)throw Error('This material is not built in and the file does not name it.');
  const cutterMaterial=legacy?'carbide':t.material;
  if(typeof cutterMaterial!=='string'||!Object.hasOwn(CUTTER_MATERIALS,cutterMaterial))throw Error('Unsupported cutter material. Choose Carbide or HSS.');
  if(!legacy&&typeof l.cuttingDataKnown!=='boolean')throw Error('Missing chip and surface-speed limit availability.');
@@ -80,26 +86,33 @@ export function readSnapshot(value:unknown,legacy=false):Snapshot{
  if(!Number.isInteger(tool.flutes))throw Error('Flutes must be a whole number.');
  const machine={name:machineName,rpmMin:num(m,'rpmMin',1,100000),rpmMax:num(m,'rpmMax',2,200000),feedMax:num(m,'feedMax',1,200000),power:num(m,'power',.1,100000),torque:num(m,'torque',.001,1000),utilization:num(m,'utilization',.01,1),known:known(m)};
  if(machine.rpmMin>=machine.rpmMax)throw Error('Minimum RPM must be less than maximum RPM.');
- const material={name:MATERIALS[materialId].name,kc:num(a,'kc',1,10000),powerFactor:num(a,'powerFactor',1,5),forceFactor:num(a,'forceFactor',1,5),known:known(a)};
+ const material={name:materialName,kc:num(a,'kc',1,10000),powerFactor:num(a,'powerFactor',1,5),forceFactor:num(a,'forceFactor',1,5),known:known(a)};
  if(l.preset!==undefined&&l.preset!==CUTTING_PRESET_VERSION)throw Error('Unknown cutting-limit preset version.');
  const limits={...(l.preset===CUTTING_PRESET_VERSION?{preset:CUTTING_PRESET_VERSION}:{}),cuttingDataKnown:legacy?true:l.cuttingDataKnown as boolean,chipMin:num(l,'chipMin',.00001,1),chipMax:num(l,'chipMax',.00002,5),deflection:num(l,'deflection',.01,5000),surfaceMax:num(l,'surfaceMax',1,10000),caution:l.caution===undefined?.75:num(l,'caution',.1,.99),operation:(l.operation===undefined?'roughing':l.operation) as Operation};
  if(limits.operation!=='roughing'&&limits.operation!=='finishing')throw Error('Operation must be roughing or finishing.');
  if(limits.chipMin>=limits.chipMax)throw Error('Minimum chip thickness must be less than maximum.');
  return {machineId,materialId,config:{tool,machine,material,limits},point:{rpm:num(p,'rpm',1,200000),feed:num(p,'feed',0,200000),docRatio:num(p,'docRatio',0,100),wocRatio:num(p,'wocRatio',0,2)}};
 }
+const OLD_DMC2={name:'DMC2 Mini',rpmMin:3000,rpmMax:18000,feedMax:3000,power:250,torque:.3,utilization:.75,known:true};
+function migrateMachineProfile(snapshot:Snapshot,modelVersion:unknown){
+ if(!['illustrative-static-2','illustrative-static-3','illustrative-static-4'].includes(String(modelVersion))||snapshot.machineId!=='dmc2')return snapshot;
+ if(Object.entries(OLD_DMC2).every(([key,value])=>snapshot.config.machine[key as keyof typeof OLD_DMC2]===value))snapshot.config.machine={...MACHINES.dmc2};
+ return snapshot;
+}
 export function parseExperiment(text:string):Experiment{
  const o=object(JSON.parse(text));if(o.schemaVersion!==2)throw Error('Unsupported file version. This prototype imports version 2 experiments only.');
- const legacy=o.modelVersion==='illustrative-static-2';
- if(!legacy&&o.modelVersion!==MODEL_VERSION)throw Error('Model version does not match. No automatic reinterpretation was performed.');
+ const legacy=o.modelVersion==='illustrative-static-2',previous=legacy||o.modelVersion==='illustrative-static-3'||o.modelVersion==='illustrative-static-4';
+ if(!previous&&o.modelVersion!==MODEL_VERSION)throw Error('Model version does not match. No automatic reinterpretation was performed.');
  if(typeof o.name!=='string'||o.name.length>120)throw Error('Experiment name must be 120 characters or fewer.');
  if(o.units!=='metric'&&o.units!=='imperial')throw Error('Unsupported unit system.');
  const v=object(o.view);if(!['mrr','power','chip','chipMax','deflection','utilization','margin','constraint','zone'].includes(String(v.fill)))throw Error('Unknown fill metric.');
  if(!['none','mrr','utilization','chipMax','chip','deflection'].includes(String(v.overlay)))throw Error('Unknown contour metric.');
+ const colorScheme=v.colorScheme??'safety';if(colorScheme!=='safety'&&colorScheme!=='teal')throw Error('Unknown color scheme.');
  if(v.contourDensity!==undefined&&(typeof v.contourDensity!=='string'||!['coarse','standard','fine'].includes(v.contourDensity)))throw Error('Unknown contour spacing.');
  if(typeof v.fixed!=='boolean'||typeof v.physicalAxes!=='boolean')throw Error('Invalid view settings.');
- const view:View={fill:v.fill as Metric,overlay:v.overlay as Overlay,...(v.contourDensity===undefined?{}:{contourDensity:v.contourDensity as ContourDensity}),physicalAxes:v.physicalAxes,fixed:v.fixed,scaleMin:num(v,'scaleMin',-1e9,1e9),scaleMax:num(v,'scaleMax',-1e9,1e9),rpmMin:num(v,'rpmMin',1,199999),rpmMax:num(v,'rpmMax',2,200000),feedMax:num(v,'feedMax',1,200000),wocMax:num(v,'wocMax',1,200),docMax:num(v,'docMax',1,10000),...(v.feedMin===undefined?{}:{feedMin:num(v,'feedMin',0,199999)}),...(v.wocMin===undefined?{}:{wocMin:num(v,'wocMin',0,199)}),...(v.docMin===undefined?{}:{docMin:num(v,'docMin',0,9999)})};
+ const view:View={fill:v.fill as Metric,overlay:v.overlay as Overlay,colorScheme,...(v.contourDensity===undefined?{}:{contourDensity:v.contourDensity as ContourDensity}),physicalAxes:v.physicalAxes,fixed:v.fixed,scaleMin:num(v,'scaleMin',-1e9,1e9),scaleMax:num(v,'scaleMax',-1e9,1e9),rpmMin:num(v,'rpmMin',1,199999),rpmMax:num(v,'rpmMax',2,200000),feedMax:num(v,'feedMax',1,200000),wocMax:num(v,'wocMax',1,200),docMax:num(v,'docMax',1,10000),...(v.feedMin===undefined?{}:{feedMin:num(v,'feedMin',0,199999)}),...(v.wocMin===undefined?{}:{wocMin:num(v,'wocMin',0,199)}),...(v.docMin===undefined?{}:{docMin:num(v,'docMin',0,9999)})};
  if(view.feedMax<=(view.feedMin??0)||view.wocMax<=(view.wocMin??0)||view.docMax<=(view.docMin??0)||view.scaleMax<=view.scaleMin||view.rpmMax<=view.rpmMin)throw Error('Scale and axis maximums must exceed minimums.');
  if(!Array.isArray(o.pins)||o.pins.length>3)throw Error('At most three comparison points are supported.');
- return {...readSnapshot(o,legacy),schemaVersion:2,modelVersion:MODEL_VERSION,name:o.name,units:o.units,view,pins:o.pins.map(p=>readSnapshot(p,legacy)),provenance:'illustrative / user overrides'};
+ return {...migrateMachineProfile(readSnapshot(o,legacy),o.modelVersion),schemaVersion:2,modelVersion:MODEL_VERSION,name:o.name,units:o.units,view,pins:o.pins.map(p=>migrateMachineProfile(readSnapshot(p,legacy),o.modelVersion)),provenance:'illustrative / user overrides'};
 }
 export const STORAGE_KEY='cutspace-experiment-v2';

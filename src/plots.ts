@@ -1,10 +1,10 @@
 import {contours} from 'd3-contour';
 import {calculate,metricValue,clamp} from './model.ts';
 import type {Setup,Metric,Result,Cut} from './model.ts';
-import type {View} from './experiment.ts';
+import type {ColorScheme,View} from './experiment.ts';
 export const NX=72,NY=48;
 export interface Grid {kind:'speed'|'engagement';samples:Result[];xMin:number;xMax:number;yMin:number;yMax:number;diameter:number;}
-export interface Scale {min:number;max:number;basis:'visible-range'|'categories'|'fixed'|'unavailable'}
+export interface Scale {min:number;max:number;basis:'visible-range'|'configured-limit'|'categories'|'fixed'|'unavailable'}
 export function gridFor(s:Setup,kind:Grid['kind'],view:View):Grid{
  const speed=kind==='speed';
  const grid:Grid={kind,samples:[],xMin:speed?view.rpmMin:(view.wocMin??0),xMax:speed?view.rpmMax:view.wocMax,yMin:speed?(view.feedMin??0):(view.docMin??0),yMax:speed?view.feedMax:view.docMax,diameter:s.tool.diameter};
@@ -26,11 +26,39 @@ export function autoScale(grids:Grid[],metric:Metric):Scale{
  if(max===min){const pad=Math.max(Math.abs(min)*.01,1e-6);min=metric==='margin'?min-pad:Math.max(0,min-pad);max+=pad;}
  return {min,max,basis:'visible-range'};
 }
-export function heatColor(value:number){
- const stops=[[21,43,57],[32,88,101],[60,144,137],[162,198,149],[238,209,132]];
+/** Metrics with one meaningful upper allowance keep an absolute color range while the plot is zoomed. */
+export function automaticFillScale(grids:Grid[],metric:Metric,s:Setup):Scale{
+ const visible=autoScale(grids,metric);
+ if(visible.basis==='unavailable'||visible.basis==='categories')return visible;
+ if(metric==='deflection')return {min:0,max:s.limits.deflection,basis:'configured-limit'};
+ if(metric==='utilization')return {min:0,max:1,basis:'configured-limit'};
+ return visible;
+}
+/** Place the configured caution threshold at the yellow stop and the limit at red. */
+export function scalePosition(value:number,scale:Scale,caution=.75){
+ const ratio=(value-scale.min)/(scale.max-scale.min);
+ if(scale.basis!=='configured-limit')return ratio;
+ const c=clamp(caution,.1,.99);
+ if(ratio<=c/2)return ratio/c;
+ if(ratio<=c)return .5+(ratio-c/2)/c*.5;
+ return .75+(ratio-c)/(1-c)*.25;
+}
+export function heatColor(value:number,scheme:ColorScheme='teal'){
+ const stops=scheme==='safety'?[[0,0,0],[0,105,55],[65,170,73],[242,205,54],[205,45,36]]:[[21,43,57],[32,88,101],[60,144,137],[162,198,149],[238,209,132]];
  const v=clamp(value,0,1)*4,i=Math.min(3,Math.floor(v)),f=v-i;
  return `rgb(${stops[i].map((a,k)=>Math.round(a+(stops[i+1][k]-a)*f)).join(',')})`;
 }
+export const zonePalettes:Record<ColorScheme,readonly {label:string;color:string}[]>={
+ safety:[{label:'Very safe',color:'#000000'},{label:'Safe',color:'#009148'},{label:'Borderline',color:'#f2cd36'},{label:'No good',color:'#cd2d24'}],
+ teal:[{label:'Very safe',color:'#152b39'},{label:'Safe',color:'#205865'},{label:'Borderline',color:'#a2c695'},{label:'No good',color:'#eed184'}],
+};
+/** Semantic category for Limit zone. Hard failures and unavailable checks remain hatched/unknown. */
+export function zonePaletteEntry(r:Result,scheme:ColorScheme,caution=.75){
+ if(r.zone==='unknown')return {label:'Outside / unknown',color:'#283443'} as const;
+ const index=r.softRatio<=caution*.5?0:r.softRatio<=caution?1:r.softRatio<=1?2:3;
+ return zonePalettes[scheme][index];
+}
+export function safetyZoneColor(r:Result,caution=.75){return zonePaletteEntry(r,'safety',caution).color;}
 export type XY=[number,number];
 /** Real contour runs, with synthetic frame edges removed. Shared by paths and labels. */
 export function contourSegments(values:number[],threshold:number,w:number,h:number,left=0,top=0):XY[][]{
