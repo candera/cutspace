@@ -60,12 +60,19 @@ export function zonePaletteEntry(r:Result,scheme:ColorScheme,caution=.75){
 }
 export function safetyZoneColor(r:Result,caution=.75){return zonePaletteEntry(r,'safety',caution).color;}
 export type XY=[number,number];
-/** Real contour runs, with synthetic frame edges removed. Shared by paths and labels. */
+/** Real contour runs, with synthetic frame and missing-data closure edges removed. Shared by paths and labels. */
 export function contourSegments(values:number[],threshold:number,w:number,h:number,left=0,top=0):XY[][]{
  const shape=contours().size([NX,NY]).thresholds([threshold])(values)[0];
  if(!shape)return [];
  const segments:XY[][]=[];
  const at=(p:number[]):XY=>[left+p[0]/NX*w,top+p[1]/NY*h];
+ const finite=(x:number,y:number)=>x>=0&&x<NX&&y>=0&&y<NY&&Number.isFinite(values[y*NX+x]);
+ const missingEdge=(a:number[],b:number[])=>{
+  const midX=(a[0]+b[0])/2,midY=(a[1]+b[1])/2;
+  if(Math.abs(a[0]-b[0])<1e-9){const x=Math.floor(midX),y=Math.floor(midY);return finite(x,y)!==finite(x+1,y);}
+  if(Math.abs(a[1]-b[1])<1e-9){const x=Math.floor(midX),y=Math.floor(midY);return finite(x,y)!==finite(x,y+1);}
+  return false;
+ };
  for(const poly of shape.coordinates)for(const ring of poly){let run:XY[]=[];
   const flush=()=>{if(run.length>1)segments.push(run);run=[];};
   for(let i=1;i<ring.length;i++){
@@ -73,7 +80,7 @@ export function contourSegments(values:number[],threshold:number,w:number,h:numb
    const onEdge=(p:number[])=>p[0]===0||p[0]===NX||p[1]===0||p[1]===NY;
    const corner=onEdge(a)&&onEdge(b)&&Math.abs(a[0]-b[0])<=1&&Math.abs(a[1]-b[1])<=1;
    const border=corner||(a[0]===0&&b[0]===0)||(a[0]===NX&&b[0]===NX)||(a[1]===0&&b[1]===0)||(a[1]===NY&&b[1]===NY);
-   if(border){flush();continue;}
+   if(border||missingEdge(a,b)){flush();continue;}
    if(!run.length)run.push(at(a));run.push(at(b));
   }flush();
  }return segments;

@@ -53,6 +53,16 @@ test('labels never get synthetic border segments or fragments too short to label
  const labels=placeContourLabels([{value:1,text:'100%',path:'',segments:[[[10,10],[15,15]]]}],{left:0,top:0,width:400,height:200});
  assert.deepEqual(labels,[]);
 });
+test('contours terminate instead of closing along an internal missing-data boundary',()=>{
+ const cutoff=68,values=Array.from({length:NX*NY},(_,i)=>i%NX<cutoff?Math.floor(i/NX)/(NY-1):NaN);
+ const segments=contourSegments(values,.5,NX,NY);
+ assert.ok(segments.length>0);
+ for(const run of segments){
+  const xs=run.map(p=>p[0]),ys=run.map(p=>p[1]);
+  assert.ok(Math.max(...xs)-Math.min(...xs)>10,'real contour should remain');
+  assert.ok(Math.max(...ys)-Math.min(...ys)<1,'missing boundary must not add a vertical closure');
+ }
+});
 test('labels follow screen-space contour tangents, remain upright, and fit rotated bounds',()=>{
  for(const segments of [[[[20,20],[180,180]]],[[[180,180],[20,20]]],[[[100,20],[100,180]]]] as [number,number][][][]){
   const labels=placeContourLabels([{value:1,text:'100%',path:'',segments}],{left:0,top:0,width:200,height:200});
