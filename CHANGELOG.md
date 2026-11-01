@@ -6,6 +6,8 @@ Cutspace remains an illustrative exploration tool, not a source of validated cut
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-01
+
 ### Added
 
 - Added a preloaded, removable **Nova Labs** shared library (`public/libraries/nova-labs.json`, published beside the app) holding the ShopSabre RC4 and Big Blue profiles and the two reported Big Blue plywood recipes. It illustrates URL-based shared libraries: Refresh re-fetches it, a newer bundled copy replaces the stored one, and removing it is remembered.
