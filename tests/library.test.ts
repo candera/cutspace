@@ -44,6 +44,8 @@ test('personal libraries add, remove and export items with unique ids; read-only
  assert.equal(lib.machines[1].machine.power,MACHINES['industrial-router-example'].power);
  const part=exportLibrary(lib,{machines:['my-mill-2'],tools:[]});
  assert.equal(part.machines.length,1);assert.equal(part.tools.length,0);assert.equal(part.recipes.length,1);
+ lib=withItem(lib,'materials',materialItem(lib,'Saved material',e.config.material,e.config.limits,'carbide'));
+ assert.equal(exportLibrary(lib,{materials:[]}).materials.length,0,'an empty material selection exports no materials');assert.equal(exportLibrary(lib,{materials:['saved-material']}).materials.length,1);
  lib=removeItem(lib,'machines','my-mill');assert.equal(lib.machines.length,1);
  assert.throws(()=>withItem(builtinLibrary(),'machines',lib.machines[0]));
  assert.equal(uniqueId('a',['a','a-2']),'a-3');assert.equal(slug('ShopSabre RC4 (Nova Labs)'),'shopsabre-rc4-nova-labs');

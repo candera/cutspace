@@ -6,6 +6,17 @@ Cutspace remains an illustrative exploration tool, not a source of validated cut
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-01
+
+### Changed
+
+- On screens wider than 1000 px the Model & limits inspector is now a docked side panel instead of a modal dialog. It stays open while you work with the plots, scrolls independently, can be resized by dragging its left edge (or with the arrow keys on the handle), and remembers its width, open state and current tab in this browser. The Model & limits and Library buttons toggle it. The plots reflow to the space beside the panel, using the same layouts they use in a narrower window. Narrower screens keep the modal sheet, and Compare remains a dialog everywhere.
+- Reworked the Library tab to handle libraries with dozens or hundreds of entries. A sticky toolbar holds a search box that filters every library at once (names, provenance notes, and the values an item is known by: a tool's diameter in millimetres, inches or as a fraction, its flutes and cutter material; a recipe's machine, workpiece and RPM), kind tabs (All, Machines, Materials, Tools, Recipes) with match counts, and a sort control (library order, name with numeric ordering, recently updated). Each library is a collapsible group whose header shows its contents and keeps Export, Refresh and Remove. Items are compact single-line rows that expand on click to show the full description and provenance; the machine and material in use are marked. The save, import and add-shared controls sit in a disclosure that opens by default only while My library is empty. The search and filter survive switching inspector tabs within a page load.
+
+### Fixed
+
+- Exporting selected items now respects the material selection; earlier every material was exported regardless of which were checked.
+
 ## [0.3.0] - 2026-11-01
 
 ### Added

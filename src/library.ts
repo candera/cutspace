@@ -196,7 +196,7 @@ export function recipeItem(library:Library,name:string,snapshot:Snapshot,units:U
 /** Copy of a library holding only the selected items (all items when no selection is given). */
 export function exportLibrary(library:Library,selection?:Selection):Library{
  const pick=<T extends ItemBase>(items:T[],ids?:string[])=>ids?items.filter(i=>ids.includes(i.id)):items;
- return structuredClone({...library,machines:pick(library.machines,selection?.machines),tools:pick(library.tools,selection?.tools),recipes:pick(library.recipes,selection?.recipes)});
+ return structuredClone({...library,machines:pick(library.machines,selection?.machines),materials:pick(library.materials,selection?.materials),tools:pick(library.tools,selection?.tools),recipes:pick(library.recipes,selection?.recipes)});
 }
 export function conflictsBetween(target:Library,incoming:Library){
  return ITEM_KINDS.flatMap(kind=>{const ids=new Set((target[kind] as ItemBase[]).map(i=>i.id));return (incoming[kind] as ItemBase[]).filter(i=>ids.has(i.id)).map(i=>`${kind}:${i.id}`);});
