@@ -1,7 +1,10 @@
 import test from 'node:test';
 import {readFileSync} from 'node:fs';
 import assert from 'node:assert/strict';
-import {fresh,applyCuttingPreset,editLimit,setCutterMaterial,setWorkpieceMaterial,setupFor,parseExperiment,snapshot,MACHINES,MATERIALS} from '../src/experiment.ts';
+import {fresh,applyCuttingPreset,editLimit,setCutterMaterial,setWorkpieceMaterial,setupFor,parseExperiment,snapshot,MATERIALS} from '../src/experiment.ts';
+import {parseLibrary,machineFromItem} from '../src/library.ts';
+const NOVA=parseLibrary(readFileSync(new URL('../public/libraries/nova-labs.json',import.meta.url),'utf8'));
+const novaMachine=(id:string)=>machineFromItem(NOVA.machines.find(m=>m.id===id)!);
 import {CUTTING_PRESETS,cuttingPreset} from '../src/cuttingPresets.ts';
 import {calculate,CUTTER_MATERIALS} from '../src/model.ts';
 import type {MaterialId} from '../src/experiment.ts';
@@ -28,7 +31,7 @@ test('reported Big Blue plywood cut exposes inherited chip and deflection thresh
  // User-reported working cut: carbide 1/4 in, 2 flutes, 18k RPM, 300 IPM,
  // DOC 50%D, WOC 100%D, approximately 30 mm stickout. RC4 is a profile proxy,
  // NOT measured Big Blue capacity. 15 mm flute length remains an assumed value.
- const e=fresh();e.machineId='bigblue';e.config.machine={...MACHINES.bigblue};setWorkpieceMaterial(e,'plywood');
+ const e=fresh();e.machineId='lib:nova-labs/big-blue';e.config.machine=novaMachine('big-blue');setWorkpieceMaterial(e,'plywood');
  Object.assign(e.config.tool,{diameter:6.35,flutes:2,stickout:30});e.point={rpm:18000,feed:7620,docRatio:.5,wocRatio:1};
  const s=setupFor(e),r=calculate(s.cut,s);
  assert.ok(Math.abs(r.chip/25.4-300/(18000*2))<1e-12);
@@ -49,13 +52,13 @@ test('older files without preset metadata retain exact inputs; unsupported prese
 });
 
 
-test('Big Blue shares RC4 initial numbers but is a separate, restorable machine',()=>{
- const {name:rcName,...rc}=MACHINES.rc4,{name:blueName,...blue}=MACHINES.bigblue;
- assert.deepEqual(blue,rc);assert.notEqual(blueName,rcName);
- const e=fresh();e.machineId='bigblue';e.config.machine={...MACHINES.bigblue};e.pins.push(snapshot(e));
+test('Big Blue keeps the RC4 placeholder numbers except the user-supplied 18,000 RPM ceiling, and is a separate, restorable machine',()=>{
+ const {name:rcName,...rc}=novaMachine('shopsabre-rc4'),{name:blueName,...blue}=novaMachine('big-blue');
+ assert.deepEqual({...blue,rpmMax:18000},rc);assert.equal(rc.rpmMax,18000);assert.equal(blue.rpmMax,24000);assert.notEqual(blueName,rcName);
+ const e=fresh();e.machineId='lib:nova-labs/big-blue';e.config.machine=novaMachine('big-blue');e.pins.push(snapshot(e));
  e.config.machine.power=2000;
- const restored=parseExperiment(JSON.stringify(e));assert.equal(restored.config.machine.name,'Big Blue');assert.equal(restored.pins[0].config.machine.power,MACHINES.rc4.power);
- assert.equal(MACHINES.rc4.power,1500);
+ const restored=parseExperiment(JSON.stringify(e));assert.equal(restored.config.machine.name,'Big Blue');assert.equal(restored.pins[0].config.machine.power,rc.power);
+ assert.equal(rc.power,1500);
 });
 
 
@@ -65,7 +68,7 @@ test('both reported plywood example files reproduce their geometry and current e
   ['big-blue-plywood-shared-200-ipm',4,10000,5080,9.525,25.4,39.862395038487775,640.1196875],
  ] as const){
   const e=parseExperiment(readFileSync(new URL(`../examples/${file}.json`,import.meta.url),'utf8')),s=setupFor(e),r=calculate(s.cut,s);
-  assert.equal(e.machineId,'bigblue');assert.equal(e.materialId,'plywood');assert.equal(s.tool.flutes,flutes);assert.equal(s.tool.stickout,stickout);
+  assert.equal(e.machineId,'lib:nova-labs/big-blue');assert.equal(e.materialId,'plywood');assert.equal(s.tool.flutes,flutes);assert.equal(s.tool.stickout,stickout);
   assert.equal(s.cut.rpm,rpm);assert.equal(s.cut.feed,feed);assert.ok(Math.abs(s.cut.doc-doc)<1e-12);assert.equal(s.cut.woc,6.35);
   assert.ok(Math.abs(r.deflection-deflection)<1e-8);assert.ok(Math.abs(r.power-power)<1e-8);assert.equal(r.status,'inside');
   const old=calculate(s.cut,{...s,limits:cuttingPreset('aluminum','carbide')});assert.equal(old.status,'outside');assert.equal(old.power,r.power);assert.equal(old.deflection,r.deflection);

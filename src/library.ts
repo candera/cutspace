@@ -40,7 +40,7 @@ function parseProvenance(v:unknown):Provenance{
  const o=object(v,'Provenance');const source=o.source;
  if(typeof source!=='string'||!Object.hasOwn(PROVENANCE_LABEL,source))throw Error('Provenance source must be illustrative, manufacturer, measured or user.');
  const url=str(o,'url',500,false);if(url!==undefined&&!/^https?:\/\//.test(url))throw Error('Provenance url must start with http:// or https://.');
- return {source:source as ProvenanceSource,...(str(o,'note',600,false)===undefined?{}:{note:o.note as string}),...(url===undefined?{}:{url})};
+ return {source:source as ProvenanceSource,...(str(o,'note',1500,false)===undefined?{}:{note:o.note as string}),...(url===undefined?{}:{url})};
 }
 function parseBase(o:Record<string,unknown>):ItemBase{
  const id=str(o,'id',64)!;if(!ID.test(id))throw Error(`Item id "${id}" may use letters, digits, dot, underscore and hyphen only.`);
@@ -94,9 +94,7 @@ export function parseLibrary(value:unknown):Library{
 }
 
 const MACHINE_NOTES:Record<MachineId,string>={
- dmc2:'Shariff publishes a 2.2 kW, 24,000 RPM ER20 spindle and 10,000 mm/min rapids. The 10,000 RPM minimum is user-supplied; 0.875 N·m is derived from 2.2 kW at 24,000 RPM; the 75% usable-output reserve remains illustrative.',
- rc4:'Placeholder numbers, not a verified RC4 specification. Public resale listings describe RC4s with roughly 4 HP (3 kW) HSD spindles and 18,000 RPM maximum; confirm from the nameplate of the actual machine (for example the Nova Labs RC4) before relying on this profile.',
- bigblue:'Copies the ShopSabre RC4 example values at the user’s request; not independently measured.',
+ 'spindle-router-example':'Generic starting point for a router with a 2.2 kW, 24,000 RPM class VFD spindle; the 0.875 N·m plateau is the nameplate power at 24,000 RPM. Edit to match your machine, or import a measured profile.',
  'desktop-mill-example':'Generic starting point for a small benchtop mill. Edit to match your machine.',
  'hobby-router-example':'Generic starting point for a palm-router or small-spindle hobby router. Edit to match your machine.',
  'industrial-router-example':'Generic starting point for a 4×4 or larger router with a 3 kW class spindle. Edit to match your machine.',
@@ -119,20 +117,44 @@ export function builtinLibrary(recipes:RecipeItem[]=[]):Library{
   recipes};
 }
 export function personalLibrary():Library{return {schemaVersion:LIBRARY_SCHEMA,id:PERSONAL_ID,name:'My library',kind:'personal',readOnly:false,updatedAt:now(),machines:[],materials:[],tools:[],recipes:[]};}
-export function parseStoredLibraries(text:string|null):Library[]{
- if(!text)return [];
+/** Browser storage holds the non-built-in libraries plus the addresses of preloaded shared libraries the user removed, so they are not added again. */
+export interface LibraryStore {libraries:Library[];dismissed:string[]}
+export function readLibraryStore(text:string|null):LibraryStore{
+ if(!text)return {libraries:[],dismissed:[]};
  const o=object(JSON.parse(text),'Stored libraries');
  if(o.schemaVersion!==LIBRARY_SCHEMA||!Array.isArray(o.libraries))throw Error('Unsupported stored library format.');
- return o.libraries.map(parseLibrary).filter(l=>l.kind!=='builtin');
+ const dismissed=Array.isArray(o.dismissed)?o.dismissed.filter((u):u is string=>typeof u==='string'&&u.length<=500).slice(0,100):[];
+ return {libraries:o.libraries.map(parseLibrary).filter(l=>l.kind!=='builtin'),dismissed};
 }
-export function loadLibraries(builtin:Library):{libraries:Library[];error:string}{
- let stored:Library[]=[],error='';
- try{stored=parseStoredLibraries(localStorage.getItem(LIBRARIES_KEY));}catch(e){stored=[];error=`Saved libraries could not be read: ${e instanceof Error?e.message:String(e)}. Starting with an empty personal library.`;}
+export function parseStoredLibraries(text:string|null):Library[]{return readLibraryStore(text).libraries;}
+/**
+ * Adds preloaded shared libraries (bundled copies of libraries published at a URL) unless the user removed them earlier.
+ * A stored copy with the same address is replaced when the bundled copy is newer, so a release can update it without a manual refresh.
+ */
+export function withPreloaded(libraries:Library[],preloaded:Library[],dismissed:string[]):Library[]{
+ let result=libraries;
+ for(const lib of preloaded){
+  if(!lib.sourceUrl||dismissed.includes(lib.sourceUrl))continue;
+  const existing=result.find(l=>l.kind==='shared'&&l.sourceUrl===lib.sourceUrl);
+  if(!existing)result=upsertLibrary(result,asShared(lib,lib.sourceUrl));
+  else if(lib.updatedAt>existing.updatedAt)result=result.map(l=>l===existing?{...asShared(lib,lib.sourceUrl),id:existing.id}:l);
+ }
+ return result;
+}
+/** Addresses of preloaded libraries that the user has just removed, to be remembered as dismissed. */
+export function dismissedPreloads(before:Library[],after:Library[],preloaded:Library[]):string[]{
+ const urls=new Set(preloaded.map(l=>l.sourceUrl).filter((u):u is string=>!!u));
+ return before.filter(l=>l.sourceUrl&&urls.has(l.sourceUrl)&&!after.some(a=>a.id===l.id)).map(l=>l.sourceUrl as string);
+}
+export function loadLibraries(builtin:Library,preloaded:Library[]=[]):{libraries:Library[];dismissed:string[];error:string}{
+ let store:LibraryStore={libraries:[],dismissed:[]},error='';
+ try{store=readLibraryStore(localStorage.getItem(LIBRARIES_KEY));}catch(e){error=`Saved libraries could not be read: ${e instanceof Error?e.message:String(e)}. Starting with an empty personal library.`;}
+ let stored=store.libraries;
  if(!stored.some(l=>l.id===PERSONAL_ID))stored=[personalLibrary(),...stored];
- return {libraries:[builtin,...stored],error};
+ return {libraries:[builtin,...withPreloaded(stored,preloaded,store.dismissed)],dismissed:store.dismissed,error};
 }
-export function saveLibraries(libraries:Library[]):string{
- try{localStorage.setItem(LIBRARIES_KEY,JSON.stringify({schemaVersion:LIBRARY_SCHEMA,libraries:libraries.filter(l=>l.kind!=='builtin')}));return '';}
+export function saveLibraries(libraries:Library[],dismissed:string[]=[]):string{
+ try{localStorage.setItem(LIBRARIES_KEY,JSON.stringify({schemaVersion:LIBRARY_SCHEMA,libraries:libraries.filter(l=>l.kind!=='builtin'),dismissed}));return '';}
  catch{return 'Libraries were not saved: browser storage is unavailable or full. Export your library to keep a copy.';}
 }
 

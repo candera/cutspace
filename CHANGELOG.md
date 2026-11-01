@@ -6,6 +6,19 @@ Cutspace remains an illustrative exploration tool, not a source of validated cut
 
 ## [Unreleased]
 
+### Added
+
+- Added a preloaded, removable **Nova Labs** shared library (`public/libraries/nova-labs.json`, published beside the app) holding the ShopSabre RC4 and Big Blue profiles and the two reported Big Blue plywood recipes. It illustrates URL-based shared libraries: Refresh re-fetches it, a newer bundled copy replaces the stored one, and removing it is remembered.
+- Added an importable **DMC2 Mini** library (`examples/dmc2-mini-library.json`) generated from the operator’s speeds-and-feeds sheet: a machine profile fitted to the aggressive test cuts and recorded spindle bog-downs, the 17 tools from the sheet, and 32 recipes for the manufacturer-chart rows, each carrying per-tool limits derived from the tests and a note saying whether the chart row lands inside the fitted envelope. Rows for 8–12 mm tools at the chart’s low RPM do not.
+- Added a generic **2.2 kW spindle router (example)** built-in profile, now the default for a fresh experiment.
+- The Machine tab shows the active profile’s provenance note.
+- The ShopSabre RC4 profile now uses the user-supplied 18,000 RPM maximum; Big Blue keeps its 24,000 RPM placeholder.
+
+### Changed
+
+- Removed DMC2 Mini, ShopSabre RC4 and Big Blue from the built-in machines; built-ins are generic examples only. Saved experiments that reference the old ids are redirected to the corresponding library items and keep their own values.
+- Provenance notes may now be up to 1,500 characters.
+
 ## [0.2.2] - 2026-10-31
 
 ### Added

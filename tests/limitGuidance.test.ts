@@ -10,7 +10,7 @@ test('thin chips and low RPM identify a lower bound, not an overload',()=>{
  assert.match(reading.readings[0],/below minimum/);
  s.cut.rpm=1000;
  reading=limitReading('rpm',s,calculate(s.cut,s),'metric');
- assert.equal(reading.state,'Below minimum');assert.match(reading.readings[0],/1,000 RPM · range 10,000–24,000 RPM/);
+ assert.equal(reading.state,'Below minimum');assert.match(reading.readings[0],/1,000 RPM · range 8,000–24,000 RPM/);
  s.cut.rpm=25000;
  assert.equal(limitReading('rpm',s,calculate(s.cut,s),'metric').state,'Above maximum');
 });

@@ -1,0 +1,169 @@
+{
+ "schemaVersion": 1,
+ "id": "nova-labs",
+ "name": "Nova Labs",
+ "kind": "shared",
+ "readOnly": true,
+ "sourceUrl": "https://www.craigandera.org/software/cutspace/libraries/nova-labs.json",
+ "updatedAt": "2026-11-01T00:00:00.000Z",
+ "machines": [
+  {
+   "id": "shopsabre-rc4",
+   "name": "ShopSabre RC4",
+   "machine": {
+    "rpmMin": 6000,
+    "rpmMax": 18000,
+    "feedMax": 10000,
+    "power": 1500,
+    "torque": 0.9,
+    "utilization": 0.75,
+    "known": true
+   },
+   "provenance": {
+    "source": "user",
+    "note": "The 18,000 RPM maximum is user-supplied for the Nova Labs machine. The minimum RPM, feed ceiling, 1.5 kW / 0.9 N·m plateaus and usable fraction remain placeholders, not a verified RC4 specification; public resale listings describe RC4s with roughly 4 HP (3 kW) HSD spindles. Confirm the rest from the nameplate before relying on this profile."
+   },
+   "updatedAt": "2026-11-01T00:00:00.000Z"
+  },
+  {
+   "id": "big-blue",
+   "name": "Big Blue",
+   "machine": {
+    "rpmMin": 6000,
+    "rpmMax": 24000,
+    "feedMax": 10000,
+    "power": 1500,
+    "torque": 0.9,
+    "utilization": 0.75,
+    "known": true
+   },
+   "provenance": {
+    "source": "illustrative",
+    "note": "Started as a copy of the ShopSabre RC4 placeholder values at the user’s request; not independently measured. It keeps the 24,000 RPM placeholder ceiling, which the RC4 no longer uses, so its reported 300 IPM plywood cut at 18,000 RPM stays inside."
+   },
+   "updatedAt": "2026-11-01T00:00:00.000Z"
+  }
+ ],
+ "materials": [],
+ "tools": [],
+ "recipes": [
+  {
+   "id": "bigblue-plywood-300ipm",
+   "name": "Big Blue · plywood · 300 IPM (reported cut)",
+   "snapshot": {
+    "machineId": "lib:nova-labs/big-blue",
+    "materialId": "plywood",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 6.35,
+      "flutes": 2,
+      "stickout": 30,
+      "fluteLength": 15,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "Big Blue",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 1500,
+      "torque": 0.9,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Plywood",
+      "kc": 100,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "preset": "provisional-1",
+      "cuttingDataKnown": true,
+      "chipMin": 0.025,
+      "chipMax": 0.3,
+      "deflection": 100,
+      "surfaceMax": 650,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 18000,
+     "feed": 7620,
+     "docRatio": 0.5,
+     "wocRatio": 1
+    }
+   },
+   "units": "imperial",
+   "notes": "User-reported successful cut: 1/4 in two-flute carbide, 18,000 RPM, 300 IPM, 50%D depth, full-width slot, about 30 mm stickout. Flute length assumed at 15 mm. Provisional plywood limits.",
+   "provenance": {
+    "source": "user",
+    "note": "Reported by the operator, not instrumented."
+   },
+   "updatedAt": "2026-10-29T00:00:00.000Z"
+  },
+  {
+   "id": "bigblue-plywood-200ipm",
+   "name": "Big Blue · plywood · 200 IPM (shared screenshot)",
+   "snapshot": {
+    "machineId": "lib:nova-labs/big-blue",
+    "materialId": "plywood",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 6.35,
+      "flutes": 4,
+      "stickout": 25.4,
+      "fluteLength": 20.32,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "Big Blue",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 1500,
+      "torque": 0.9,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Plywood",
+      "kc": 100,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "preset": "provisional-1",
+      "cuttingDataKnown": true,
+      "chipMin": 0.025,
+      "chipMax": 0.3,
+      "deflection": 100,
+      "surfaceMax": 650,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 10000,
+     "feed": 5080,
+     "docRatio": 1.5,
+     "wocRatio": 1
+    }
+   },
+   "units": "imperial",
+   "notes": "Shared screenshot: 200 IPM, 10,000 RPM, 1/4 in four-flute tool, 150%D depth, full-width slot, 1 in stickout, 0.8 in flutes. Carbide assumed.",
+   "provenance": {
+    "source": "user",
+    "note": "Reported by another operator as successful; cutter material unconfirmed."
+   },
+   "updatedAt": "2026-10-29T00:00:00.000Z"
+  }
+ ]
+}

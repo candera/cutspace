@@ -16,7 +16,7 @@ export interface Setup { tool: Tool; material: Material; machine: Machine; limit
 export const defaults: Setup = {
  tool:{material:'carbide',diameter:6,flutes:3,stickout:20,fluteLength:15,modulus:600,stiffness:.45},
  material:{name:'Aluminum · 6061',kc:1000,powerFactor:1.25,forceFactor:1.3,known:true},
- machine:{name:'DMC2 Mini',rpmMin:10000,rpmMax:24000,feedMax:10000,power:2200,torque:.875,utilization:.75,known:true},
+ machine:{name:'2.2 kW spindle router (example)',rpmMin:8000,rpmMax:24000,feedMax:10000,power:2200,torque:.875,utilization:.75,known:true},
  limits:{cuttingDataKnown:true,chipMin:.008,chipMax:.055,deflection:25,surfaceMax:450,caution:.75,operation:'finishing'},
  cut:{rpm:10000,feed:1200,doc:3,woc:1.2},
 };

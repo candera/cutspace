@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {fresh,fitView,setupFor,parseExperiment,snapshot,setWorkpieceMaterial,MACHINES,MATERIALS} from '../src/experiment.ts';
+import {fresh,fitView,setupFor,parseExperiment,snapshot,setWorkpieceMaterial,MACHINES,MATERIALS,DEFAULT_MACHINE_ID,DMC2_PUBLISHED_PROFILE,LEGACY_MACHINE_IDS} from '../src/experiment.ts';
 import {calculate,MODEL_VERSION} from '../src/model.ts';
 import {gridFor} from '../src/plots.ts';
 import {toDisplay,fromDisplay,parseNumeric} from '../src/units.ts';
@@ -29,21 +29,29 @@ test('untrusted files cannot introduce machines, invalid physics, unknown versio
  const variants=[(e:any)=>{e.machineId='new-router';e.config.machine.name='';},(e:any)=>e.machineId=42,(e:any)=>e.modelVersion='future',(e:any)=>e.schemaVersion=1,(e:any)=>e.config.tool.diameter=0,(e:any)=>e.point.rpm=null,(e:any)=>e.config.tool.flutes=2.5,(e:any)=>e.view.scaleMax=e.view.scaleMin,(e:any)=>e.config.machine.rpmMin=e.config.machine.rpmMax];
  for(const mutate of variants){const e=fresh();mutate(e);assert.throws(()=>parseExperiment(JSON.stringify(e)));}
 });
-test('six material starters and six machine presets have explicit illustrative data',()=>{
- assert.equal(Object.keys(MACHINES).length,6);assert.equal(Object.keys(MATERIALS).length,6);
- assert.notEqual(MACHINES.dmc2.power,MACHINES.rc4.power);
+test('six material starters and four generic machine presets have explicit illustrative data',()=>{
+ assert.equal(Object.keys(MACHINES).length,4);assert.equal(Object.keys(MATERIALS).length,6);
+ assert.equal(new Set(Object.values(MACHINES).map(m=>m.power)).size,4);
+ assert.equal(fresh().machineId,DEFAULT_MACHINE_ID);assert.equal(fresh().config.machine.name,MACHINES[DEFAULT_MACHINE_ID].name);
+ const seed=setupFor(fresh());assert.equal(calculate(seed.cut,seed).status,'inside');
  assert.equal(new Set(Object.values(MATERIALS).map(m=>m.kc)).size,6);
  for(const material of Object.values(MATERIALS)){const e=fresh();e.config.material.kc=material.kc;const s=setupFor(e);assert.ok(Number.isFinite(calculate(s.cut,s).power));}
 });
-test('DMC2 profile uses the published spindle ceiling, rating and rapid with the entered minimum and derived torque',()=>{
- assert.deepEqual(MACHINES.dmc2,{name:'DMC2 Mini',rpmMin:10000,rpmMax:24000,feedMax:10000,power:2200,torque:.875,utilization:.75,known:true});
+test('legacy built-in machine ids are redirected to their library items while the file keeps its own values',()=>{
+ for(const [legacy,ref] of Object.entries(LEGACY_MACHINE_IDS)){
+  const e:any=fresh();e.machineId=legacy;e.config.machine={...e.config.machine,name:'Named machine',power:1234};e.pins=[snapshot(e)];
+  const read=parseExperiment(JSON.stringify(e));
+  assert.equal(read.machineId,ref);assert.equal(read.pins[0].machineId,ref);assert.equal(read.config.machine.name,'Named machine');assert.equal(read.config.machine.power,1234);
+ }
+ assert.equal(LEGACY_MACHINE_IDS.bigblue,'lib:nova-labs/big-blue');
 });
 test('model-4 files upgrade an untouched DMC2 placeholder but preserve custom machine values',()=>{
- const old:any=fresh();old.modelVersion='illustrative-static-4';old.config.machine={name:'DMC2 Mini',rpmMin:3000,rpmMax:18000,feedMax:3000,power:250,torque:.3,utilization:.75,known:true};old.pins=[snapshot(old)];
- const upgraded=parseExperiment(JSON.stringify(old));assert.equal(upgraded.modelVersion,MODEL_VERSION);assert.deepEqual(upgraded.config.machine,MACHINES.dmc2);assert.deepEqual(upgraded.pins[0].config.machine,MACHINES.dmc2);
+ assert.deepEqual(DMC2_PUBLISHED_PROFILE,{name:'DMC2 Mini',rpmMin:10000,rpmMax:24000,feedMax:10000,power:2200,torque:.875,utilization:.75,known:true});
+ const old:any=fresh();old.machineId='dmc2';old.modelVersion='illustrative-static-4';old.config.machine={name:'DMC2 Mini',rpmMin:3000,rpmMax:18000,feedMax:3000,power:250,torque:.3,utilization:.75,known:true};old.pins=[snapshot(old)];
+ const upgraded=parseExperiment(JSON.stringify(old));assert.equal(upgraded.modelVersion,MODEL_VERSION);assert.equal(upgraded.machineId,LEGACY_MACHINE_IDS.dmc2);assert.deepEqual(upgraded.config.machine,DMC2_PUBLISHED_PROFILE);assert.deepEqual(upgraded.pins[0].config.machine,DMC2_PUBLISHED_PROFILE);
  old.config.machine.power=251;const custom=parseExperiment(JSON.stringify(old));assert.equal(custom.config.machine.power,251);assert.equal(custom.config.machine.rpmMax,18000);
 });
-test('DMC2 and brass retain a visible operating envelope with a small carbide cutter',()=>{
+test('the default spindle-router profile and brass retain a visible operating envelope with a small carbide cutter',()=>{
  const e=fresh();setWorkpieceMaterial(e,'brass');Object.assign(e.config.tool,{diameter:3.175,flutes:2,stickout:15,fluteLength:12.7});e.point={rpm:12000,feed:500,docRatio:.5,wocRatio:.3};e.view=fitView(e);const s=setupFor(e);
  for(const kind of ['speed','engagement'] as const)assert.ok(gridFor(s,kind,e.view).samples.some(r=>r.feasible),`${kind} envelope`);
 });

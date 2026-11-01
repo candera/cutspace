@@ -1,0 +1,2245 @@
+{
+ "schemaVersion": 1,
+ "id": "dmc2-mini",
+ "name": "DMC2 Mini · speeds and feeds",
+ "kind": "personal",
+ "readOnly": false,
+ "updatedAt": "2026-10-31T00:00:00.000Z",
+ "machines": [
+  {
+   "id": "dmc2-mini",
+   "name": "DMC2 Mini",
+   "machine": {
+    "rpmMin": 6000,
+    "rpmMax": 24000,
+    "feedMax": 10000,
+    "power": 950,
+    "torque": 0.378,
+    "utilization": 0.75,
+    "known": true
+   },
+   "provenance": {
+    "source": "user",
+    "note": "Fitted to the operator’s DMC2 Mini test log, not a specification. 24,000 RPM and the 10,000 mm/min feed ceiling are Shariff’s published figures. The 6,000 RPM floor admits the manufacturer-chart rows down to 6,600 RPM; the slowest tested speed was 10,000 RPM and low-speed spindle cooling is not modelled. The 950 W / 0.378 N·m plateau is not the 2.2 kW nameplate: it is the effective constant-torque output under Cutspace’s constant-coefficient force model, chosen so the aggressive test cuts sit at or below usable output (3 mm aluminium at 22,000 RPM and 4 mm steel at 16,000 RPM reach about 92–95%) and the recorded high-feed spindle bog-downs at 24,000 RPM sit beyond it. It folds in thin-chip force effects and whatever the spindle really delivers. Deep, thin-radial stalls with 10–12 mm tools are not power events in this model; the per-tool deflection allowances in the recipes capture those.",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing"
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  }
+ ],
+ "materials": [],
+ "tools": [
+  {
+   "id": "al-3f-1mm",
+   "name": "1 mm · 3 flute uncoated carbide (aluminum set)",
+   "tool": {
+    "material": "carbide",
+    "diameter": 1,
+    "flutes": 3,
+    "stickout": 6,
+    "fluteLength": 3,
+    "modulus": 600,
+    "stiffness": 0.45
+   },
+   "provenance": {
+    "source": "user",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (3 mm) and 6 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0025–0.00834 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 153 µm (the model’s deflection at the heaviest successful test, aluminum profile at 24,000 RPM, 518 mm/min, 0.5 mm stepover × 3 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "al-3f-2mm",
+   "name": "2 mm · 3 flute uncoated carbide (aluminum set)",
+   "tool": {
+    "material": "carbide",
+    "diameter": 2,
+    "flutes": 3,
+    "stickout": 9,
+    "fluteLength": 6,
+    "modulus": 600,
+    "stiffness": 0.45
+   },
+   "provenance": {
+    "source": "user",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (6 mm) and 9 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0042–0.0516 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 384 µm (the model’s deflection at the heaviest successful test, aluminum profile at 20,000 RPM, 3,093 mm/min, 1 mm stepover × 5 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "al-3f-3mm",
+   "name": "3 mm · 3 flute uncoated carbide (aluminum set)",
+   "tool": {
+    "material": "carbide",
+    "diameter": 3,
+    "flutes": 3,
+    "stickout": 12,
+    "fluteLength": 9,
+    "modulus": 600,
+    "stiffness": 0.45
+   },
+   "provenance": {
+    "source": "user",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (9 mm) and 12 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0063–0.0445 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 220 µm (the model’s deflection at the heaviest successful test, aluminum profile at 22,000 RPM, 2,592 mm/min, 1.5 mm stepover × 8 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "al-3f-4mm",
+   "name": "4 mm · 3 flute uncoated carbide (aluminum set)",
+   "tool": {
+    "material": "carbide",
+    "diameter": 4,
+    "flutes": 3,
+    "stickout": 18,
+    "fluteLength": 12,
+    "modulus": 600,
+    "stiffness": 0.45
+   },
+   "provenance": {
+    "source": "user",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (12 mm) and 18 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0083–0.05 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 216 µm (the model’s deflection at the heaviest successful test, aluminum profile at 24,000 RPM, 2,400 mm/min, 1 mm stepover × 10 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "al-3f-6mm",
+   "name": "6 mm · 3 flute uncoated carbide (aluminum set)",
+   "tool": {
+    "material": "carbide",
+    "diameter": 6,
+    "flutes": 3,
+    "stickout": 22,
+    "fluteLength": 16,
+    "modulus": 600,
+    "stiffness": 0.45
+   },
+   "provenance": {
+    "source": "user",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (16 mm) and 22 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0077–0.0625 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 103 µm (the model’s deflection at the heaviest successful test, aluminum profile at 24,000 RPM, 4,147 mm/min, 0.5 mm stepover × 12 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "al-3f-8mm",
+   "name": "8 mm · 3 flute uncoated carbide (aluminum set)",
+   "tool": {
+    "material": "carbide",
+    "diameter": 8,
+    "flutes": 3,
+    "stickout": 32,
+    "fluteLength": 25,
+    "modulus": 600,
+    "stiffness": 0.45
+   },
+   "provenance": {
+    "source": "user",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (25 mm) and 32 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0043–0.055 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 66.3 µm (the model’s deflection at the heaviest successful test, aluminum profile at 24,000 RPM, 2,000 mm/min, 0.3 mm stepover × 24 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "al-3f-10mm",
+   "name": "10 mm · 3 flute uncoated carbide (aluminum set)",
+   "tool": {
+    "material": "carbide",
+    "diameter": 10,
+    "flutes": 3,
+    "stickout": 38,
+    "fluteLength": 30,
+    "modulus": 600,
+    "stiffness": 0.45
+   },
+   "provenance": {
+    "source": "user",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (30 mm) and 38 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0028–0.0594 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 43.4 µm (the model’s deflection at the heaviest successful test, aluminum profile at 22,000 RPM, 1,900 mm/min, 0.2 mm stepover × 30 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "al-3f-12mm",
+   "name": "12 mm · 3 flute uncoated carbide (aluminum set)",
+   "tool": {
+    "material": "carbide",
+    "diameter": 12,
+    "flutes": 3,
+    "stickout": 45,
+    "fluteLength": 35,
+    "modulus": 600,
+    "stiffness": 0.45
+   },
+   "provenance": {
+    "source": "user",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (35 mm) and 45 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0019–0.0739 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 38.2 µm (the model’s deflection at the heaviest successful test, aluminum profile at 18,000 RPM, 1,600 mm/min, 0.2 mm stepover × 35 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "st-4f-1mm",
+   "name": "1 mm · 4 flute coated carbide (steel set)",
+   "tool": {
+    "material": "carbide",
+    "diameter": 1,
+    "flutes": 4,
+    "stickout": 6,
+    "fluteLength": 3,
+    "modulus": 600,
+    "stiffness": 0.45
+   },
+   "provenance": {
+    "source": "user",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (3 mm) and 6 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.00073–0.00459 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 175 µm (the model’s deflection at the heaviest successful test, steel profile at 24,000 RPM, 480 mm/min, 0.3 mm stepover × 3 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "st-4f-2mm",
+   "name": "2 mm · 4 flute coated carbide (steel set)",
+   "tool": {
+    "material": "carbide",
+    "diameter": 2,
+    "flutes": 4,
+    "stickout": 9,
+    "fluteLength": 6,
+    "modulus": 600,
+    "stiffness": 0.45
+   },
+   "provenance": {
+    "source": "user",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (6 mm) and 9 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0018–0.025 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 268 µm (the model’s deflection at the heaviest successful test, steel profile at 16,000 RPM, 2,132 mm/min, 0.2 mm stepover × 5 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "st-4f-3mm",
+   "name": "3 mm · 4 flute coated carbide (steel set)",
+   "tool": {
+    "material": "carbide",
+    "diameter": 3,
+    "flutes": 4,
+    "stickout": 12,
+    "fluteLength": 9,
+    "modulus": 600,
+    "stiffness": 0.45
+   },
+   "provenance": {
+    "source": "user",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (9 mm) and 12 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0023–0.0324 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 325 µm (the model’s deflection at the heaviest successful test, steel profile at 16,000 RPM, 4,147 mm/min, 0.2 mm stepover × 8 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "st-4f-4mm",
+   "name": "4 mm · 4 flute coated carbide (steel set)",
+   "tool": {
+    "material": "carbide",
+    "diameter": 4,
+    "flutes": 4,
+    "stickout": 18,
+    "fluteLength": 12,
+    "modulus": 600,
+    "stiffness": 0.45
+   },
+   "provenance": {
+    "source": "user",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (12 mm) and 18 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0028–0.0407 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 546 µm (the model’s deflection at the heaviest successful test, steel profile at 16,000 RPM, 5,971 mm/min, 0.2 mm stepover × 10 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "st-4f-6mm",
+   "name": "6 mm · 4 flute coated carbide (steel set)",
+   "tool": {
+    "material": "carbide",
+    "diameter": 6,
+    "flutes": 4,
+    "stickout": 22,
+    "fluteLength": 16,
+    "modulus": 600,
+    "stiffness": 0.45
+   },
+   "provenance": {
+    "source": "user",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (16 mm) and 22 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0052–0.0313 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 97.9 µm (the model’s deflection at the heaviest successful test, steel profile at 16,000 RPM, 3,456 mm/min, 0.15 mm stepover × 12 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "st-4f-8mm",
+   "name": "8 mm · 4 flute coated carbide (steel set)",
+   "tool": {
+    "material": "carbide",
+    "diameter": 8,
+    "flutes": 4,
+    "stickout": 32,
+    "fluteLength": 25,
+    "modulus": 600,
+    "stiffness": 0.45
+   },
+   "provenance": {
+    "source": "user",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (25 mm) and 32 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.00093–0.0201 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 21.2 µm (the model’s deflection at the heaviest successful test, steel profile at 18,000 RPM, 1,100 mm/min, 0.03 mm stepover × 24 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "st-4f-10mm",
+   "name": "10 mm · 4 flute coated carbide (steel set)",
+   "tool": {
+    "material": "carbide",
+    "diameter": 10,
+    "flutes": 4,
+    "stickout": 38,
+    "fluteLength": 30,
+    "modulus": 600,
+    "stiffness": 0.45
+   },
+   "provenance": {
+    "source": "user",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (30 mm) and 38 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.001–0.0251 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 20.1 µm (the model’s deflection at the heaviest successful test, steel profile at 17,000 RPM, 1,000 mm/min, 0.05 mm stepover × 30 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "st-4f-12mm",
+   "name": "12 mm · 4 flute coated carbide (steel set)",
+   "tool": {
+    "material": "carbide",
+    "diameter": 12,
+    "flutes": 4,
+    "stickout": 45,
+    "fluteLength": 35,
+    "modulus": 600,
+    "stiffness": 0.45
+   },
+   "provenance": {
+    "source": "user",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (35 mm) and 45 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.001–0.0313 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 29.4 µm (the model’s deflection at the heaviest successful test, steel profile at 14,000 RPM, 1,000 mm/min, 0.1 mm stepover × 35 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "insert-mill-10mm-1f",
+   "name": "10 mm · single-insert mill (steel body)",
+   "tool": {
+    "material": "carbide",
+    "diameter": 10,
+    "flutes": 1,
+    "stickout": 35,
+    "fluteLength": 8,
+    "modulus": 210,
+    "stiffness": 0.45
+   },
+   "provenance": {
+    "source": "user",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "From the DMC2 Mini test log: 10 mm indexable mill with one carbide insert. Modelled as “carbide” for the insert’s cutting data, with the modulus set to 210 GPa for its steel body. Effective flute length 8 mm and 35 mm stickout are assumed; measure both. Tests reached aluminum profile at 22,000 RPM, 800 mm/min, 0.1 mm stepover × 6 mm depth, aluminum slot at 24,000 RPM, 1,600 mm/min, 10 mm stepover × 0.6 mm depth, steel profile at 18,000 RPM, 500 mm/min, 0.02 mm stepover × 6 mm depth and steel slot at 22,000 RPM, 1,000 mm/min, 10 mm stepover × 0.4 mm depth; no chart rows exist for it, so it has no recipes."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  }
+ ],
+ "recipes": [
+  {
+   "id": "chart-aluminum-1mm-profile",
+   "name": "Aluminum · 1 mm · profile 0.1D × 1.5D (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "aluminum",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 1,
+      "flutes": 3,
+      "stickout": 6,
+      "fluteLength": 3,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Aluminum · 6061",
+      "kc": 1000,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0025,
+      "chipMax": 0.00834,
+      "deflection": 153,
+      "surfaceMax": 760,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 24000,
+     "feed": 800,
+     "docRatio": 1.5,
+     "wocRatio": 0.1
+    }
+   },
+   "units": "metric",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart, 40,000 RPM capped at 24,000 by the DMC2 manufacturer with the chart feed kept: 24,000 RPM, 800 mm/min, 0.1 mm stepover (10%D) × 1.5 mm depth (150%D), 0.0111 mm/tooth. Lands inside the fitted DMC2 envelope but near a soft limit; tightest check chipload too high 80%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-aluminum-2mm-profile",
+   "name": "Aluminum · 2 mm · profile 0.1D × 1.5D (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "aluminum",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 2,
+      "flutes": 3,
+      "stickout": 9,
+      "fluteLength": 6,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Aluminum · 6061",
+      "kc": 1000,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0042,
+      "chipMax": 0.0516,
+      "deflection": 384,
+      "surfaceMax": 760,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 24000,
+     "feed": 1200,
+     "docRatio": 1.5,
+     "wocRatio": 0.1
+    }
+   },
+   "units": "metric",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart, 40,000 RPM capped at 24,000 by the DMC2 manufacturer with the chart feed kept: 24,000 RPM, 1,200 mm/min, 0.2 mm stepover (10%D) × 3 mm depth (150%D), 0.0167 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check chipload too low 42%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-aluminum-3mm-profile",
+   "name": "Aluminum · 3 mm · profile 0.1D × 1.5D (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "aluminum",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 3,
+      "flutes": 3,
+      "stickout": 12,
+      "fluteLength": 9,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Aluminum · 6061",
+      "kc": 1000,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0063,
+      "chipMax": 0.0445,
+      "deflection": 220,
+      "surfaceMax": 760,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 24000,
+     "feed": 1800,
+     "docRatio": 1.5,
+     "wocRatio": 0.1
+    }
+   },
+   "units": "metric",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart, 26,500 RPM capped at 24,000 by the DMC2 manufacturer with the chart feed kept: 24,000 RPM, 1,800 mm/min, 0.3 mm stepover (10%D) × 4.5 mm depth (150%D), 0.0250 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check chipload too low 42%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-aluminum-4mm-profile",
+   "name": "Aluminum · 4 mm · profile 0.1D × 1.5D (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "aluminum",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 4,
+      "flutes": 3,
+      "stickout": 18,
+      "fluteLength": 12,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Aluminum · 6061",
+      "kc": 1000,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0083,
+      "chipMax": 0.05,
+      "deflection": 216,
+      "surfaceMax": 760,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 20000,
+     "feed": 2000,
+     "docRatio": 1.5,
+     "wocRatio": 0.1
+    }
+   },
+   "units": "metric",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 20,000 RPM, 2,000 mm/min, 0.4 mm stepover (10%D) × 6 mm depth (150%D), 0.0333 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check chipload too low 41%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-aluminum-6mm-profile",
+   "name": "Aluminum · 6 mm · profile 0.1D × 1.5D (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "aluminum",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 6,
+      "flutes": 3,
+      "stickout": 22,
+      "fluteLength": 16,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Aluminum · 6061",
+      "kc": 1000,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0077,
+      "chipMax": 0.0625,
+      "deflection": 103,
+      "surfaceMax": 760,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 13000,
+     "feed": 1500,
+     "docRatio": 1.5,
+     "wocRatio": 0.1
+    }
+   },
+   "units": "metric",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 13,000 RPM, 1,500 mm/min, 0.6 mm stepover (10%D) × 9 mm depth (150%D), 0.0385 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check tool deflection 54%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-aluminum-8mm-profile",
+   "name": "Aluminum · 8 mm · profile 0.1D × 1.5D (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "aluminum",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 8,
+      "flutes": 3,
+      "stickout": 32,
+      "fluteLength": 25,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Aluminum · 6061",
+      "kc": 1000,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0043,
+      "chipMax": 0.055,
+      "deflection": 66.3,
+      "surfaceMax": 760,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 10000,
+     "feed": 1650,
+     "docRatio": 1.5,
+     "wocRatio": 0.1
+    }
+   },
+   "units": "metric",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 10,000 RPM, 1,650 mm/min, 0.8 mm stepover (10%D) × 12 mm depth (150%D), 0.0550 mm/tooth. Outside the fitted DMC2 envelope: tool deflection 156%, spindle torque 111%. The tests never ran this tool this heavily; the heaviest success was aluminum profile at 24,000 RPM, 2,000 mm/min, 0.3 mm stepover × 24 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-aluminum-10mm-profile",
+   "name": "Aluminum · 10 mm · profile 0.1D × 1.5D (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "aluminum",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 10,
+      "flutes": 3,
+      "stickout": 38,
+      "fluteLength": 30,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Aluminum · 6061",
+      "kc": 1000,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0028,
+      "chipMax": 0.0594,
+      "deflection": 43.4,
+      "surfaceMax": 760,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 8000,
+     "feed": 1900,
+     "docRatio": 1.5,
+     "wocRatio": 0.1
+    }
+   },
+   "units": "metric",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 8,000 RPM, 1,900 mm/min, 1 mm stepover (10%D) × 15 mm depth (150%D), 0.0792 mm/tooth. Outside the fitted DMC2 envelope: tool deflection 295%, spindle torque 250%. The tests never ran this tool this heavily; the heaviest success was aluminum profile at 22,000 RPM, 1,900 mm/min, 0.2 mm stepover × 30 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-aluminum-12mm-profile",
+   "name": "Aluminum · 12 mm · profile 0.1D × 1.5D (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "aluminum",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 12,
+      "flutes": 3,
+      "stickout": 45,
+      "fluteLength": 35,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Aluminum · 6061",
+      "kc": 1000,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0019,
+      "chipMax": 0.0739,
+      "deflection": 38.2,
+      "surfaceMax": 760,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 6600,
+     "feed": 1950,
+     "docRatio": 1.5,
+     "wocRatio": 0.1
+    }
+   },
+   "units": "metric",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 6,600 RPM, 1,950 mm/min, 1.2 mm stepover (10%D) × 18 mm depth (150%D), 0.0985 mm/tooth. Outside the fitted DMC2 envelope: spindle torque 448%, tool deflection 400%, spindle power 123%. The tests never ran this tool this heavily; the heaviest success was aluminum profile at 18,000 RPM, 1,600 mm/min, 0.2 mm stepover × 35 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-aluminum-1mm-slot",
+   "name": "Aluminum · 1 mm · slot 0.5D deep (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "aluminum",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 1,
+      "flutes": 3,
+      "stickout": 6,
+      "fluteLength": 3,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Aluminum · 6061",
+      "kc": 1000,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0025,
+      "chipMax": 0.00834,
+      "deflection": 153,
+      "surfaceMax": 760,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 24000,
+     "feed": 400,
+     "docRatio": 0.5,
+     "wocRatio": 1
+    }
+   },
+   "units": "metric",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart, 40,000 RPM capped at 24,000 by the DMC2 manufacturer with the chart feed kept: 24,000 RPM, 400 mm/min, 1 mm stepover (100%D) × 0.5 mm depth (50%D), 0.0056 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check chipload too high 67%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-aluminum-2mm-slot",
+   "name": "Aluminum · 2 mm · slot 0.5D deep (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "aluminum",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 2,
+      "flutes": 3,
+      "stickout": 9,
+      "fluteLength": 6,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Aluminum · 6061",
+      "kc": 1000,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0042,
+      "chipMax": 0.0516,
+      "deflection": 384,
+      "surfaceMax": 760,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 24000,
+     "feed": 600,
+     "docRatio": 0.5,
+     "wocRatio": 1
+    }
+   },
+   "units": "metric",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart, 40,000 RPM capped at 24,000 by the DMC2 manufacturer with the chart feed kept: 24,000 RPM, 600 mm/min, 2 mm stepover (100%D) × 1 mm depth (50%D), 0.0083 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check chipload too low 50%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-aluminum-3mm-slot",
+   "name": "Aluminum · 3 mm · slot 0.5D deep (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "aluminum",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 3,
+      "flutes": 3,
+      "stickout": 12,
+      "fluteLength": 9,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Aluminum · 6061",
+      "kc": 1000,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0063,
+      "chipMax": 0.0445,
+      "deflection": 220,
+      "surfaceMax": 760,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 24000,
+     "feed": 900,
+     "docRatio": 0.5,
+     "wocRatio": 1
+    }
+   },
+   "units": "metric",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart, 26,500 RPM capped at 24,000 by the DMC2 manufacturer with the chart feed kept: 24,000 RPM, 900 mm/min, 3 mm stepover (100%D) × 1.5 mm depth (50%D), 0.0125 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check chipload too low 50%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-aluminum-4mm-slot",
+   "name": "Aluminum · 4 mm · slot 0.5D deep (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "aluminum",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 4,
+      "flutes": 3,
+      "stickout": 18,
+      "fluteLength": 12,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Aluminum · 6061",
+      "kc": 1000,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0083,
+      "chipMax": 0.05,
+      "deflection": 216,
+      "surfaceMax": 760,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 20000,
+     "feed": 1000,
+     "docRatio": 0.5,
+     "wocRatio": 1
+    }
+   },
+   "units": "metric",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 20,000 RPM, 1,000 mm/min, 4 mm stepover (100%D) × 2 mm depth (50%D), 0.0167 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check chipload too low 50%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-aluminum-6mm-slot",
+   "name": "Aluminum · 6 mm · slot 0.5D deep (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "aluminum",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 6,
+      "flutes": 3,
+      "stickout": 22,
+      "fluteLength": 16,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Aluminum · 6061",
+      "kc": 1000,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0077,
+      "chipMax": 0.0625,
+      "deflection": 103,
+      "surfaceMax": 760,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 13000,
+     "feed": 750,
+     "docRatio": 0.5,
+     "wocRatio": 1
+    }
+   },
+   "units": "metric",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 13,000 RPM, 750 mm/min, 6 mm stepover (100%D) × 3 mm depth (50%D), 0.0192 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check spindle torque 73%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-aluminum-8mm-slot",
+   "name": "Aluminum · 8 mm · slot 0.5D deep (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "aluminum",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 8,
+      "flutes": 3,
+      "stickout": 32,
+      "fluteLength": 25,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Aluminum · 6061",
+      "kc": 1000,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0043,
+      "chipMax": 0.055,
+      "deflection": 66.3,
+      "surfaceMax": 760,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 10000,
+     "feed": 825,
+     "docRatio": 0.5,
+     "wocRatio": 1
+    }
+   },
+   "units": "metric",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 10,000 RPM, 825 mm/min, 8 mm stepover (100%D) × 4 mm depth (50%D), 0.0275 mm/tooth. Outside the fitted DMC2 envelope: spindle torque 185%. The tests never ran this tool this heavily; the heaviest success was aluminum profile at 24,000 RPM, 2,000 mm/min, 0.3 mm stepover × 24 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-aluminum-10mm-slot",
+   "name": "Aluminum · 10 mm · slot 0.5D deep (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "aluminum",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 10,
+      "flutes": 3,
+      "stickout": 38,
+      "fluteLength": 30,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Aluminum · 6061",
+      "kc": 1000,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0028,
+      "chipMax": 0.0594,
+      "deflection": 43.4,
+      "surfaceMax": 760,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 8000,
+     "feed": 950,
+     "docRatio": 0.5,
+     "wocRatio": 1
+    }
+   },
+   "units": "metric",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 8,000 RPM, 950 mm/min, 10 mm stepover (100%D) × 5 mm depth (50%D), 0.0396 mm/tooth. Outside the fitted DMC2 envelope: spindle torque 417%, spindle power 139%. The tests never ran this tool this heavily; the heaviest success was aluminum profile at 22,000 RPM, 1,900 mm/min, 0.2 mm stepover × 30 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-aluminum-12mm-slot",
+   "name": "Aluminum · 12 mm · slot 0.5D deep (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "aluminum",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 12,
+      "flutes": 3,
+      "stickout": 45,
+      "fluteLength": 35,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Aluminum · 6061",
+      "kc": 1000,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0019,
+      "chipMax": 0.0739,
+      "deflection": 38.2,
+      "surfaceMax": 760,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 6600,
+     "feed": 975,
+     "docRatio": 0.5,
+     "wocRatio": 1
+    }
+   },
+   "units": "metric",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 6,600 RPM, 975 mm/min, 12 mm stepover (100%D) × 6 mm depth (50%D), 0.0492 mm/tooth. Outside the fitted DMC2 envelope: spindle torque 746%, spindle power 205%, tool deflection 111%. The tests never ran this tool this heavily; the heaviest success was aluminum profile at 18,000 RPM, 1,600 mm/min, 0.2 mm stepover × 35 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-steel-1mm-profile",
+   "name": "Mild steel · 1 mm · profile 0.05D × 1.5D (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "steel",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 1,
+      "flutes": 4,
+      "stickout": 6,
+      "fluteLength": 3,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Mild steel",
+      "kc": 1800,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.00073,
+      "chipMax": 0.00459,
+      "deflection": 175,
+      "surfaceMax": 610,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 24000,
+     "feed": 320,
+     "docRatio": 1.5,
+     "wocRatio": 0.05
+    }
+   },
+   "units": "metric",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart, 40,000 RPM capped at 24,000 by the DMC2 manufacturer with the chart feed kept: 24,000 RPM, 320 mm/min, 0.05 mm stepover (5%D) × 1.5 mm depth (150%D), 0.0033 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check chipload too low 50%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-steel-2mm-profile",
+   "name": "Mild steel · 2 mm · profile 0.05D × 1.5D (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "steel",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 2,
+      "flutes": 4,
+      "stickout": 9,
+      "fluteLength": 6,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Mild steel",
+      "kc": 1800,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0018,
+      "chipMax": 0.025,
+      "deflection": 268,
+      "surfaceMax": 610,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 24000,
+     "feed": 800,
+     "docRatio": 1.5,
+     "wocRatio": 0.05
+    }
+   },
+   "units": "metric",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart, 40,000 RPM capped at 24,000 by the DMC2 manufacturer with the chart feed kept: 24,000 RPM, 800 mm/min, 0.1 mm stepover (5%D) × 3 mm depth (150%D), 0.0083 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check chipload too low 50%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-steel-3mm-profile",
+   "name": "Mild steel · 3 mm · profile 0.05D × 1.5D (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "steel",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 3,
+      "flutes": 4,
+      "stickout": 12,
+      "fluteLength": 9,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Mild steel",
+      "kc": 1800,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0023,
+      "chipMax": 0.0324,
+      "deflection": 325,
+      "surfaceMax": 610,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 24000,
+     "feed": 1020,
+     "docRatio": 1.5,
+     "wocRatio": 0.05
+    }
+   },
+   "units": "metric",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart, 32,000 RPM capped at 24,000 by the DMC2 manufacturer with the chart feed kept: 24,000 RPM, 1,020 mm/min, 0.15 mm stepover (5%D) × 4.5 mm depth (150%D), 0.0106 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check chipload too low 50%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-steel-4mm-profile",
+   "name": "Mild steel · 4 mm · profile 0.05D × 1.5D (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "steel",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 4,
+      "flutes": 4,
+      "stickout": 18,
+      "fluteLength": 12,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Mild steel",
+      "kc": 1800,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0028,
+      "chipMax": 0.0407,
+      "deflection": 546,
+      "surfaceMax": 610,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 24000,
+     "feed": 1250,
+     "docRatio": 1.5,
+     "wocRatio": 0.05
+    }
+   },
+   "units": "metric",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 24,000 RPM, 1,250 mm/min, 0.2 mm stepover (5%D) × 6 mm depth (150%D), 0.0130 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check surface speed 49%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-steel-6mm-profile",
+   "name": "Mild steel · 6 mm · profile 0.05D × 1.5D (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "steel",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 6,
+      "flutes": 4,
+      "stickout": 22,
+      "fluteLength": 16,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Mild steel",
+      "kc": 1800,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0052,
+      "chipMax": 0.0313,
+      "deflection": 97.9,
+      "surfaceMax": 610,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 16000,
+     "feed": 1540,
+     "docRatio": 1.5,
+     "wocRatio": 0.05
+    }
+   },
+   "units": "metric",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 16,000 RPM, 1,540 mm/min, 0.3 mm stepover (5%D) × 9 mm depth (150%D), 0.0241 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check chipload too low 50%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-steel-8mm-profile",
+   "name": "Mild steel · 8 mm · profile 0.05D × 1.5D (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "steel",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 8,
+      "flutes": 4,
+      "stickout": 32,
+      "fluteLength": 25,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Mild steel",
+      "kc": 1800,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.00093,
+      "chipMax": 0.0201,
+      "deflection": 21.2,
+      "surfaceMax": 610,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 12000,
+     "feed": 1540,
+     "docRatio": 1.5,
+     "wocRatio": 0.05
+    }
+   },
+   "units": "metric",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 12,000 RPM, 1,540 mm/min, 0.4 mm stepover (5%D) × 12 mm depth (150%D), 0.0321 mm/tooth. Outside the fitted DMC2 envelope: tool deflection 373%. The tests never ran this tool this heavily; the heaviest success was steel profile at 18,000 RPM, 1,100 mm/min, 0.03 mm stepover × 24 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-steel-10mm-profile",
+   "name": "Mild steel · 10 mm · profile 0.05D × 1.5D (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "steel",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 10,
+      "flutes": 4,
+      "stickout": 38,
+      "fluteLength": 30,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Mild steel",
+      "kc": 1800,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.001,
+      "chipMax": 0.0251,
+      "deflection": 20.1,
+      "surfaceMax": 610,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 9600,
+     "feed": 1540,
+     "docRatio": 1.5,
+     "wocRatio": 0.05
+    }
+   },
+   "units": "metric",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 9,600 RPM, 1,540 mm/min, 0.5 mm stepover (5%D) × 15 mm depth (150%D), 0.0401 mm/tooth. Outside the fitted DMC2 envelope: tool deflection 421%, spindle torque 152%. The tests never ran this tool this heavily; the heaviest success was steel profile at 17,000 RPM, 1,000 mm/min, 0.05 mm stepover × 30 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-steel-12mm-profile",
+   "name": "Mild steel · 12 mm · profile 0.05D × 1.5D (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "steel",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 12,
+      "flutes": 4,
+      "stickout": 45,
+      "fluteLength": 35,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Mild steel",
+      "kc": 1800,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.001,
+      "chipMax": 0.0313,
+      "deflection": 29.4,
+      "surfaceMax": 610,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 8000,
+     "feed": 1600,
+     "docRatio": 1.5,
+     "wocRatio": 0.05
+    }
+   },
+   "units": "metric",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 8,000 RPM, 1,600 mm/min, 0.6 mm stepover (5%D) × 18 mm depth (150%D), 0.0500 mm/tooth. Outside the fitted DMC2 envelope: tool deflection 345%, spindle torque 273%. The tests never ran this tool this heavily; the heaviest success was steel profile at 14,000 RPM, 1,000 mm/min, 0.1 mm stepover × 35 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-steel-1mm-slot",
+   "name": "Mild steel · 1 mm · slot 0.25D deep (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "steel",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 1,
+      "flutes": 4,
+      "stickout": 6,
+      "fluteLength": 3,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Mild steel",
+      "kc": 1800,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.00073,
+      "chipMax": 0.00459,
+      "deflection": 175,
+      "surfaceMax": 610,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 24000,
+     "feed": 160,
+     "docRatio": 0.25,
+     "wocRatio": 1
+    }
+   },
+   "units": "metric",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart, 40,000 RPM capped at 24,000 by the DMC2 manufacturer with the chart feed kept: 24,000 RPM, 160 mm/min, 1 mm stepover (100%D) × 0.25 mm depth (25%D), 0.0017 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check chipload too low 44%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-steel-2mm-slot",
+   "name": "Mild steel · 2 mm · slot 0.25D deep (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "steel",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 2,
+      "flutes": 4,
+      "stickout": 9,
+      "fluteLength": 6,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Mild steel",
+      "kc": 1800,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0018,
+      "chipMax": 0.025,
+      "deflection": 268,
+      "surfaceMax": 610,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 24000,
+     "feed": 400,
+     "docRatio": 0.25,
+     "wocRatio": 1
+    }
+   },
+   "units": "metric",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart, 40,000 RPM capped at 24,000 by the DMC2 manufacturer with the chart feed kept: 24,000 RPM, 400 mm/min, 2 mm stepover (100%D) × 0.5 mm depth (25%D), 0.0042 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check chipload too low 43%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-steel-3mm-slot",
+   "name": "Mild steel · 3 mm · slot 0.25D deep (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "steel",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 3,
+      "flutes": 4,
+      "stickout": 12,
+      "fluteLength": 9,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Mild steel",
+      "kc": 1800,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0023,
+      "chipMax": 0.0324,
+      "deflection": 325,
+      "surfaceMax": 610,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 24000,
+     "feed": 510,
+     "docRatio": 0.25,
+     "wocRatio": 1
+    }
+   },
+   "units": "metric",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart, 32,000 RPM capped at 24,000 by the DMC2 manufacturer with the chart feed kept: 24,000 RPM, 510 mm/min, 3 mm stepover (100%D) × 0.75 mm depth (25%D), 0.0053 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check chipload too low 43%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-steel-4mm-slot",
+   "name": "Mild steel · 4 mm · slot 0.25D deep (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "steel",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 4,
+      "flutes": 4,
+      "stickout": 18,
+      "fluteLength": 12,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Mild steel",
+      "kc": 1800,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0028,
+      "chipMax": 0.0407,
+      "deflection": 546,
+      "surfaceMax": 610,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 24000,
+     "feed": 625,
+     "docRatio": 0.25,
+     "wocRatio": 1
+    }
+   },
+   "units": "metric",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 24,000 RPM, 625 mm/min, 4 mm stepover (100%D) × 1 mm depth (25%D), 0.0065 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check surface speed 49%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-steel-6mm-slot",
+   "name": "Mild steel · 6 mm · slot 0.25D deep (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "steel",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 6,
+      "flutes": 4,
+      "stickout": 22,
+      "fluteLength": 16,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Mild steel",
+      "kc": 1800,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.0052,
+      "chipMax": 0.0313,
+      "deflection": 97.9,
+      "surfaceMax": 610,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 16000,
+     "feed": 770,
+     "docRatio": 0.25,
+     "wocRatio": 1
+    }
+   },
+   "units": "metric",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 16,000 RPM, 770 mm/min, 6 mm stepover (100%D) × 1.5 mm depth (25%D), 0.0120 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check spindle torque 55%.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-steel-8mm-slot",
+   "name": "Mild steel · 8 mm · slot 0.25D deep (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "steel",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 8,
+      "flutes": 4,
+      "stickout": 32,
+      "fluteLength": 25,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Mild steel",
+      "kc": 1800,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.00093,
+      "chipMax": 0.0201,
+      "deflection": 21.2,
+      "surfaceMax": 610,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 12000,
+     "feed": 770,
+     "docRatio": 0.25,
+     "wocRatio": 1
+    }
+   },
+   "units": "metric",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 12,000 RPM, 770 mm/min, 8 mm stepover (100%D) × 2 mm depth (25%D), 0.0160 mm/tooth. Outside the fitted DMC2 envelope: spindle torque 130%. The tests never ran this tool this heavily; the heaviest success was steel profile at 18,000 RPM, 1,100 mm/min, 0.03 mm stepover × 24 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-steel-10mm-slot",
+   "name": "Mild steel · 10 mm · slot 0.25D deep (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "steel",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 10,
+      "flutes": 4,
+      "stickout": 38,
+      "fluteLength": 30,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Mild steel",
+      "kc": 1800,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.001,
+      "chipMax": 0.0251,
+      "deflection": 20.1,
+      "surfaceMax": 610,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 9600,
+     "feed": 770,
+     "docRatio": 0.25,
+     "wocRatio": 1
+    }
+   },
+   "units": "metric",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 9,600 RPM, 770 mm/min, 10 mm stepover (100%D) × 2.5 mm depth (25%D), 0.0201 mm/tooth. Outside the fitted DMC2 envelope: spindle torque 253%, spindle power 101%. The tests never ran this tool this heavily; the heaviest success was steel profile at 17,000 RPM, 1,000 mm/min, 0.05 mm stepover × 30 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  },
+  {
+   "id": "chart-steel-12mm-slot",
+   "name": "Mild steel · 12 mm · slot 0.25D deep (chart)",
+   "snapshot": {
+    "machineId": "lib:dmc2-mini/dmc2-mini",
+    "materialId": "steel",
+    "config": {
+     "tool": {
+      "material": "carbide",
+      "diameter": 12,
+      "flutes": 4,
+      "stickout": 45,
+      "fluteLength": 35,
+      "modulus": 600,
+      "stiffness": 0.45
+     },
+     "machine": {
+      "name": "DMC2 Mini",
+      "rpmMin": 6000,
+      "rpmMax": 24000,
+      "feedMax": 10000,
+      "power": 950,
+      "torque": 0.378,
+      "utilization": 0.75,
+      "known": true
+     },
+     "material": {
+      "name": "Mild steel",
+      "kc": 1800,
+      "powerFactor": 1.25,
+      "forceFactor": 1.3,
+      "known": true
+     },
+     "limits": {
+      "cuttingDataKnown": true,
+      "chipMin": 0.001,
+      "chipMax": 0.0313,
+      "deflection": 29.4,
+      "surfaceMax": 610,
+      "caution": 0.75,
+      "operation": "roughing"
+     }
+    },
+    "point": {
+     "rpm": 8000,
+     "feed": 800,
+     "docRatio": 0.25,
+     "wocRatio": 1
+    }
+   },
+   "units": "metric",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 8,000 RPM, 800 mm/min, 12 mm stepover (100%D) × 3 mm depth (25%D), 0.0250 mm/tooth. Outside the fitted DMC2 envelope: spindle torque 455%, spindle power 152%. The tests never ran this tool this heavily; the heaviest success was steel profile at 14,000 RPM, 1,000 mm/min, 0.1 mm stepover × 35 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "provenance": {
+    "source": "manufacturer",
+    "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
+    "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
+   },
+   "updatedAt": "2026-10-31T00:00:00.000Z"
+  }
+ ]
+}

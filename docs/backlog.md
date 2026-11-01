@@ -33,7 +33,7 @@ Optional, off by default. Choose one uncertain parameter and explicit low/refere
 
 ## CS B02 Additional machine definitions
 
-Status: Largely superseded on 30 October 2026 by libraries (`src/library.ts`): any machine edited in the Machine tab can be saved to a personal library with provenance, exported, imported and shared by URL, and three generic example machines ship built in. Still open: a dedicated machine editor with curve applicability and measured-curve points rather than editing the active experiment then saving.
+Status: Largely superseded on 30 October 2026 by libraries (`src/library.ts`): any machine edited in the Machine tab can be saved to a personal library with provenance, exported, imported and shared by URL, and four generic example machines ship built in. Since 31 October 2026 named machines live only in libraries (preloaded Nova Labs; importable DMC2 Mini). Still open: a dedicated machine editor with curve applicability and measured-curve points rather than editing the active experiment then saving; a preload list that users can extend themselves.
 
 
 ## CS B03 Router bits and other cutter geometries

@@ -51,14 +51,15 @@ test('every limit explains what the operator would notice',async()=>{
 test('single-flute cutters get a heavier chip band and roughing a larger deflection allowance; the RC4 aluminum slot then reads sensibly',async()=>{
  const {cuttingPreset,fluteScale,OPERATION_INFO}=await import('../src/cuttingPresets.ts');
  const {setOperation,editLimit:edit}=await import('../src/experiment.ts');
- const {MACHINES}=await import('../src/experiment.ts');
+ const {parseLibrary,machineFromItem}=await import('../src/library.ts');const {readFileSync}=await import('node:fs');
+ const rc4=machineFromItem(parseLibrary(readFileSync(new URL('../public/libraries/nova-labs.json',import.meta.url),'utf8')).machines.find(m=>m.id==='shopsabre-rc4')!);
  assert.equal(fluteScale(1),1.8);assert.equal(fluteScale(2),1);assert.equal(fluteScale(3),1);assert.equal(fluteScale(4),.8);
  const single=cuttingPreset('aluminum','carbide',{diameter:4,flutes:1}),twin=cuttingPreset('aluminum','carbide',{diameter:4,flutes:2});
  assert.ok(Math.abs(single.chipMax/twin.chipMax-1.8)<1e-3);assert.equal(single.chipMin,twin.chipMin);
  assert.equal(cuttingPreset('aluminum','carbide',{operation:'finishing'}).deflection,25);assert.equal(cuttingPreset('aluminum','carbide').deflection,100);
  assert.equal(OPERATION_INFO.roughing.deflection/OPERATION_INFO.finishing.deflection,4);
  // Reported RC4 cut: 4 mm single-flute carbide, 6061, 16,000 RPM, 40 IPM, 2 mm deep slot.
- const e=fresh();e.machineId='rc4';e.config.machine={...MACHINES.rc4};Object.assign(e.config.tool,{diameter:4,flutes:1,stickout:15,fluteLength:12});applyCuttingPreset(e);
+ const e=fresh();e.machineId='lib:nova-labs/shopsabre-rc4';e.config.machine=rc4;Object.assign(e.config.tool,{diameter:4,flutes:1,stickout:15,fluteLength:12});applyCuttingPreset(e);
  e.point={rpm:16000,feed:40*25.4,docRatio:.5,wocRatio:1};
  const {setupFor}=await import('../src/experiment.ts');
  const r=calculate(setupFor(e).cut,setupFor(e));

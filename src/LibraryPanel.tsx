@@ -10,12 +10,12 @@ import type {Machine,Tool} from './model';
 import {fmt,toDisplay,unit} from './units';
 import type {Units} from './units';
 
-interface Props {libraries:Library[];experiment:Experiment;units:Units;onChange:(libraries:Library[])=>void;onUseMachine:(machineId:string,machine:Machine)=>void;onUseMaterial:(materialId:string,item:MaterialItem)=>void;onUseTool:(tool:Tool)=>void;onLoadRecipe:(recipe:RecipeItem)=>void;notify:(message:string)=>void}
+interface Props {libraries:Library[];preloaded?:Library[];experiment:Experiment;units:Units;onChange:(libraries:Library[])=>void;onUseMachine:(machineId:string,machine:Machine)=>void;onUseMaterial:(materialId:string,item:MaterialItem)=>void;onUseTool:(tool:Tool)=>void;onLoadRecipe:(recipe:RecipeItem)=>void;notify:(message:string)=>void}
 type Pending={incoming:Library;target:string;policy:ConflictPolicy;conflicts:string[]};
 const KIND_LABEL:Record<ItemKind,string>={machines:'Machines',materials:'Workpiece materials',tools:'Tools',recipes:'Cut recipes'};
 const message=(err:unknown)=>err instanceof Error?err.message:String(err);
 
-export default function LibraryPanel({libraries,experiment:e,units:u,onChange,onUseMachine,onUseMaterial,onUseTool,onLoadRecipe,notify}:Props){
+export default function LibraryPanel({libraries,preloaded=[],experiment:e,units:u,onChange,onUseMachine,onUseMaterial,onUseTool,onLoadRecipe,notify}:Props){
  const [name,setName]=useState(''),[url,setUrl]=useState(''),[busy,setBusy]=useState(false);
  const [selection,setSelection]=useState<Record<string,Selection>>({});
  const [pending,setPending]=useState<Pending|null>(null);
@@ -96,10 +96,10 @@ export default function LibraryPanel({libraries,experiment:e,units:u,onChange,on
      <button {...explain('Download this whole library as a JSON file that others can import.')} onClick={()=>{download(exportLibrary(lib),`cutspace-library-${lib.id}.json`);notify(`Exported ${lib.name}.`);}}><Download size={12}/> Export</button>
      {selectedCount(lib.id)>0&&<button onClick={()=>{const sel=selection[lib.id]??{};download(exportLibrary(lib,{machines:sel.machines??[],tools:sel.tools??[],recipes:sel.recipes??[]}),`cutspace-${lib.id}-selection.json`);notify(`Exported ${selectedCount(lib.id)} selected items.`);}}>Export {selectedCount(lib.id)} selected</button>}
      {lib.sourceUrl&&<button disabled={busy} onClick={()=>void addFromUrl(lib)}><RefreshCw size={12}/> Refresh</button>}
-     {lib.kind==='shared'&&<button aria-label={`Remove ${lib.name}`} onClick={()=>{onChange(libraries.filter(l=>l.id!==lib.id));notify(`Removed shared library ${lib.name}. Items copied to your library stay.`);}}><Trash2 size={12}/></button>}
+     {lib.kind==='shared'&&<button aria-label={`Remove ${lib.name}`} {...explain(preloaded.some(p=>p.sourceUrl===lib.sourceUrl)?'Remove this preloaded shared library. It will not be added again automatically; Add shared with its address brings it back.':'Remove this shared library. Items you copied to your own library stay.')} onClick={()=>{onChange(libraries.filter(l=>l.id!==lib.id));notify(`Removed shared library ${lib.name}. Items copied to your library stay${preloaded.some(p=>p.sourceUrl===lib.sourceUrl)?'; it will not be preloaded again':''}.`);}}><Trash2 size={12}/></button>}
     </div>
    </div>
-   {lib.sourceUrl&&<small className="lib-source">{lib.sourceUrl}</small>}
+   {lib.sourceUrl&&<small className="lib-source">{preloaded.some(p=>p.sourceUrl===lib.sourceUrl)?'Preloaded from ':'Shared from '}{lib.sourceUrl}</small>}
    {ITEM_KINDS.map(kind=>{const items=lib[kind] as ItemBase[];if(!items.length)return null;
     return <div key={kind}><h5>{KIND_LABEL[kind]}</h5><ul className="lib-items">{items.map(item=><li key={item.id}>
      <label><input type="checkbox" aria-label={`Select ${item.name} for export`} checked={selection[lib.id]?.[kind]?.includes(item.id)??false} onChange={ev=>toggle(lib.id,kind,item.id,ev.target.checked)}/><span><b>{item.name}</b><small>{describe(kind,item)}</small><small>{PROVENANCE_LABEL[item.provenance.source]}{item.provenance.note?` · ${item.provenance.note}`:''}{item.provenance.url?<> · <a href={item.provenance.url} target="_blank" rel="noreferrer">source</a></>:null}</small></span></label>

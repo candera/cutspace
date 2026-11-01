@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "modelVersion": "illustrative-static-3",
   "name": "Big Blue · shared plywood cut · 200 IPM",
-  "machineId": "bigblue",
+  "machineId": "lib:nova-labs/big-blue",
   "materialId": "plywood",
   "config": {
     "tool": {

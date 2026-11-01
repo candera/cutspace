@@ -2,15 +2,16 @@ import {cuttingPreset,CUTTING_PRESET_VERSION,OPERATION_INFO} from './cuttingPres
 import {cloneDefaults, MODEL_VERSION, CUTTER_MATERIALS} from './model.ts';
 import type {Setup, Metric, CutterMaterial, Operation} from './model.ts';
 import type {Units} from './units.ts';
-const RC4_PROFILE={name:'ShopSabre RC4',rpmMin:6000,rpmMax:24000,feedMax:10000,power:1500,torque:.9,utilization:.75,known:true};
+/** Built-in machines are generic starting points only. Named machines (the Nova Labs ShopSabre RC4 and Big Blue, a DMC2 Mini) live in libraries. */
 export const MACHINES={
- dmc2:{name:'DMC2 Mini',rpmMin:10000,rpmMax:24000,feedMax:10000,power:2200,torque:.875,utilization:.75,known:true},
- rc4:{...RC4_PROFILE},
- bigblue:{...RC4_PROFILE,name:'Big Blue'},
+ 'spindle-router-example':{name:'2.2 kW spindle router (example)',rpmMin:8000,rpmMax:24000,feedMax:10000,power:2200,torque:.875,utilization:.75,known:true},
  'desktop-mill-example':{name:'Desktop mill (example)',rpmMin:2000,rpmMax:10000,feedMax:2500,power:500,torque:.6,utilization:.75,known:true},
  'hobby-router-example':{name:'Hobby router (example)',rpmMin:10000,rpmMax:30000,feedMax:5000,power:900,torque:.4,utilization:.75,known:true},
  'industrial-router-example':{name:'4×4 industrial router (example)',rpmMin:6000,rpmMax:24000,feedMax:15000,power:3000,torque:1.6,utilization:.75,known:true},
 };
+export const DEFAULT_MACHINE_ID='spindle-router-example';
+/** Machine ids that earlier versions shipped built in. Files that reference them now point at the library item that carries the same profile; the snapshot keeps its own values either way. */
+export const LEGACY_MACHINE_IDS:Record<string,string>={dmc2:'lib:dmc2-mini/dmc2-mini',rc4:'lib:nova-labs/shopsabre-rc4',bigblue:'lib:nova-labs/big-blue'};
 /** All capacities and coefficients below are fictional demonstration inputs, not specifications. */
 export const MATERIALS={
  aluminum:{name:'Aluminum · 6061',kc:1000,note:'Illustrative effective coefficient; alloy/temper and tool data require qualification.'},
@@ -33,7 +34,7 @@ export interface View {fill:Metric;overlay:Overlay;colorScheme:ColorScheme;conto
 export interface Experiment extends Snapshot {schemaVersion:2;modelVersion:typeof MODEL_VERSION;name:string;units:Units;view:View;pins:Snapshot[];provenance:'illustrative / user overrides';}
 export function fresh():Experiment{
  const s=cloneDefaults();s.limits=cuttingPreset('aluminum','carbide',{diameter:s.tool.diameter,flutes:s.tool.flutes});const {cut,...config}=s;
- return {schemaVersion:2,modelVersion:MODEL_VERSION,name:'Untitled exploration',machineId:'dmc2',materialId:'aluminum',config,point:{rpm:cut.rpm,feed:cut.feed,docRatio:.5,wocRatio:.2},units:'metric',view:{fill:'mrr',overlay:'utilization',colorScheme:'safety',contourDensity:'standard',physicalAxes:true,fixed:false,scaleMin:0,scaleMax:10,rpmMin:1500,rpmMax:19800,feedMax:3600,wocMax:100,docMax:275},pins:[],provenance:'illustrative / user overrides'};
+ return {schemaVersion:2,modelVersion:MODEL_VERSION,name:'Untitled exploration',machineId:DEFAULT_MACHINE_ID,materialId:'aluminum',config,point:{rpm:cut.rpm,feed:cut.feed,docRatio:.5,wocRatio:.2},units:'metric',view:{fill:'mrr',overlay:'utilization',colorScheme:'safety',contourDensity:'standard',physicalAxes:true,fixed:false,scaleMin:0,scaleMax:10,rpmMin:1500,rpmMax:19800,feedMax:3600,wocMax:100,docMax:275},pins:[],provenance:'illustrative / user overrides'};
 }
 /** Built-in materials load explicit provisional limits. A custom material needs its library cutting data supplied by the caller. */
 export function applyCuttingPreset(e:Experiment){
@@ -74,7 +75,7 @@ export function readSnapshot(value:unknown,legacy=false):Snapshot{
  const s=object(value),c=object(s.config),t=object(c.tool),m=object(c.machine),a=object(c.material),l=object(c.limits),p=object(s.point);
  if(typeof s.machineId!=='string'||!s.machineId.trim()||s.machineId.length>200)throw Error('Unsupported machine reference.');
  if(typeof s.materialId!=='string'||!s.materialId.trim()||s.materialId.length>200)throw Error('Unsupported material reference.');
- const machineId=s.machineId,materialId=s.materialId;
+ const machineId=LEGACY_MACHINE_IDS[s.machineId]??s.machineId,materialId=s.materialId;
  const machineName=Object.hasOwn(MACHINES,machineId)?MACHINES[machineId as MachineId].name:m.name;
  if(typeof machineName!=='string'||!machineName.trim()||machineName.length>120)throw Error('This machine is not built in and the file does not name it.');
  const materialName=Object.hasOwn(MATERIALS,materialId)?MATERIALS[materialId as MaterialId].name:a.name;
@@ -94,9 +95,11 @@ export function readSnapshot(value:unknown,legacy=false):Snapshot{
  return {machineId,materialId,config:{tool,machine,material,limits},point:{rpm:num(p,'rpm',1,200000),feed:num(p,'feed',0,200000),docRatio:num(p,'docRatio',0,100),wocRatio:num(p,'wocRatio',0,2)}};
 }
 const OLD_DMC2={name:'DMC2 Mini',rpmMin:3000,rpmMax:18000,feedMax:3000,power:250,torque:.3,utilization:.75,known:true};
+/** Manufacturer-based DMC2 Mini profile introduced by model illustrative-static-5; used only to upgrade untouched placeholders in older files. */
+export const DMC2_PUBLISHED_PROFILE={name:'DMC2 Mini',rpmMin:10000,rpmMax:24000,feedMax:10000,power:2200,torque:.875,utilization:.75,known:true};
 function migrateMachineProfile(snapshot:Snapshot,modelVersion:unknown){
- if(!['illustrative-static-2','illustrative-static-3','illustrative-static-4'].includes(String(modelVersion))||snapshot.machineId!=='dmc2')return snapshot;
- if(Object.entries(OLD_DMC2).every(([key,value])=>snapshot.config.machine[key as keyof typeof OLD_DMC2]===value))snapshot.config.machine={...MACHINES.dmc2};
+ if(!['illustrative-static-2','illustrative-static-3','illustrative-static-4'].includes(String(modelVersion))||snapshot.machineId!==LEGACY_MACHINE_IDS.dmc2)return snapshot;
+ if(Object.entries(OLD_DMC2).every(([key,value])=>snapshot.config.machine[key as keyof typeof OLD_DMC2]===value))snapshot.config.machine={...DMC2_PUBLISHED_PROFILE};
  return snapshot;
 }
 export function parseExperiment(text:string):Experiment{
