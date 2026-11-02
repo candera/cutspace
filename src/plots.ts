@@ -1,6 +1,7 @@
 import {contours} from 'd3-contour';
 import {calculate,metricValue,clamp} from './model.ts';
 import type {Setup,Metric,Result,Cut} from './model.ts';
+import {sequentialMaps,divergingMap} from './colorMaps.ts';
 import type {ColorScheme,View} from './experiment.ts';
 import {CHARTS,axisValue,cutOn} from './charts.ts';
 import type {Chart,ChartId} from './charts.ts';
@@ -52,31 +53,41 @@ export function automaticFillScale(grids:Grid[],metric:Metric,s:Setup):Scale{
  if(metric==='utilization')return {min:0,max:1,basis:'configured-limit'};
  return visible;
 }
-/** Place the configured caution threshold at the yellow stop and the limit at red. */
-export function scalePosition(value:number,scale:Scale,caution=.75){
- const ratio=(value-scale.min)/(scale.max-scale.min);
- if(scale.basis!=='configured-limit')return ratio;
- const c=clamp(caution,.1,.99);
- if(ratio<=c/2)return ratio/c;
- if(ratio<=c)return .5+(ratio-c/2)/c*.5;
- return .75+(ratio-c)/(1-c)*.25;
+/** Linear position of a value on the scale. The map is never re-spaced to pin a threshold to a colour: the caution and limit lines mark thresholds, so the fill stays perceptually uniform. */
+export function scalePosition(value:number,scale:Scale){return (value-scale.min)/(scale.max-scale.min);}
+/** Interpolate a colour table (evenly spaced hex stops) at a 0–1 position, clamped at the ends. */
+function sampleMap(table:readonly string[],t:number){
+ const v=clamp(t,0,1)*(table.length-1),i=Math.min(table.length-2,Math.floor(v)),f=v-i;
+ const hex=(c:string)=>[1,3,5].map(k=>parseInt(c.slice(k,k+2),16));
+ const a=hex(table[i]),b=hex(table[i+1]);
+ return `rgb(${a.map((c,k)=>Math.round(c+(b[k]-c)*f)).join(',')})`;
 }
-export function heatColor(value:number,scheme:ColorScheme='teal'){
- const stops=scheme==='safety'?[[0,0,0],[0,105,55],[65,170,73],[242,205,54],[205,45,36]]:[[21,43,57],[32,88,101],[60,144,137],[162,198,149],[238,209,132]];
- const v=clamp(value,0,1)*4,i=Math.min(3,Math.floor(v)),f=v-i;
- return `rgb(${stops[i].map((a,k)=>Math.round(a+(stops[i+1][k]-a)*f)).join(',')})`;
+/** Colour of a 0–1 position on the chosen sequential map. */
+export function heatColor(value:number,scheme:ColorScheme='batlow'){return sampleMap(sequentialMaps[scheme],value);}
+/** Remaining margin is signed, so it uses a diverging map with zero at the neutral centre and each sign scaled to its own extreme (a multi-sequential mapping). Negative margin, past a limit, takes the red side; positive margin the blue side. A scale without a sign change uses only that half. */
+export function divergingPosition(value:number,scale:Scale){
+ const lo=Math.min(scale.min,0),hi=Math.max(scale.max,0);
+ return value<0?(lo<0?.5-.5*value/lo:.5):hi>0?.5+.5*value/hi:.5;
 }
-export const zonePalettes:Record<ColorScheme,readonly {label:string;color:string}[]>={
- safety:[{label:'Very safe',color:'#000000'},{label:'Safe',color:'#009148'},{label:'Borderline',color:'#f2cd36'},{label:'No good',color:'#cd2d24'}],
- teal:[{label:'Very safe',color:'#152b39'},{label:'Safe',color:'#205865'},{label:'Borderline',color:'#a2c695'},{label:'No good',color:'#eed184'}],
-};
+/** The fill colour of a numeric metric value on the shared scale. */
+export function fillColor(value:number,metric:Metric,scale:Scale,scheme:ColorScheme){
+ if(metric==='margin')return sampleMap(divergingMap,1-divergingPosition(value,scale));
+ return heatColor(scalePosition(value,scale),scheme);
+}
+/** CSS gradient for the legend, sampled through the same mapping as the plot fill so the colour bar cannot drift from it. */
+export function legendGradient(metric:Metric,scale:Scale,scheme:ColorScheme,steps=24){
+ const stops=Array.from({length:steps+1},(_,i)=>fillColor(scale.min+(scale.max-scale.min)*i/steps,metric,scale,scheme));
+ return `linear-gradient(90deg,${stops.join(',')})`;
+}
+const ZONE_LABELS=['Very safe','Safe','Borderline','No good'] as const;
+/** Limit zone is four ordered classes, so they are four evenly spaced samples of the sequential map: order survives greyscale and colour-vision deficiency. */
+export function zonePalette(scheme:ColorScheme){return ZONE_LABELS.map((label,i)=>({label,color:heatColor((i+.5)/4,scheme)}));}
 /** Semantic category for Limit zone. Hard failures and unavailable checks remain hatched/unknown. */
 export function zonePaletteEntry(r:Result,scheme:ColorScheme,caution=.75){
  if(r.zone==='unknown')return {label:'Outside / unknown',color:'#283443'} as const;
  const index=r.softRatio<=caution*.5?0:r.softRatio<=caution?1:r.softRatio<=1?2:3;
- return zonePalettes[scheme][index];
+ return zonePalette(scheme)[index];
 }
-export function safetyZoneColor(r:Result,caution=.75){return zonePaletteEntry(r,'safety',caution).color;}
 export type XY=[number,number];
 /** Real contour runs, with synthetic frame and missing-data closure edges removed. Shared by paths and labels. */
 export function contourSegments(values:number[],threshold:number,w:number,h:number,left=0,top=0):XY[][]{

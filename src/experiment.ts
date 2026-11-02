@@ -31,13 +31,14 @@ export interface Point {rpm:number;feed:number;docRatio:number;wocRatio:number}
 export interface Snapshot {machineId:string;materialId:string;config:Configuration;point:Point}
 export type Overlay='none'|'mrr'|'utilization'|'chipMax'|'chip'|'deflection';
 export type ContourDensity='coarse'|'standard'|'fine';
-export type ColorScheme='safety'|'teal';
+/** Sequential fill maps. `batlow` is Crameri's perceptually uniform, colour-vision-safe default; `teal` is the earlier teal–gold ramp. The retired black–green–red scheme is migrated to batlow on load. */
+export type ColorScheme='batlow'|'teal';
 /** `charts` names the two plots' axis charts (default speed/feed and engagement). Axis ranges are per coordinate; the derived ones are optional and fall back to the broad fit. */
 export interface View {fill:Metric;overlay:Overlay;colorScheme:ColorScheme;contourDensity?:ContourDensity;physicalAxes:boolean;fixed:boolean;scaleMin:number;scaleMax:number;rpmMin:number;rpmMax:number;feedMax:number;wocMax:number;docMax:number;feedMin?:number;wocMin?:number;docMin?:number;charts?:[ChartId,ChartId];mrrMin?:number;mrrMax?:number;chipMin?:number;chipMax?:number;surfaceMin?:number;surfaceMax?:number}
 export interface Experiment extends Snapshot {schemaVersion:2;modelVersion:typeof MODEL_VERSION;name:string;units:Units;view:View;pins:Snapshot[];provenance:'illustrative / user overrides';}
 export function fresh():Experiment{
  const s=cloneDefaults();s.limits=cuttingPreset('aluminum','carbide',{diameter:s.tool.diameter,flutes:s.tool.flutes});const {cut,...config}=s;
- return {schemaVersion:2,modelVersion:MODEL_VERSION,name:'Untitled exploration',machineId:DEFAULT_MACHINE_ID,materialId:'aluminum',config,point:{rpm:cut.rpm,feed:cut.feed,docRatio:.5,wocRatio:.2},units:'metric',view:{fill:'mrr',overlay:'utilization',colorScheme:'safety',contourDensity:'standard',physicalAxes:true,fixed:false,scaleMin:0,scaleMax:10,rpmMin:1500,rpmMax:19800,feedMax:3600,wocMax:100,docMax:275},pins:[],provenance:'illustrative / user overrides'};
+ return {schemaVersion:2,modelVersion:MODEL_VERSION,name:'Untitled exploration',machineId:DEFAULT_MACHINE_ID,materialId:'aluminum',config,point:{rpm:cut.rpm,feed:cut.feed,docRatio:.5,wocRatio:.2},units:'metric',view:{fill:'mrr',overlay:'utilization',colorScheme:'batlow',contourDensity:'standard',physicalAxes:true,fixed:false,scaleMin:0,scaleMax:10,rpmMin:1500,rpmMax:19800,feedMax:3600,wocMax:100,docMax:275},pins:[],provenance:'illustrative / user overrides'};
 }
 /** Built-in materials load explicit provisional limits. A custom material needs its library cutting data supplied by the caller. */
 export function applyCuttingPreset(e:Experiment){
@@ -145,7 +146,7 @@ export function parseExperiment(text:string):Experiment{
  if(o.units!=='metric'&&o.units!=='imperial')throw Error('Unsupported unit system.');
  const v=object(o.view);if(!['mrr','power','chip','chipMax','deflection','utilization','margin','constraint','zone'].includes(String(v.fill)))throw Error('Unknown fill metric.');
  if(!['none','mrr','utilization','chipMax','chip','deflection'].includes(String(v.overlay)))throw Error('Unknown contour metric.');
- const colorScheme=v.colorScheme??'safety';if(colorScheme!=='safety'&&colorScheme!=='teal')throw Error('Unknown color scheme.');
+ const colorScheme=v.colorScheme===undefined||v.colorScheme==='safety'?'batlow':v.colorScheme;if(colorScheme!=='batlow'&&colorScheme!=='teal')throw Error('Unknown color scheme.');
  if(v.contourDensity!==undefined&&(typeof v.contourDensity!=='string'||!['coarse','standard','fine'].includes(v.contourDensity)))throw Error('Unknown contour spacing.');
  if(typeof v.fixed!=='boolean'||typeof v.physicalAxes!=='boolean')throw Error('Invalid view settings.');
  const view:View={fill:v.fill as Metric,overlay:v.overlay as Overlay,colorScheme,...(v.contourDensity===undefined?{}:{contourDensity:v.contourDensity as ContourDensity}),physicalAxes:v.physicalAxes,fixed:v.fixed,scaleMin:num(v,'scaleMin',-1e9,1e9),scaleMax:num(v,'scaleMax',-1e9,1e9),rpmMin:num(v,'rpmMin',1,199999),rpmMax:num(v,'rpmMax',2,200000),feedMax:num(v,'feedMax',1,200000),wocMax:num(v,'wocMax',1,200),docMax:num(v,'docMax',1,10000),...(v.feedMin===undefined?{}:{feedMin:num(v,'feedMin',0,199999)}),...(v.wocMin===undefined?{}:{wocMin:num(v,'wocMin',0,199)}),...(v.docMin===undefined?{}:{docMin:num(v,'docMin',0,9999)}),...derivedRanges(v)};

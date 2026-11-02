@@ -6,6 +6,16 @@ Cutspace remains an illustrative exploration tool, not a source of validated cut
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-11-02
+
+### Changed
+
+- Replaced the default black → green → yellow → red plot palette with **batlow**, a perceptually uniform, colour-vision-safe Scientific colour map by Fabio Crameri (MIT), whose lightness rises monotonically so order reads in greyscale and without the legend. The old ramp reversed lightness at its top and paired red and green of equal lightness; experiments saved with it open with batlow. Teal → gold remains available.
+- Remaining margin now uses Crameri's diverging **vik** map centred on zero, red where a limit is exceeded and blue where margin remains.
+- Limit zone classes are four evenly spaced samples of the chosen sequential map rather than traffic-light hues, so their order survives greyscale and colour-vision deficiency.
+- Removed the re-spacing that pinned the caution fraction to a fixed colour on limit-anchored scales; the caution and limit lines mark those thresholds and the fill stays uniform.
+- The legend gradient is generated from the same mapping as the plot fill, and contour, caution and soft-limit lines and textures sit on a dark halo so they remain legible over the light end of the map.
+
 ## [0.7.0] - 2026-11-02
 
 ### Added

@@ -3,7 +3,7 @@ import {ZoomIn,ZoomOut} from 'lucide-react';
 import type {KeyboardEvent,PointerEvent} from 'react';
 import {calculate,clamp,constraintInfo,metricValue,zoneInfo} from './model';
 import type {Cut,Metric,Setup} from './model';
-import {contourPath,contourSegments,segmentsPath,cutAt,gridPosition,heatColor,scalePosition,zonePaletteEntry,NX,NY} from './plots';
+import {contourPath,contourSegments,segmentsPath,cutAt,gridPosition,fillColor,zonePaletteEntry,NX,NY} from './plots';
 import {contourLabel,contourValue,placeContourLabels} from './contours';
 import type {ContourLevels} from './contours';
 import type {Grid,Scale} from './plots';
@@ -58,12 +58,12 @@ export default function Plot({grid:g,setup:s,fill,overlay,colorScheme,levels,sca
   for(let i=0;i<g.samples.length;i++){
    const r=g.samples[i],value=metricValue(r,fill),x=left+(i%NX)/NX*w,y=top+Math.floor(i/NX)/NY*h;
    const known=Number.isFinite(value)&&r.status!=='invalid';
-   ctx.fillStyle=!known?'#283443':fill==='constraint'?constraintInfo[r.limiting.key].color:fill==='zone'?zonePaletteEntry(r,colorScheme,s.limits.caution).color:heatColor(scalePosition(value,scale,s.limits.caution),colorScheme);
+   ctx.fillStyle=!known?'#283443':fill==='constraint'?constraintInfo[r.limiting.key].color:fill==='zone'?zonePaletteEntry(r,colorScheme,s.limits.caution).color:fillColor(value,fill,scale,colorScheme);
    ctx.globalAlpha=fill==='constraint'||fill==='zone'?.8:1;ctx.fillRect(x,y,w/NX+.5,h/NY+.5);
-   // Soft-limit zones use texture in the colour of their boundary line: sparse 45° lines (red) beyond a soft limit, a sparse stipple (amber) in the caution band.
+   // Soft-limit zones use texture in the colour of their boundary line: sparse 45° lines (red) beyond a soft limit, a sparse stipple (amber) in the caution band. Each mark sits on a dark halo so it reads over light and dark fills alike.
    const col=i%NX,row=Math.floor(i/NX),cw=w/NX,ch=h/NY;
-   if(fill!=='zone'&&r.zone==='beyond'&&((col-row)%3+3)%3===0){ctx.globalAlpha=.65;ctx.strokeStyle='#e8694f';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+cw,y+ch);ctx.stroke();}
-   if(fill!=='zone'&&r.zone==='caution'&&col%3===1&&row%3===1){ctx.globalAlpha=.8;ctx.fillStyle='#e8b85a';ctx.beginPath();ctx.arc(x+cw/2,y+ch/2,1.3,0,2*Math.PI);ctx.fill();}
+   if(fill!=='zone'&&r.zone==='beyond'&&((col-row)%3+3)%3===0){ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+cw,y+ch);ctx.globalAlpha=.45;ctx.strokeStyle='#0b1722';ctx.lineWidth=2.6;ctx.stroke();ctx.globalAlpha=.8;ctx.strokeStyle='#e8694f';ctx.lineWidth=1;ctx.stroke();}
+   if(fill!=='zone'&&r.zone==='caution'&&col%3===1&&row%3===1){ctx.globalAlpha=.5;ctx.fillStyle='#0b1722';ctx.beginPath();ctx.arc(x+cw/2,y+ch/2,2.2,0,2*Math.PI);ctx.fill();ctx.globalAlpha=.9;ctx.fillStyle='#e8b85a';ctx.beginPath();ctx.arc(x+cw/2,y+ch/2,1.3,0,2*Math.PI);ctx.fill();}
    if(r.status==='invalid'||r.status==='no-cut'||!r.hardOk||r.unknown.length){ctx.globalAlpha=.52;ctx.fillStyle='#0b1722';ctx.fillRect(x,y,w/NX+.5,h/NY+.5);ctx.globalAlpha=.22;ctx.strokeStyle='#e1e7dc';ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(x,y+h/NY);ctx.lineTo(x+w/NX,y);ctx.stroke();}
   }ctx.globalAlpha=1;
  },[g,fill,colorScheme,scale,s.limits.caution,width,w,h,left,top]);
@@ -100,8 +100,12 @@ export default function Plot({grid:g,setup:s,fill,overlay,colorScheme,levels,sca
     {secondaryX&&<text data-help={help.absolute+` This top axis shows physical ${COORDINATES[cx].short}.`} className="axis-title" x={left+w/2} y={13} textAnchor="middle">{COORDINATES[cx].short} ({unit('length',units)})</text>}
     {secondaryY&&<text data-help={help.absolute+` This right axis shows physical ${COORDINATES[cy].short}.`} className="axis-title" transform={`translate(${width-7} ${top+h/2}) rotate(-90)`} textAnchor="middle">{COORDINATES[cy].short} ({unit('length',units)})</text>}
     <g clipPath={`url(#${id})`}>
-     {overlayData.lines.map(line=><path key={line.value} d={line.path} className="contour-line" fill="none" stroke="#ebbb75" strokeWidth={(overlay==='utilization'||overlay==='deflection')&&Math.abs(line.value-1)<1e-8?1.8:1.1} opacity={.72}/>)}
-     <path d={zoneLines.caution} stroke="#e8b85a" fill="none" strokeWidth={1.4} strokeDasharray="4 3" opacity={.9}/>
+     {/* Lines carry a dark halo beneath their colour so they stay legible over the light end of the fill map. */}
+     {overlayData.lines.map(line=><path key={`halo-${line.value}`} d={line.path} fill="none" stroke="#0b1722" strokeWidth={((overlay==='utilization'||overlay==='deflection')&&Math.abs(line.value-1)<1e-8?1.8:1.1)+1.6} opacity={.4}/>)}
+     {overlayData.lines.map(line=><path key={line.value} d={line.path} className="contour-line" fill="none" stroke="#ebbb75" strokeWidth={(overlay==='utilization'||overlay==='deflection')&&Math.abs(line.value-1)<1e-8?1.8:1.1} opacity={.85}/>)}
+     <path d={zoneLines.caution} stroke="#0b1722" fill="none" strokeWidth={3} strokeDasharray="4 3" opacity={.45}/>
+     <path d={zoneLines.caution} stroke="#e8b85a" fill="none" strokeWidth={1.4} strokeDasharray="4 3" opacity={.95}/>
+     <path d={zoneLines.beyond} stroke="#0b1722" fill="none" strokeWidth={3.4} opacity={.45}/>
      <path d={zoneLines.beyond} stroke="#e8694f" fill="none" strokeWidth={1.7} opacity={.95}/>
      <path d={boundary} stroke="#eff7ed" fill="none" strokeWidth={1.6} strokeDasharray="6 4"/>
      <g className="contour-labels" pointerEvents="none">{labels.map(label=><text key={label.value} transform={`translate(${label.x} ${label.y}) rotate(${label.angle})`} textAnchor="middle" dominantBaseline="central">{label.text}</text>)}</g>

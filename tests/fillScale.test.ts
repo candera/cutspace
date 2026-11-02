@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {fresh,parseExperiment,setupFor,setWorkpieceMaterial,setCutterMaterial} from '../src/experiment.ts';
-import {autoScale,automaticFillScale,gridFor,heatColor,safetyZoneColor,scalePosition,zonePaletteEntry} from '../src/plots.ts';
+import {autoScale,automaticFillScale,gridFor,heatColor,fillColor,divergingPosition,legendGradient,scalePosition,zonePalette,zonePaletteEntry} from '../src/plots.ts';
+import {BATLOW,VIK} from '../src/colorMaps.ts';
 import {calculate,metricValue} from '../src/model.ts';
 import type {Metric} from '../src/model.ts';
 
@@ -39,22 +40,43 @@ test('material switches release old fixed ranges without changing numeric limits
  e.view.fixed=true;setCutterMaterial(e,'hss');assert.equal(e.view.fixed,false);
 });
 
-test('color schemes have distinct endpoints and persist with a safe default for older files',()=>{
- assert.equal(heatColor(0,'safety'),'rgb(0,0,0)');assert.equal(heatColor(1,'safety'),'rgb(205,45,36)');
- assert.notEqual(heatColor(.5,'safety'),heatColor(.5,'teal'));
- const e=fresh();assert.equal(e.view.colorScheme,'safety');e.view.colorScheme='teal';assert.equal(parseExperiment(JSON.stringify(e)).view.colorScheme,'teal');
- const older:any=structuredClone(e);delete older.view.colorScheme;assert.equal(parseExperiment(JSON.stringify(older)).view.colorScheme,'safety');
+const rgb=(hex:string)=>`rgb(${[1,3,5].map(k=>parseInt(hex.slice(k,k+2),16)).join(',')})`;
+/** Relative luminance, enough to check that lightness only increases along a sequential map. */
+const luminance=(css:string)=>{const [r,g,b]=css.match(/\d+/g)!.map(Number).map(c=>{c/=255;return c<=.04045?c/12.92:((c+.055)/1.055)**2.4;});return .2126*r+.7152*g+.0722*b;};
+
+test('color schemes run dark to light, persist, and the retired black–green–red scheme migrates to batlow',()=>{
+ assert.equal(heatColor(0,'batlow'),rgb(BATLOW[0]));assert.equal(heatColor(1,'batlow'),rgb(BATLOW[BATLOW.length-1]));
+ assert.equal(heatColor(0,'teal'),'rgb(21,43,57)');assert.notEqual(heatColor(.5,'batlow'),heatColor(.5,'teal'));
+ for(const scheme of ['batlow','teal'] as const){let last=-1;for(let i=0;i<=40;i++){const l=luminance(heatColor(i/40,scheme));assert.ok(l>last,`${scheme} lightness must increase at ${i/40}`);last=l;}}
+ const e=fresh();assert.equal(e.view.colorScheme,'batlow');e.view.colorScheme='teal';assert.equal(parseExperiment(JSON.stringify(e)).view.colorScheme,'teal');
+ const older:any=structuredClone(e);delete older.view.colorScheme;assert.equal(parseExperiment(JSON.stringify(older)).view.colorScheme,'batlow');
+ const retired:any=structuredClone(e);retired.view.colorScheme='safety';assert.equal(parseExperiment(JSON.stringify(retired)).view.colorScheme,'batlow');
  const bad:any=structuredClone(e);bad.view.colorScheme='rainbow';assert.throws(()=>parseExperiment(JSON.stringify(bad)),/color scheme/);
 });
 
-test('safety Limit zone colors have semantic thresholds',()=>{
- const s=setupFor(fresh()),r=calculate(s.cut,s);
- assert.equal(safetyZoneColor({...r,zone:'comfortable',softRatio:.2},.75),'#000000');
- assert.equal(safetyZoneColor({...r,zone:'comfortable',softRatio:.6},.75),'#009148');
- assert.equal(safetyZoneColor({...r,zone:'caution',softRatio:.8},.75),'#f2cd36');
- assert.equal(safetyZoneColor({...r,zone:'beyond',softRatio:1.1},.75),'#cd2d24');
- assert.equal(safetyZoneColor({...r,zone:'unknown',softRatio:0},.75),'#283443');
- assert.equal(zonePaletteEntry({...r,zone:'beyond',softRatio:1.1},'teal',.75).color,'#eed184');
+test('Limit zone classes are ordered samples of the chosen sequential map',()=>{
+ const s=setupFor(fresh()),r=calculate(s.cut,s),zones=zonePalette('batlow');
+ assert.deepEqual(zones.map(z=>z.label),['Very safe','Safe','Borderline','No good']);
+ assert.deepEqual(zones.map(z=>z.color),[.125,.375,.625,.875].map(t=>heatColor(t,'batlow')));
+ for(let i=1;i<4;i++)assert.ok(luminance(zones[i].color)>luminance(zones[i-1].color));
+ assert.equal(zonePaletteEntry({...r,zone:'comfortable',softRatio:.2},'batlow',.75).label,'Very safe');
+ assert.equal(zonePaletteEntry({...r,zone:'comfortable',softRatio:.6},'batlow',.75).label,'Safe');
+ assert.equal(zonePaletteEntry({...r,zone:'caution',softRatio:.8},'batlow',.75).label,'Borderline');
+ assert.equal(zonePaletteEntry({...r,zone:'beyond',softRatio:1.1},'batlow',.75).color,zones[3].color);
+ assert.equal(zonePaletteEntry({...r,zone:'unknown',softRatio:0},'batlow',.75).color,'#283443');
+ assert.equal(zonePaletteEntry({...r,zone:'beyond',softRatio:1.1},'teal',.75).color,heatColor(.875,'teal'));
+});
+
+test('remaining margin uses the diverging map with zero at the neutral centre and the legend follows the fill',()=>{
+ const scale={min:-.5,max:1,basis:'visible-range'} as const;
+ assert.equal(divergingPosition(0,scale),.5);assert.equal(divergingPosition(-.5,scale),0);assert.equal(divergingPosition(1,scale),1);assert.equal(divergingPosition(.5,scale),.75);
+ assert.equal(fillColor(-.5,'margin',scale,'batlow'),rgb(VIK[VIK.length-1]));assert.equal(fillColor(1,'margin',scale,'batlow'),rgb(VIK[0]));
+ assert.equal(fillColor(0,'margin',scale,'batlow'),fillColor(0,'margin',{min:-2,max:.1,basis:'visible-range'},'batlow'));
+ assert.equal(divergingPosition(.25,{min:.1,max:.5,basis:'visible-range'}),.75);
+ assert.equal(fillColor(.3,'mrr',{min:0,max:1,basis:'visible-range'},'teal'),heatColor(.3,'teal'));
+ const gradient=legendGradient('mrr',{min:0,max:1,basis:'visible-range'},'batlow',4);
+ assert.equal(gradient,`linear-gradient(90deg,${[0,.25,.5,.75,1].map(t=>heatColor(t,'batlow')).join(',')})`);
+ assert.ok(legendGradient('margin',scale,'batlow').startsWith(`linear-gradient(90deg,${rgb(VIK[VIK.length-1])}`));
 });
 
 test('deflection and utilization colors stay anchored to configured limits while visible metrics rescale',()=>{
@@ -66,6 +88,6 @@ test('deflection and utilization colors stay anchored to configured limits while
  assert.deepEqual(zoomedDeflection,deflection);
  assert.deepEqual(automaticFillScale(narrow,'utilization',s),{min:0,max:1,basis:'configured-limit'});
  assert.notDeepEqual(automaticFillScale(broad,'mrr',s),automaticFillScale(narrow,'mrr',s));
- assert.equal(scalePosition(s.limits.deflection*.75,deflection,.75),.75);
- assert.equal(scalePosition(s.limits.deflection,deflection,.75),1);
+ assert.equal(scalePosition(s.limits.deflection*.75,deflection),.75);
+ assert.equal(scalePosition(s.limits.deflection,deflection),1);
 });
