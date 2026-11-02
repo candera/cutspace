@@ -96,3 +96,21 @@ export const help={
  force:'Use the illustrative material model to estimate force, power, torque and deflection. Static force is the peak vector sum of instantaneous straight-flute tangential loads over one tooth-passing period. Turning the model off leaves geometry and removal outputs available but those estimates unknown.',
  curve:'Assumed available spindle output versus RPM: constant torque at lower speed, then constant power, reduced by the usable-output percentage. RPM-range checks separately reject disallowed speeds.',
 };
+/** Guided start: plain-language help for each step and the result. The wording says starting point; it never calls the result a recommendation. */
+export const wizardHelp={
+ open:'Answer four questions (machine, tool, workpiece, kind of cut) and get a starting point inside your configured limits, or a matching saved cut from your libraries. The result opens in the explorer so you can see why it sits where it does. It is a place to begin, not a verified cutting recommendation.',
+ dialog:'Guided start walks through machine, tool, workpiece and operation, then offers a starting point derived from your libraries and configured limits. Nothing changes until you choose a result; closing this applies nothing.',
+ machine:'Pick the machine you will cut on. Its speed range, feed limit and spindle curve bound everything else. Library machines carry their own provenance notes; the built-in profiles are generic examples you can edit later if your machine is not listed.',
+ tool:'Pick a saved tool or enter the bit yourself. Cutspace models flat end mills; router-specific shapes such as downcut, compression and carbide-tipped bits are outside the model, so pick the nearest flat end mill and treat the result with extra care.',
+ cutter:'Carbide or high-speed steel. This changes the stiffness used for the bending estimate and which cutting-data starter applies.',
+ material:'Pick what you are cutting. Built-in materials load Cutspace’s provisional cutting presets (example values); library materials use their stored starters when they have one for your cutter material.',
+ operation:'Roughing accepts more tool bending than finishing. The choice changes the deflection allowance and the starting stepover and depth convention, nothing else.',
+ recipe:'A cut saved in one of your libraries that fits your choices. Its provenance says where the numbers came from; the check result shows how it evaluates against its own stored limits.',
+ startingPoint:'A point derived from your configured limits: spindle speed from the surface-speed limit and machine range, chipload from the middle of the chip band, a conventional stepover and depth, then reduced until every check sits inside the comfortable zone. Example values in, example values out; verify against your tooling data before cutting.',
+ derivation:'The steps the solver took, in order, so you can see which limit shaped the result.',
+ related:'Saved cuts that share your workpiece but differ in machine or tool. They are context rather than a match; loading one switches to that recipe’s machine profile.',
+ apply:'Apply this choice to the experiment and return to the explorer. Undo restores your previous experiment.',
+ none:'Apply the chosen machine, tool and workpiece without changing the selected cut.',
+ back:'Return to the previous question. Your answers are kept.',
+ next:'Go to the next question.',
+};

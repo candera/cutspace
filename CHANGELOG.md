@@ -6,6 +6,12 @@ Cutspace remains an illustrative exploration tool, not a source of validated cut
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-02
+
+### Added
+
+- Added **Guided start** (header button, and **Find a starting cut** in the welcome banner): a five-step flow that asks for machine, tool, workpiece and operation, then offers saved cuts from the loaded libraries that match those choices (same workpiece and cutter material, same or similar machine, tool within 25% in diameter; exact when machine, diameter and flutes all agree) and a starting point derived from the configured limits and checked with the forward model, with the derivation listed step by step. Applying either lands in the explorer at that cut with Undo; closing applies nothing. Every input shows its provenance, matched recipes show how they evaluate against their own stored limits, and the wording says starting point, not recommendation: the derived points come from the provisional presets and library notes, not validated tooling data. When no point can pass (no cutting data for the cutter and material, a model marked unavailable, or a surface-speed limit below the machine’s minimum RPM) the result explains why and can still apply the setup without a cut.
+
 ## [0.4.0] - 2026-11-01
 
 ### Changed

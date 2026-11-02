@@ -58,3 +58,13 @@ Show a manufacturer-sourced starting chipload band (e.g. Onsrud, Amana, Freud pu
 ## CS B05 Calibration against reported working cuts
 
 Use the two Big Blue plywood examples documented in calibration-cases.md as initial evidence. Confirm actual machine configuration, exact tools, plywood product and quality/tolerance outcomes before fitting Kc, force allowances or deflection tolerances. Separate parameter fitting from held-out validation; do not tune multiple uncertain inputs solely to make a single working point pass. The old generic chip and deflection limits caused both observed false exclusions; provisional presets address that UI/model-input mismatch, not full calibration.
+
+## CS B08 Guided start follow-ups
+
+Status: Opened 2 November 2026 with the first Guided start release. The flow (`src/Wizard.tsx`, `src/recipeMatch.ts`, `src/startingPoint.ts`, `src/wizardApply.ts`) derives a starting point from the configured limits and matches library recipes; these are the gaps it leaves.
+
+- Material-aware engagement conventions. The seed starts every roughing cut at 50%D stepover / 100%D depth and every finishing cut at 10%D / 50%D, then backs off. Wood roughing is often deeper than one diameter and metals shallower; sourced conventions per material family would shorten the back-off and read more naturally.
+- Router-bit geometry in the tool step depends on CS B03. Beginners with downcut, compression or carbide-tipped bits currently pick the nearest flat end mill and are told so.
+- Sourced starting-chipload bands (CS B07) would replace the preset-derived chipload seed with manufacturer-backed values and per-row provenance.
+- Save the derived starting point as a recipe from the result screen, carrying the derivation steps as its note.
+- Matching across cutter materials (for example a carbide recipe as context for an HSS choice) is deliberately excluded for now; revisit once CS B04 supplies qualified data.

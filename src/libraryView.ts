@@ -2,6 +2,7 @@ import {ITEM_KINDS,PROVENANCE_LABEL} from './library.ts';
 import type {ItemBase,ItemKind,Library,MachineItem,MaterialItem,RecipeItem,ToolItem} from './library.ts';
 import {CUTTER_MATERIALS} from './model.ts';
 import type {CutterMaterial,Tool} from './model.ts';
+import type {Units} from './units.ts';
 
 /** Browse state for the Library tab: which kinds to show, a free-text filter and a sort order. Pure so it can be tested without the DOM. */
 export type KindFilter=ItemKind|'all';
@@ -65,4 +66,10 @@ const KIND_NOUN:Record<ItemKind,[string,string]>={machines:['machine','machines'
 export function contentsSummary(library:Library):string{
  const parts=ITEM_KINDS.filter(k=>library[k].length>0).map(k=>`${library[k].length} ${KIND_NOUN[k][library[k].length===1?0:1]}`);
  return parts.length?parts.join(' · '):'empty';
+}
+/** Short tool name for people: "1/4 in · 2-flute Carbide" when the diameter is a clean inch fraction (or the display is imperial), otherwise "6 mm · 3-flute Carbide". */
+export function toolLabel(t:Tool,units:Units):string{
+ const frac=inchFraction(t.diameter),wholeMm=Math.abs(t.diameter-Math.round(t.diameter))<1e-6;
+ const size=units==='imperial'?(frac?`${frac} in`:`${trim(t.diameter/25.4)} in`):(frac&&!wholeMm?`${frac} in`:`${trim(t.diameter)} mm`);
+ return `${size} · ${t.flutes}-flute ${CUTTER_MATERIALS[t.material].name}`;
 }
