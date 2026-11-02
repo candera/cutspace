@@ -6,6 +6,10 @@ Cutspace remains an illustrative exploration tool, not a source of validated cut
 
 ## [Unreleased]
 
+### Added
+
+- **Chart picker on each plot.** The dropdown in a plot's header chooses which two quantities are its axes; the other two named quantities are held at their current values and shown beside it. Besides the existing Speed / feed and Engagement charts there are **Removal rate / depth** (RPM and chipload held; stepover absorbs the removal rate, so the plot shows deep-and-narrow against shallow-and-wide at a given MRR), **Removal rate / surface speed** (chipload and depth held, the book values as inputs), **Removal rate / chipload** and **Surface speed / chipload** (depth and stepover held, the speed/feed slice re-plotted so chipload limits are horizontal). Removal rate, chipload and surface speed are each a product of powers of RPM, feedrate, depth and stepover, so any grid point on any chart is one cut and the fill, contours, limit boundaries, probe, zoom, Fit envelope and saved markers work as before. Dragging on a removal-rate chart moves the same cut the other plot shows. The first time an axis is used its range is fitted to the chart's passing envelope; ranges are then saved with the experiment, and the View tab gains MRR, chipload and surface-speed axis fields. Experiments saved earlier open with the default charts.
+
 ## [0.6.0] - 2026-11-02
 
 ### Added

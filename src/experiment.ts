@@ -2,6 +2,8 @@ import {cuttingPreset,CUTTING_PRESET_VERSION,OPERATION_INFO} from './cuttingPres
 import {cloneDefaults, MODEL_VERSION, CUTTER_MATERIALS, BODY_MATERIALS, GEOMETRIES, withBody, withCutterMaterial} from './model.ts';
 import type {Setup, Metric, CutterMaterial, BodyMaterial, Geometry, Operation, Tool} from './model.ts';
 import type {Units} from './units.ts';
+import {broadRange,COORDINATES,isChartId,setAxisRange} from './charts.ts';
+import type {ChartId,Coordinate} from './charts.ts';
 /** Built-in machines are generic starting points only. Named machines (the Nova Labs ShopSabre RC4 and Big Blue, a DMC2 Mini) live in libraries. */
 export const MACHINES={
  'spindle-router-example':{name:'2.2 kW spindle router (example)',rpmMin:8000,rpmMax:24000,feedMax:10000,power:2200,torque:.875,utilization:.75,known:true},
@@ -30,7 +32,8 @@ export interface Snapshot {machineId:string;materialId:string;config:Configurati
 export type Overlay='none'|'mrr'|'utilization'|'chipMax'|'chip'|'deflection';
 export type ContourDensity='coarse'|'standard'|'fine';
 export type ColorScheme='safety'|'teal';
-export interface View {fill:Metric;overlay:Overlay;colorScheme:ColorScheme;contourDensity?:ContourDensity;physicalAxes:boolean;fixed:boolean;scaleMin:number;scaleMax:number;rpmMin:number;rpmMax:number;feedMax:number;wocMax:number;docMax:number;feedMin?:number;wocMin?:number;docMin?:number}
+/** `charts` names the two plots' axis charts (default speed/feed and engagement). Axis ranges are per coordinate; the derived ones are optional and fall back to the broad fit. */
+export interface View {fill:Metric;overlay:Overlay;colorScheme:ColorScheme;contourDensity?:ContourDensity;physicalAxes:boolean;fixed:boolean;scaleMin:number;scaleMax:number;rpmMin:number;rpmMax:number;feedMax:number;wocMax:number;docMax:number;feedMin?:number;wocMin?:number;docMin?:number;charts?:[ChartId,ChartId];mrrMin?:number;mrrMax?:number;chipMin?:number;chipMax?:number;surfaceMin?:number;surfaceMax?:number}
 export interface Experiment extends Snapshot {schemaVersion:2;modelVersion:typeof MODEL_VERSION;name:string;units:Units;view:View;pins:Snapshot[];provenance:'illustrative / user overrides';}
 export function fresh():Experiment{
  const s=cloneDefaults();s.limits=cuttingPreset('aluminum','carbide',{diameter:s.tool.diameter,flutes:s.tool.flutes});const {cut,...config}=s;
@@ -71,7 +74,20 @@ export function setWorkpieceMaterial(e:Experiment,id:MaterialId){
 }
 export function setupFor(s:Snapshot):Setup{return {...s.config,cut:{rpm:s.point.rpm,feed:s.point.feed,doc:s.point.docRatio*s.config.tool.diameter,woc:s.point.wocRatio*s.config.tool.diameter}};}
 export function snapshot(e:Snapshot):Snapshot{return structuredClone({machineId:e.machineId,materialId:e.materialId,config:e.config,point:e.point});}
-export function fitView(e:Experiment):View{return {...e.view,feedMin:0,wocMin:0,docMin:0,rpmMin:Math.max(1,Math.min(e.config.machine.rpmMin*.5,e.point.rpm*.95)),rpmMax:Math.min(200000,Math.max(e.config.machine.rpmMax*1.1,e.point.rpm*1.05)),feedMax:Math.min(200000,Math.max(e.config.machine.feedMax*1.2,e.point.feed*1.05)),wocMax:Math.min(200,Math.max(100,e.point.wocRatio*105)),docMax:Math.min(10000,Math.max(100,e.config.tool.fluteLength/e.config.tool.diameter*110,e.point.docRatio*105))};}
+/** The broad view: every axis coordinate fitted to the machine, tool and selected cut. Charts are unchanged. */
+export function fitView(e:Experiment):View{const view={...e.view};for(const c of Object.keys(COORDINATES) as Coordinate[])setAxisRange(view,c,broadRange(e,c));return view;}
+/** Optional axis ranges for the derived coordinates; a maximum without a minimum starts at zero. */
+function derivedRanges(v:Record<string,unknown>){
+ const out:Partial<View>={};
+ for(const c of ['mrr','chip','surface'] as const){
+  const lo=`${c}Min` as const,hi=`${c}Max` as const,info=COORDINATES[c];
+  if(v[hi]===undefined&&v[lo]===undefined)continue;
+  if(v[hi]===undefined)throw Error(`${hi} is required with ${lo}.`);
+  out[hi]=num(v,hi,info.lo,info.hi);if(v[lo]!==undefined)out[lo]=num(v,lo,info.lo,info.hi);
+  if(out[hi]<=(out[lo]??0))throw Error('Scale and axis maximums must exceed minimums.');
+ }
+ return out;
+}
 function object(x:unknown):Record<string,unknown>{if(!x||typeof x!=='object'||Array.isArray(x))throw Error('Expected an object.');return x as Record<string,unknown>;}
 function num(o:Record<string,unknown>,k:string,min:number,max:number){const n=o[k];if(typeof n!=='number'||!Number.isFinite(n)||n<min||n>max)throw Error(`${k} must be between ${min} and ${max}.`);return n;}
 function known(o:Record<string,unknown>){if(typeof o.known!=='boolean')throw Error('Missing model availability flag.');return o.known;}
@@ -132,7 +148,8 @@ export function parseExperiment(text:string):Experiment{
  const colorScheme=v.colorScheme??'safety';if(colorScheme!=='safety'&&colorScheme!=='teal')throw Error('Unknown color scheme.');
  if(v.contourDensity!==undefined&&(typeof v.contourDensity!=='string'||!['coarse','standard','fine'].includes(v.contourDensity)))throw Error('Unknown contour spacing.');
  if(typeof v.fixed!=='boolean'||typeof v.physicalAxes!=='boolean')throw Error('Invalid view settings.');
- const view:View={fill:v.fill as Metric,overlay:v.overlay as Overlay,colorScheme,...(v.contourDensity===undefined?{}:{contourDensity:v.contourDensity as ContourDensity}),physicalAxes:v.physicalAxes,fixed:v.fixed,scaleMin:num(v,'scaleMin',-1e9,1e9),scaleMax:num(v,'scaleMax',-1e9,1e9),rpmMin:num(v,'rpmMin',1,199999),rpmMax:num(v,'rpmMax',2,200000),feedMax:num(v,'feedMax',1,200000),wocMax:num(v,'wocMax',1,200),docMax:num(v,'docMax',1,10000),...(v.feedMin===undefined?{}:{feedMin:num(v,'feedMin',0,199999)}),...(v.wocMin===undefined?{}:{wocMin:num(v,'wocMin',0,199)}),...(v.docMin===undefined?{}:{docMin:num(v,'docMin',0,9999)})};
+ const view:View={fill:v.fill as Metric,overlay:v.overlay as Overlay,colorScheme,...(v.contourDensity===undefined?{}:{contourDensity:v.contourDensity as ContourDensity}),physicalAxes:v.physicalAxes,fixed:v.fixed,scaleMin:num(v,'scaleMin',-1e9,1e9),scaleMax:num(v,'scaleMax',-1e9,1e9),rpmMin:num(v,'rpmMin',1,199999),rpmMax:num(v,'rpmMax',2,200000),feedMax:num(v,'feedMax',1,200000),wocMax:num(v,'wocMax',1,200),docMax:num(v,'docMax',1,10000),...(v.feedMin===undefined?{}:{feedMin:num(v,'feedMin',0,199999)}),...(v.wocMin===undefined?{}:{wocMin:num(v,'wocMin',0,199)}),...(v.docMin===undefined?{}:{docMin:num(v,'docMin',0,9999)}),...derivedRanges(v)};
+ if(v.charts!==undefined){if(!Array.isArray(v.charts)||v.charts.length!==2||!v.charts.every(isChartId))throw Error('Unknown plot chart.');view.charts=[v.charts[0],v.charts[1]];}
  if(view.feedMax<=(view.feedMin??0)||view.wocMax<=(view.wocMin??0)||view.docMax<=(view.docMin??0)||view.scaleMax<=view.scaleMin||view.rpmMax<=view.rpmMin)throw Error('Scale and axis maximums must exceed minimums.');
  if(!Array.isArray(o.pins)||o.pins.length>3)throw Error('At most three comparison points are supported.');
  return {...migrateMachineProfile(readSnapshot(o,legacy),o.modelVersion),schemaVersion:2,modelVersion:MODEL_VERSION,name:o.name,units:o.units,view,pins:o.pins.map(p=>migrateMachineProfile(readSnapshot(p,legacy),o.modelVersion)),provenance:'illustrative / user overrides'};

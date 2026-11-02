@@ -39,6 +39,12 @@ export const fieldHelp:Record<string,string>={
  'Feed axis maximum':'Top edge of the feedrate axis. Changes the visible range only, not the machine feed limit or the selected feedrate.',
  'WOC axis maximum':'Right edge of the engagement plot, as a percentage of cutter diameter. Values above 100%D expose regions that are invalid for this milling model.',
  'DOC axis maximum':'Top edge of the engagement plot, as a percentage of cutter diameter. This display bound can exceed 100%D and does not change the flute-length limit.',
+ 'MRR axis minimum':'Left edge of a removal-rate axis. Changes the visible range only; MRR is an axis on the removal-rate charts, where the other axis and the held quantities decide how a cut achieves it.',
+ 'MRR axis maximum':'Right edge of a removal-rate axis. Reset view returns it to a one-diameter slot at the machine’s top feed; Fit envelope tightens it to the passing region.',
+ 'Chipload axis minimum':'Lower edge of a chipload axis, in nominal feed per tooth. Changes the visible range only, not the chipload limits.',
+ 'Chipload axis maximum':'Upper edge of a chipload axis. Reset view returns it to 2.5 times the maximum chip thickness limit.',
+ 'Surface speed axis minimum':'Lower edge of a surface-speed axis. It is RPM rescaled by the cutter diameter, so Reset view follows the RPM range.',
+ 'Surface speed axis maximum':'Upper edge of a surface-speed axis. Changes the visible range only, not the surface speed limit.',
  'Color scale minimum':'Value assigned the lowest fill color. Editing it switches to a fixed scale shared by both plots; lower values saturate at that color. Does not change a cutting limit.',
  'Color scale maximum':'Value assigned the highest fill color. Editing it switches to a fixed scale shared by both plots; higher values saturate at that color. Does not change a cutting limit.',
 };

@@ -2,20 +2,38 @@ import {contours} from 'd3-contour';
 import {calculate,metricValue,clamp} from './model.ts';
 import type {Setup,Metric,Result,Cut} from './model.ts';
 import type {ColorScheme,View} from './experiment.ts';
+import {CHARTS,axisValue,cutOn} from './charts.ts';
+import type {Chart,ChartId} from './charts.ts';
 export const NX=72,NY=48;
-export interface Grid {kind:'speed'|'engagement';samples:Result[];xMin:number;xMax:number;yMin:number;yMax:number;diameter:number;}
+/** A sampled plot: `kind` names the chart; axis bounds are in axis units (percent of diameter for DOC and WOC). */
+export interface Grid {kind:ChartId;chart:Chart;samples:Result[];xMin:number;xMax:number;yMin:number;yMax:number;diameter:number;flutes:number;}
 export interface Scale {min:number;max:number;basis:'visible-range'|'configured-limit'|'categories'|'fixed'|'unavailable'}
-export function gridFor(s:Setup,kind:Grid['kind'],view:View):Grid{
- const speed=kind==='speed';
- const grid:Grid={kind,samples:[],xMin:speed?view.rpmMin:(view.wocMin??0),xMax:speed?view.rpmMax:view.wocMax,yMin:speed?(view.feedMin??0):(view.docMin??0),yMax:speed?view.feedMax:view.docMax,diameter:s.tool.diameter};
+/** Axis bounds for a coordinate from the view's fields; a derived coordinate without a saved range gets the fallback the caller computed. */
+function bounds(view:View,c:Chart['x']):[number,number]{
+ switch(c){
+  case 'rpm':return [view.rpmMin,view.rpmMax];
+  case 'feed':return [view.feedMin??0,view.feedMax];
+  case 'woc':return [view.wocMin??0,view.wocMax];
+  case 'doc':return [view.docMin??0,view.docMax];
+  case 'mrr':return [view.mrrMin??0,view.mrrMax??NaN];
+  case 'chip':return [view.chipMin??0,view.chipMax??NaN];
+  case 'surface':return [view.surfaceMin??0,view.surfaceMax??NaN];
+ }
+}
+/** Sample a chart over the view's ranges for its axes. A view lacking a derived axis range must be completed with `fitView` or `axisRange` first. */
+export function gridFor(s:Setup,kind:ChartId,view:View):Grid{
+ const chart=CHARTS[kind],[xMin,xMax]=bounds(view,chart.x),[yMin,yMax]=bounds(view,chart.y);
+ const grid:Grid={kind,chart,samples:[],xMin,xMax,yMin,yMax,diameter:s.tool.diameter,flutes:s.tool.flutes};
  for(let j=0;j<NY;j++)for(let i=0;i<NX;i++)grid.samples.push(calculate(cutAt(grid,s.cut,(i+.5)/NX,(j+.5)/NY),s));
  return grid;
 }
-/** No rounding/clamping: zero is a real no-cut boundary. UI validation owns admissible edits. */
+/** The cut at a grid fraction (x right, y down), holding the chart's held coordinates at their values in `c`. No rounding/clamping: zero is a real no-cut boundary. UI validation owns admissible edits. */
 export function cutAt(g:Grid,c:Cut,x:number,y:number):Cut{
  const a=g.xMin+x*(g.xMax-g.xMin),b=g.yMax-y*(g.yMax-g.yMin);
- return g.kind==='speed'?{...c,rpm:a,feed:b}:{...c,woc:a/100*g.diameter,doc:b/100*g.diameter};
+ return cutOn(g.chart,c,g,a,b);
 }
+/** The axis position of a cut on a grid's chart. */
+export function gridPosition(g:Grid,c:Cut):[number,number]{return [axisValue(g.chart.x,c,g),axisValue(g.chart.y,c,g)];}
 /** Shared visible-data range, independent of feasibility. Invalid cells are drawn gray. */
 export function autoScale(grids:Grid[],metric:Metric):Scale{
  if(metric==='constraint'||metric==='zone')return {min:0,max:1,basis:'categories'};
@@ -94,7 +112,7 @@ export function envelopeBounds(g:Grid,c:Cut){
  if(!passing.length)return null;
  const dx=(g.xMax-g.xMin)/NX,dy=(g.yMax-g.yMin)/NY;
  const xs=passing.map(i=>g.xMin+(i%NX+.5)*dx),ys=passing.map(i=>g.yMax-(Math.floor(i/NX)+.5)*dy);
- const px=g.kind==='speed'?c.rpm:c.woc/g.diameter*100,py=g.kind==='speed'?c.feed:c.doc/g.diameter*100;
+ const [px,py]=gridPosition(g,c);
  const x0=Math.min(...xs,px),x1=Math.max(...xs,px),y0=Math.min(...ys,py),y1=Math.max(...ys,py);
  const padX=Math.max(dx,(x1-x0)*.06),padY=Math.max(dy,(y1-y0)*.06);
  return {xMin:Math.max(g.xMin,x0-padX),xMax:Math.min(g.xMax,x1+padX),yMin:Math.max(g.yMin,y0-padY),yMax:Math.min(g.yMax,y1+padY)};
