@@ -1,5 +1,5 @@
-import {constraintInfo} from './model.ts';
-import type {ConstraintKey,Result,Setup} from './model';
+import {BODY_MATERIALS,constraintInfo} from './model.ts';
+import type {ConstraintKey,Result,Setup,ToolNotice} from './model';
 import {decimals,fmt,toDisplay,unit} from './units.ts';
 import type {Quantity,Units} from './units';
 
@@ -36,8 +36,8 @@ export const limitGuidance:Record<ConstraintKey,{meaning:string;why:string;adjus
  deflection:{
   meaning:'Cutting force bends the tool slightly away from its unloaded position. This is an estimate of steady tool-tip bending, compared with the deflection allowed in this experiment.',
   why:'Too much bending can leave dimensions wrong, tapered walls or an uneven finish. A flexible setup can also increase the risk of tool damage.',
-  adjust:'Explore less axial DOC or shorter stickout while retaining the reach and holder clearance the job needs. Shorter stickout strongly reduces this estimate. A larger tool changes stiffness, but also changes absolute DOC and WOC because Cutspace preserves their percentages.',
-  qualification:'The selected cutter material sets a representative elastic modulus: HSS bends more than carbide under the same load and geometry in this model. This simplified estimate excludes holder, machine and workpiece flexibility. It does not predict chatter, tool breakage or guaranteed part accuracy.',
+  adjust:'Explore less axial DOC or shorter stickout while retaining the reach and holder clearance the job needs. Shorter stickout strongly reduces this estimate. A larger tool changes stiffness, but also changes absolute DOC and WOC because Cutspace preserves their percentages. A bit with a shank smaller than its cutting diameter bends mostly in the shank; a stiffer body or a larger shank helps more than a larger cutting diameter.',
+  qualification:'The body material sets a representative elastic modulus: a steel body (carbide-tipped or insert bits) and HSS bend more than solid carbide under the same load and geometry in this model. The estimate is a two-segment cantilever, fluted section on a solid shank, and excludes holder, machine and workpiece flexibility. It does not predict chatter, tool breakage or guaranteed part accuracy.',
   notice:'Walls that are not square, undersized or tapered pockets, a wavy finish, a ringing or chattering sound.',
  },
  surface:{
@@ -72,6 +72,7 @@ export const limitGuidance:Record<ConstraintKey,{meaning:string;why:string;adjus
 
 export function limitReading(key:ConstraintKey,s:Setup,r:Result,u:Units){
  const value=(n:number,q:Quantity)=>`${fmt(toDisplay(n,q,u),q==='length'?(u==='imperial'?5:4):decimals(q,u))} ${unit(q,u)}`.trim();
+ const len=(n:number)=>`${fmt(toDisplay(n,'length',u),u==='imperial'?3:2)} ${unit('length',u)}`;
  const row=(label:string,actual:number,bound:number,q:Quantity,minimum=false)=>`${label}: ${value(actual,q)} · ${minimum?'minimum':'maximum'} ${value(bound,q)}${actual>bound&&!minimum?' — above maximum':actual<bound&&minimum?' — below minimum':''}`;
  const ratio=r.constraints.find(c=>c.key===key)?.ratio;
  const inactive=key==='chipLow'&&r.status==='no-cut'&&s.limits.cuttingDataKnown;
@@ -85,7 +86,7 @@ export function limitReading(key:ConstraintKey,s:Setup,r:Result,u:Units){
   case 'chipLow':readings=inactive?['No material is being removed. The minimum-chip check applies to a cutting point.']:[row('Maximum chip thickness',r.chipMax,s.limits.chipMin,'length',true)];break;
   case 'power':readings=[row('Estimated cutting power',r.power,s.machine.power*s.machine.utilization,'power')];break;
   case 'torque':readings=[row('Estimated cutting torque',r.torque,s.machine.torque*s.machine.utilization,'torque')];break;
-  case 'deflection':readings=[row('Estimated tip bending',r.deflection,s.limits.deflection,'deflection')];break;
+  case 'deflection':readings=[row('Estimated tip bending',r.deflection,s.limits.deflection,'deflection'),`${BODY_MATERIALS[s.tool.body].name} · ${fmt(s.tool.modulus,0)} GPa · shank ${len(s.tool.shankDiameter)}${s.tool.shankDiameter!==s.tool.diameter?` under a ${len(s.tool.diameter)} cutting diameter`:''}`];break;
   case 'surface':readings=[row('Surface speed',r.surface,s.limits.surfaceMax,'surface')];break;
   case 'rpm':readings=[`Selected ${fmt(s.cut.rpm,0)} RPM · range ${fmt(s.machine.rpmMin,0)}–${fmt(s.machine.rpmMax,0)} RPM${s.tool.maxRpm?` · tool maximum ${fmt(s.tool.maxRpm,0)} RPM`:''}`];break;
   case 'feed':readings=[row('Feedrate',s.cut.feed,s.machine.feedMax,'feed')];break;
@@ -94,4 +95,10 @@ export function limitReading(key:ConstraintKey,s:Setup,r:Result,u:Units){
  if(unknown)readings=['This check cannot be evaluated: required model data are unavailable or the cutting geometry is invalid. It is not a passing result.'];
  if(unknown&&!s.limits.cuttingDataKnown&&['chipHigh','chipLow','surface'].includes(key))readings=['No active limit for this cutter/workpiece combination. Enter chip and surface-speed limits above and enable their use. Previous values are retained for editing, not used in the check.'];
  return {state,exceeded,unknown,inactive,caution,soft,ratio,readings};
+}
+
+/** Tool notices in display units: plain sentences for the Tool tab, the Limits tab and the guided-start result. */
+export function noticeText(n:ToolNotice,u:Units):string{
+ const len=(x:number)=>`${fmt(toDisplay(x,'length',u),u==='imperial'?3:2)} ${unit('length',u)}`;
+ return `Depth of cut ${len(n.doc)} is below the ${len(n.upcutLength)} upcut length, so the downcut section is not engaged on this pass and the top edge is cut upcut-style.`;
 }

@@ -37,8 +37,8 @@ export function machineRelation(id:string,m:Machine,recipeId:string,r:Machine):M
 const PROVENANCE_RANK:Record<ProvenanceSource,number>={measured:0,user:1,manufacturer:2,illustrative:3};
 /**
  * Recipes in any loaded library that fit the choice: same workpiece and cutter material, the same or a similar machine,
- * and a tool within 25% in diameter. Exact means same machine, same diameter (within 2%) and same flute count; everything
- * else that survives is related and explains its differences. Sorted best first, deterministic.
+ * and a tool within 25% in diameter. Exact means same machine, same diameter (within 2%), same flute count and the same
+ * geometry class; everything else that survives is related and explains its differences. Sorted best first, deterministic.
  */
 export function matchRecipes(libraries:Library[],choice:WizardChoice,config:Configuration,units:Units='metric'):RecipeMatch[]{
  const out:RecipeMatch[]=[],myTool=toolLabel(choice.tool,units);
@@ -49,16 +49,16 @@ export function matchRecipes(libraries:Library[],choice:WizardChoice,config:Conf
   if(machine==='different')continue;
   const dRel=Math.abs(c.tool.diameter-choice.tool.diameter)/choice.tool.diameter,dSame=dRel<=.02||Math.abs(c.tool.diameter-choice.tool.diameter)<=.05;
   if(!dSame&&dRel>.25)continue;
-  const flutesSame=c.tool.flutes===choice.tool.flutes,tier:MatchTier=machine==='same'&&dSame&&flutesSame?'exact':'related';
+  const flutesSame=c.tool.flutes===choice.tool.flutes,geometrySame=c.tool.geometry===choice.tool.geometry,tier:MatchTier=machine==='same'&&dSame&&flutesSame&&geometrySame?'exact':'related';
   const reasons:string[]=[],differences:string[]=[];
   reasons.push(machine==='same'?`Same machine (${c.machine.name})`:`Similar machine: recorded on ${c.machine.name}`);
   if(machine!=='same')differences.push(`Recorded on ${c.machine.name}, not ${config.machine.name}; loading it switches to that machine profile`);
   reasons.push(`Same workpiece (${c.material.name})`);
-  if(dSame&&flutesSame)reasons.push(`Same tool: ${myTool}`);else differences.push(`Recipe used a ${toolLabel(c.tool,units)}; you chose a ${myTool}`);
+  if(dSame&&flutesSame&&geometrySame)reasons.push(`Same tool: ${myTool}`);else differences.push(`Recipe used a ${toolLabel(c.tool,units)}; you chose a ${myTool}`);
   if(c.limits.operation!==choice.operation)differences.push(`Saved as ${c.limits.operation}; you chose ${choice.operation}`);
   const ownSetup=setupFor(s),own=calculate(ownSetup.cut,ownSetup);
   const onYourMachine=machine==='similar'?calculate(ownSetup.cut,{...ownSetup,machine:config.machine}):undefined;
-  const score=(tier==='exact'?0:1000)+dRel*100+Math.abs(c.tool.flutes-choice.tool.flutes)*10+(c.limits.operation!==choice.operation?5:0)+PROVENANCE_RANK[recipe.provenance.source];
+  const score=(tier==='exact'?0:1000)+dRel*100+Math.abs(c.tool.flutes-choice.tool.flutes)*10+(geometrySame?0:20)+(c.limits.operation!==choice.operation?5:0)+PROVENANCE_RANK[recipe.provenance.source];
   out.push({library,recipe,tier,machine,reasons,differences,own,...(onYourMachine?{onYourMachine}:{}),score});
  }
  out.sort((a,b)=>a.score-b.score||b.recipe.updatedAt.localeCompare(a.recipe.updatedAt)||a.recipe.id.localeCompare(b.recipe.id));

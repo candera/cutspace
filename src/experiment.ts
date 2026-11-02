@@ -1,6 +1,6 @@
 import {cuttingPreset,CUTTING_PRESET_VERSION,OPERATION_INFO} from './cuttingPresets.ts';
-import {cloneDefaults, MODEL_VERSION, CUTTER_MATERIALS} from './model.ts';
-import type {Setup, Metric, CutterMaterial, Operation} from './model.ts';
+import {cloneDefaults, MODEL_VERSION, CUTTER_MATERIALS, BODY_MATERIALS, GEOMETRIES, withBody, withCutterMaterial} from './model.ts';
+import type {Setup, Metric, CutterMaterial, BodyMaterial, Geometry, Operation, Tool} from './model.ts';
 import type {Units} from './units.ts';
 /** Built-in machines are generic starting points only. Named machines (the Nova Labs ShopSabre RC4 and Big Blue, a DMC2 Mini) live in libraries. */
 export const MACHINES={
@@ -52,13 +52,17 @@ export function editLimit(e:Experiment,key:keyof Configuration['limits'],value:n
  (e.config.limits as unknown as Record<string,unknown>)[key]=value;
  if(key!=='caution'&&key!=='operation')delete e.config.limits.preset;
 }
+/** Changing the edge material re-applies cutting data for the new combination; a steel body keeps its modulus, otherwise the body follows the edge. */
 export function setCutterMaterial(e:Experiment,material:CutterMaterial){
  if(e.config.tool.material===material)return;
  e.view.fixed=false;
- e.config.tool.material=material;
- e.config.tool.modulus=CUTTER_MATERIALS[material].modulus;
+ e.config.tool=withCutterMaterial(e.config.tool,material);
  applyCuttingPreset(e);
 }
+/** Changing the body material resets the modulus to that body's default; cutting data are unaffected. */
+export function setBody(e:Experiment,body:BodyMaterial){e.config.tool=withBody(e.config.tool,body);}
+/** Changing geometry keeps every number; the upcut length only has meaning for a compression spiral. */
+export function setGeometry(e:Experiment,geometry:Geometry){e.config.tool.geometry=geometry;if(geometry!=='compression')delete e.config.tool.upcutLength;}
 export function setWorkpieceMaterial(e:Experiment,id:MaterialId){
  const changed=e.materialId!==id;
  e.materialId=id;
@@ -71,6 +75,24 @@ export function fitView(e:Experiment):View{return {...e.view,feedMin:0,wocMin:0,
 function object(x:unknown):Record<string,unknown>{if(!x||typeof x!=='object'||Array.isArray(x))throw Error('Expected an object.');return x as Record<string,unknown>;}
 function num(o:Record<string,unknown>,k:string,min:number,max:number){const n=o[k];if(typeof n!=='number'||!Number.isFinite(n)||n<min||n>max)throw Error(`${k} must be between ${min} and ${max}.`);return n;}
 function known(o:Record<string,unknown>){if(typeof o.known!=='boolean')throw Error('Missing model availability flag.');return o.known;}
+/**
+ * Validates a tool from a file. Files written before model illustrative-static-6 lack geometry, body and shank diameter;
+ * they are a flat end mill whose body matches its edge material and whose shank equals the cutting diameter, which
+ * reproduces the earlier single-cylinder bending estimate exactly.
+ */
+export function readTool(t:Record<string,unknown>,legacy=false):Tool{
+ const cutterMaterial=legacy?'carbide':t.material;
+ if(typeof cutterMaterial!=='string'||!Object.hasOwn(CUTTER_MATERIALS,cutterMaterial))throw Error('Unsupported cutter material. Choose Carbide or HSS.');
+ const geometry=t.geometry===undefined?'flat':t.geometry;
+ if(typeof geometry!=='string'||!Object.hasOwn(GEOMETRIES,geometry))throw Error('Unsupported tool geometry.');
+ const body=t.body===undefined?cutterMaterial:t.body;
+ if(typeof body!=='string'||!Object.hasOwn(BODY_MATERIALS,body))throw Error('Unsupported tool body material. Choose solid carbide, a steel body or HSS.');
+ const diameter=num(t,'diameter',.1,200);
+ const tool:Tool={material:cutterMaterial as CutterMaterial,geometry:geometry as Geometry,body:body as BodyMaterial,diameter,shankDiameter:t.shankDiameter===undefined?diameter:num(t,'shankDiameter',.1,200),flutes:num(t,'flutes',1,24),stickout:num(t,'stickout',.1,500),fluteLength:num(t,'fluteLength',.1,500),modulus:num(t,'modulus',1,1000),stiffness:num(t,'stiffness',.01,1),...(t.maxRpm===undefined?{}:{maxRpm:num(t,'maxRpm',0,200000)}),...(t.upcutLength===undefined?{}:{upcutLength:num(t,'upcutLength',.1,500)})};
+ if(!Number.isInteger(tool.flutes))throw Error('Flutes must be a whole number.');
+ if(tool.upcutLength!==undefined&&tool.upcutLength>tool.fluteLength)throw Error('Upcut length cannot exceed the flute length.');
+ return tool;
+}
 export function readSnapshot(value:unknown,legacy=false):Snapshot{
  const s=object(value),c=object(s.config),t=object(c.tool),m=object(c.machine),a=object(c.material),l=object(c.limits),p=object(s.point);
  if(typeof s.machineId!=='string'||!s.machineId.trim()||s.machineId.length>200)throw Error('Unsupported machine reference.');
@@ -80,11 +102,8 @@ export function readSnapshot(value:unknown,legacy=false):Snapshot{
  if(typeof machineName!=='string'||!machineName.trim()||machineName.length>120)throw Error('This machine is not built in and the file does not name it.');
  const materialName=Object.hasOwn(MATERIALS,materialId)?MATERIALS[materialId as MaterialId].name:a.name;
  if(typeof materialName!=='string'||!materialName.trim()||materialName.length>120)throw Error('This material is not built in and the file does not name it.');
- const cutterMaterial=legacy?'carbide':t.material;
- if(typeof cutterMaterial!=='string'||!Object.hasOwn(CUTTER_MATERIALS,cutterMaterial))throw Error('Unsupported cutter material. Choose Carbide or HSS.');
+ const tool=readTool(t,legacy);
  if(!legacy&&typeof l.cuttingDataKnown!=='boolean')throw Error('Missing chip and surface-speed limit availability.');
- const tool={material:cutterMaterial as CutterMaterial,diameter:num(t,'diameter',.1,200),flutes:num(t,'flutes',1,24),stickout:num(t,'stickout',.1,500),fluteLength:num(t,'fluteLength',.1,500),modulus:num(t,'modulus',1,1000),stiffness:num(t,'stiffness',.01,1),...(t.maxRpm===undefined?{}:{maxRpm:num(t,'maxRpm',0,200000)})};
- if(!Number.isInteger(tool.flutes))throw Error('Flutes must be a whole number.');
  const machine={name:machineName,rpmMin:num(m,'rpmMin',1,100000),rpmMax:num(m,'rpmMax',2,200000),feedMax:num(m,'feedMax',1,200000),power:num(m,'power',.1,100000),torque:num(m,'torque',.001,1000),utilization:num(m,'utilization',.01,1),known:known(m)};
  if(machine.rpmMin>=machine.rpmMax)throw Error('Minimum RPM must be less than maximum RPM.');
  const material={name:materialName,kc:num(a,'kc',1,10000),powerFactor:num(a,'powerFactor',1,5),forceFactor:num(a,'forceFactor',1,5),known:known(a)};
@@ -104,7 +123,7 @@ function migrateMachineProfile(snapshot:Snapshot,modelVersion:unknown){
 }
 export function parseExperiment(text:string):Experiment{
  const o=object(JSON.parse(text));if(o.schemaVersion!==2)throw Error('Unsupported file version. This prototype imports version 2 experiments only.');
- const legacy=o.modelVersion==='illustrative-static-2',previous=legacy||o.modelVersion==='illustrative-static-3'||o.modelVersion==='illustrative-static-4';
+ const legacy=o.modelVersion==='illustrative-static-2',previous=legacy||['illustrative-static-3','illustrative-static-4','illustrative-static-5'].includes(String(o.modelVersion));
  if(!previous&&o.modelVersion!==MODEL_VERSION)throw Error('Model version does not match. No automatic reinterpretation was performed.');
  if(typeof o.name!=='string'||o.name.length>120)throw Error('Experiment name must be 120 characters or fewer.');
  if(o.units!=='metric'&&o.units!=='imperial')throw Error('Unsupported unit system.');

@@ -27,7 +27,7 @@ import type {Library,MachineItem,RecipeItem,ToolItem} from '../src/library.ts';
 import {AGGRESSIVE,CHART,DIAMETERS,FLUTES,INSERT_AGGRESSIVE,INSERT_DIAMETER,INSERT_FLUTES,INSERT_RAW,RAW,SHEET_URL} from './dmc2-mini-data.ts';
 import type {Row,RawRow,Workpiece} from './dmc2-mini-data.ts';
 
-const UPDATED='2026-10-31T00:00:00.000Z';
+const UPDATED='2026-11-02T00:00:00.000Z';
 export const LIBRARY_ID='dmc2-mini',MACHINE_ID='dmc2-mini';
 const MACHINE_REF=`lib:${LIBRARY_ID}/${MACHINE_ID}`;
 /** [flute length, stickout] in mm per diameter. Flute length = deepest tested depth; stickout is an assumption to measure. */
@@ -48,8 +48,9 @@ const ceilTo=(x:number,step:number)=>Math.ceil(x/step-1e-9)*step;
 const ceilSig=(x:number,digits=3)=>{const step=10**(Math.floor(Math.log10(x))-digits+1);return Number(ceilTo(x,step).toPrecision(digits));};
 const fmt=(x:number,d=0)=>x.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 
-function tool(workpiece:Workpiece,diameter:number):Tool{const [fluteLength,stickout]=GEOMETRY[diameter];return {material:'carbide',diameter,flutes:FLUTES[workpiece],stickout,fluteLength,modulus:600,stiffness:.45};}
-const INSERT_TOOL:Tool={material:'carbide',diameter:INSERT_DIAMETER,flutes:INSERT_FLUTES,stickout:INSERT_GEOMETRY[1],fluteLength:INSERT_GEOMETRY[0],modulus:210,stiffness:.45};
+function tool(workpiece:Workpiece,diameter:number):Tool{const [fluteLength,stickout]=GEOMETRY[diameter];return {material:'carbide',geometry:'flat',body:'carbide',diameter,shankDiameter:diameter,flutes:FLUTES[workpiece],stickout,fluteLength,modulus:600,stiffness:.45};}
+/** The indexable mill: carbide cutting data on a steel body, which sets its 210 GPa modulus. */
+const INSERT_TOOL:Tool={material:'carbide',geometry:'flat',body:'steel',diameter:INSERT_DIAMETER,shankDiameter:INSERT_DIAMETER,flutes:INSERT_FLUTES,stickout:INSERT_GEOMETRY[1],fluteLength:INSERT_GEOMETRY[0],modulus:210,stiffness:.45};
 const toolId=(workpiece:Workpiece,diameter:number)=>`${workpiece==='aluminum'?'al-3f':'st-4f'}-${diameter}mm`;
 const toolName=(workpiece:Workpiece,diameter:number)=>`${diameter} mm · ${FLUTES[workpiece]} flute ${workpiece==='aluminum'?'uncoated':'coated'} carbide (${workpiece} set)`;
 const material=(workpiece:Workpiece)=>({name:MATERIALS[workpiece].name,kc:MATERIALS[workpiece].kc,powerFactor:1.25,forceFactor:1.3,known:true});
@@ -82,7 +83,7 @@ for(const workpiece of ['aluminum','steel'] as Workpiece[])for(const diameter of
   note:`From the DMC2 Mini test log: ${FLUTES[workpiece]}-flute ${workpiece==='aluminum'?'uncoated':'coated'} carbide square end mill used for ${workpiece}. Flute length is set to the deepest depth the tests ran (${t.fluteLength} mm) and ${t.stickout} mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness ${limits.chipMin}–${limits.chipMax} mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance ${limits.deflection} µm (the model’s deflection at the heaviest successful test, ${describe(limits.deepest)}, which scales with stickout cubed), surface speed ≤ ${SURFACE_MAX[workpiece]} m/min.`},updatedAt:UPDATED});
 }
 toolItems.push({id:'insert-mill-10mm-1f',name:'10 mm · single-insert mill (steel body)',tool:INSERT_TOOL,provenance:{source:'user',url:SHEET_URL,
- note:`From the DMC2 Mini test log: 10 mm indexable mill with one carbide insert. Modelled as “carbide” for the insert’s cutting data, with the modulus set to 210 GPa for its steel body. Effective flute length ${INSERT_GEOMETRY[0]} mm and ${INSERT_GEOMETRY[1]} mm stickout are assumed; measure both. Tests reached ${describe(INSERT_AGGRESSIVE[0])}, ${describe(INSERT_AGGRESSIVE[1])}, ${describe(INSERT_AGGRESSIVE[2])} and ${describe(INSERT_AGGRESSIVE[3])}; no chart rows exist for it, so it has no recipes.`},updatedAt:UPDATED});
+ note:`From the DMC2 Mini test log: 10 mm indexable mill with one carbide insert. Carbide cutting data on a steel body (210 GPa), with the shank assumed equal to the 10 mm cutting diameter. Effective flute length ${INSERT_GEOMETRY[0]} mm and ${INSERT_GEOMETRY[1]} mm stickout are assumed; measure both. Tests reached ${describe(INSERT_AGGRESSIVE[0])}, ${describe(INSERT_AGGRESSIVE[1])}, ${describe(INSERT_AGGRESSIVE[2])} and ${describe(INSERT_AGGRESSIVE[3])}; no chart rows exist for it, so it has no recipes.`},updatedAt:UPDATED});
 function describe(r:Row){return `${r.workpiece} ${r.mode==='slot'?'slot':'profile'} at ${fmt(r.rpm)} RPM, ${fmt(r.feed)} mm/min, ${r.woc} mm stepover × ${r.doc} mm depth`;}
 
 const machineItem:MachineItem={id:MACHINE_ID,name:MACHINE.name,machine:(({name:_n,...v})=>v)(MACHINE),provenance:{source:'user',note:MACHINE_NOTE,url:SHEET_URL},updatedAt:UPDATED};

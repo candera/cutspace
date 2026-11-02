@@ -1,6 +1,6 @@
 import {ITEM_KINDS,PROVENANCE_LABEL} from './library.ts';
 import type {ItemBase,ItemKind,Library,MachineItem,MaterialItem,RecipeItem,ToolItem} from './library.ts';
-import {CUTTER_MATERIALS} from './model.ts';
+import {BODY_MATERIALS,CUTTER_MATERIALS,GEOMETRIES} from './model.ts';
 import type {CutterMaterial,Tool} from './model.ts';
 import type {Units} from './units.ts';
 
@@ -21,8 +21,10 @@ export function inchFraction(mm:number):string|undefined{
 }
 function toolText(t:Tool){
  const frac=inchFraction(t.diameter);
- return `${trim(t.diameter)} mm ${trim(t.diameter/25.4)} in${frac?` ${frac} in ${frac}"`:''} ${t.flutes} flute ${CUTTER_MATERIALS[t.material].name}`;
+ return `${trim(t.diameter)} mm ${trim(t.diameter/25.4)} in${frac?` ${frac} in ${frac}"`:''} ${t.flutes} flute ${CUTTER_MATERIALS[t.material].name} ${GEOMETRIES[t.geometry].label} ${BODY_MATERIALS[t.body].name}${t.body==='steel'?' carbide-tipped':''}`;
 }
+/** Edge material, with the body noted when it differs: "Carbide", "Carbide-tipped", "HSS". */
+export function cutterText(t:Tool):string{const edge=CUTTER_MATERIALS[t.material].name;return t.body==='steel'?`${edge}-tipped`:edge;}
 /** Everything a search may match for an item: name, provenance, and the numbers people remember it by, in both unit systems. Lower case. */
 export function searchText(kind:ItemKind,item:ItemBase):string{
  const parts=[item.name,PROVENANCE_LABEL[item.provenance.source],item.provenance.note??''];
@@ -67,9 +69,9 @@ export function contentsSummary(library:Library):string{
  const parts=ITEM_KINDS.filter(k=>library[k].length>0).map(k=>`${library[k].length} ${KIND_NOUN[k][library[k].length===1?0:1]}`);
  return parts.length?parts.join(' · '):'empty';
 }
-/** Short tool name for people: "1/4 in · 2-flute Carbide" when the diameter is a clean inch fraction (or the display is imperial), otherwise "6 mm · 3-flute Carbide". */
+/** Short tool name for people: "1/4 in · 2-flute Carbide" when the diameter is a clean inch fraction (or the display is imperial), otherwise "6 mm · 3-flute Carbide". Router-bit geometries are named ("1/4 in · 2-flute compression · Carbide") and a steel body reads "Carbide-tipped". */
 export function toolLabel(t:Tool,units:Units):string{
  const frac=inchFraction(t.diameter),wholeMm=Math.abs(t.diameter-Math.round(t.diameter))<1e-6;
  const size=units==='imperial'?(frac?`${frac} in`:`${trim(t.diameter/25.4)} in`):(frac&&!wholeMm?`${frac} in`:`${trim(t.diameter)} mm`);
- return `${size} · ${t.flutes}-flute ${CUTTER_MATERIALS[t.material].name}`;
+ return `${size} · ${t.flutes}-flute ${t.geometry==='flat'?'':`${GEOMETRIES[t.geometry].short} · `}${cutterText(t)}`;
 }

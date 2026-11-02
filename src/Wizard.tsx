@@ -1,14 +1,16 @@
 import {useMemo,useState} from 'react';
 import {ChevronLeft,ChevronRight} from 'lucide-react';
 import Field from './Field';
+import ToolDrawing from './ToolDrawing';
 import {explain,wizardHelp} from './help';
 import {MATERIALS} from './experiment';
 import type {Configuration,Experiment,Point} from './experiment';
 import {findMachine,findMaterial,machineRefId,PROVENANCE_LABEL} from './library';
 import type {Library,MachineItem,ToolItem} from './library';
 import {toolLabel} from './libraryView';
-import {constraintInfo,CUTTER_MATERIALS} from './model';
-import type {CutterMaterial,Operation,Result,Tool} from './model';
+import {constraintInfo,CUTTER_MATERIALS,BODY_MATERIALS,GEOMETRIES,toolNotices,withBody,withCutterMaterial,withDiameter} from './model';
+import type {BodyMaterial,CutterMaterial,Geometry,Operation,Result,Tool} from './model';
+import {noticeText} from './limitGuidance';
 import {OPERATION_INFO} from './cuttingPresets';
 import {matchRecipes} from './recipeMatch';
 import type {RecipeMatch,WizardChoice} from './recipeMatch';
@@ -41,8 +43,10 @@ export default function Wizard({libraries,experiment:e,units:u,onApply,notify}:P
 
  const len=(x:number,d=u==='imperial'?3:2)=>`${fmt(toDisplay(x,'length',u),d)} ${unit('length',u)}`;
  const describeMachine=(m:MachineItem)=>`${fmt(m.machine.rpmMin,0)}–${fmt(m.machine.rpmMax,0)} RPM · ${fmt(toDisplay(m.machine.power,'power',u),u==='imperial'?2:0)} ${unit('power',u)} · feed ≤ ${fmt(toDisplay(m.machine.feedMax,'feed',u),0)} ${unit('feed',u)}`;
- const describeTool=(t:Tool)=>`stickout ${len(t.stickout,u==='imperial'?2:1)} · flute length ${len(t.fluteLength,u==='imperial'?2:1)}${t.maxRpm?` · max ${fmt(t.maxRpm,0)} RPM`:''}`;
+ const describeTool=(t:Tool)=>`stickout ${len(t.stickout,u==='imperial'?2:1)} · flute length ${len(t.fluteLength,u==='imperial'?2:1)}${t.shankDiameter!==t.diameter?` · ${len(t.shankDiameter,u==='imperial'?3:2)} shank`:''}${t.upcutLength?` · ${len(t.upcutLength,u==='imperial'?2:1)} upcut`:''}${t.maxRpm?` · max ${fmt(t.maxRpm,0)} RPM`:''}`;
  const setToolField=(patch:Partial<Tool>)=>{setTool(t=>({...t,...patch}));setToolItem(null);return null;};
+ const updateTool=(f:(t:Tool)=>Tool)=>{setTool(f);setToolItem(null);return null;};
+ const geometry=GEOMETRIES[tool.geometry];
  const apply=(pick:WizardPick)=>{try{const {experiment,notice}=buildExperiment(e,libraries,{machineId,materialId,tool,operation},pick,u);onApply(experiment,notice);}catch(err){notify(`Could not apply this choice: ${err instanceof Error?err.message:String(err)}`);}};
  const canNext=step===0?!!machineId:step===2?!!materialId:true;
 
@@ -87,19 +91,26 @@ export default function Wizard({libraries,experiment:e,units:u,onApply,notify}:P
    </section>}
    {step===1&&<section aria-labelledby="gs-tool" data-help={wizardHelp.tool}>
     <h3 id="gs-tool">What bit or end mill?</h3>
-    <p>Pick a saved tool or enter yours. Cutspace models flat end mills; downcut, compression and carbide-tipped router bits are outside the model, so pick the nearest flat end mill and read the result with extra care.</p>
-    <h4>Cutter material</h4>
-    <div className="cutter-toggle" role="group" aria-label="Cutter material">{Object.entries(CUTTER_MATERIALS).map(([id,m])=><button key={id} aria-pressed={tool.material===id} {...explain(wizardHelp.cutter)} onClick={()=>setToolField({material:id as CutterMaterial,modulus:m.modulus})}>{m.name}</button>)}</div>
+    <p>Pick a saved tool or enter yours. Every class is evaluated as a straight-fluted cylinder of its cutting diameter; the geometry names the bit, shapes the starting point and carries shop notes. Carbide-tipped bits are modelled with their steel body and actual shank.</p>
+    <h4>Geometry</h4>
+    <div className="geometry-toggle" role="group" aria-label="Cutter geometry">{(Object.keys(GEOMETRIES) as Geometry[]).map(id=><button key={id} aria-pressed={tool.geometry===id} {...explain(`${GEOMETRIES[id].label}: ${GEOMETRIES[id].note}`)} onClick={()=>updateTool(t=>({...t,geometry:id,...(id==='compression'?{}:{upcutLength:undefined})}))}>{GEOMETRIES[id].label}</button>)}</div>
+    <p className={`wizard-note${geometry.modelled==='as-flat'?' caution':''}`}>{geometry.note}</p>
+    <h4>Cutting-edge material and body</h4>
+    <div className="cutter-toggle" role="group" aria-label="Cutter material">{Object.entries(CUTTER_MATERIALS).map(([id,m])=><button key={id} aria-pressed={tool.material===id} {...explain(wizardHelp.cutter)} onClick={()=>updateTool(t=>withCutterMaterial(t,id as CutterMaterial))}>{m.name}</button>)}</div>
+    <div className="cutter-toggle" role="group" aria-label="Body material">{(Object.keys(BODY_MATERIALS) as BodyMaterial[]).filter(id=>id!=='hss'||tool.material==='hss').map(id=><button key={id} aria-pressed={tool.body===id} {...explain(wizardHelp.body)} onClick={()=>updateTool(t=>withBody(t,id))}>{BODY_MATERIALS[id].name}</button>)}</div>
     {libraries.filter(l=>l.tools.length).map(lib=><div key={lib.id}><h4>{lib.kind==='builtin'?'Starter tools':lib.name}</h4><div className="choice-list">{lib.tools.map(item=><button key={item.id} className="choice" aria-pressed={toolItem?.item===item} {...explain(`${item.name}: ${toolLabel(item.tool,u)}, ${describeTool(item.tool)}. ${item.provenance.note??''}`)} onClick={()=>{setTool({...item.tool});setToolItem({library:lib,item});}}><b>{item.name}</b><small>{toolLabel(item.tool,u)} · {describeTool(item.tool)}</small><em>{PROVENANCE_LABEL[item.provenance.source]}</em></button>)}</div></div>)}
     <h4>{toolItem?'Adjust it':'Or enter it yourself'}</h4>
     <div className="wizard-fields">
-     <Field label="Diameter" value={tool.diameter} quantity="length" units={u} min={.1} max={200} onChange={value=>setToolField({diameter:value})}/>
+     <Field label="Diameter" value={tool.diameter} quantity="length" units={u} min={.1} max={200} onChange={value=>updateTool(t=>withDiameter(t,value))}/>
+     <Field label="Shank diameter" value={tool.shankDiameter} quantity="length" units={u} min={.1} max={200} onChange={value=>setToolField({shankDiameter:value})}/>
      <Field label="Flutes" value={tool.flutes} min={1} max={24} integer onChange={value=>setToolField({flutes:value})}/>
      <Field label="Stickout" value={tool.stickout} quantity="length" units={u} min={.1} max={500} onChange={value=>setToolField({stickout:value})}/>
      <Field label="Flute length" value={tool.fluteLength} quantity="length" units={u} min={.1} max={500} onChange={value=>setToolField({fluteLength:value})}/>
+     {tool.geometry==='compression'&&<Field label="Upcut length" value={tool.upcutLength??0} quantity="length" units={u} min={0} max={tool.fluteLength} onChange={value=>setToolField(value>0?{upcutLength:value}:{upcutLength:undefined})}/>}
      <Field label="Tool max RPM" value={tool.maxRpm??0} min={0} max={200000} suffix="RPM" onChange={value=>setToolField(value>0?{maxRpm:value}:{maxRpm:undefined})}/>
     </div>
-    <p className="wizard-note">Current choice: {toolLabel(tool,u)}, {describeTool(tool)}. Measure stickout from the collet face to the tip and flute length on the actual tool; fractions such as 1/4 are accepted.</p>
+    <ToolDrawing tool={tool} units={u}/>
+    <p className="wizard-note">Current choice: {toolLabel(tool,u)}, {describeTool(tool)}. Measure stickout from the collet face to the tip and flute length on the actual tool; fractions such as 1/4 are accepted.{tool.geometry==='compression'&&!tool.upcutLength?' Enter the upcut length so the starting depth can cover it.':''}</p>
    </section>}
    {step===2&&<section aria-labelledby="gs-material" data-help={wizardHelp.material}>
     <h3 id="gs-material">What are you cutting?</h3>
@@ -123,6 +134,7 @@ export default function Wizard({libraries,experiment:e,units:u,onApply,notify}:P
      {solved?.ok?<article className="result-card" data-help={wizardHelp.startingPoint}>
       <header><b>Derived from your configured limits</b>{zoneBadge(solved.result,'Checks')}</header>
       {values(solved.point,result.config.tool)}
+      {toolNotices({...result.config,cut:solved.cut}).map(n=><p key={n.key} className="caution">{noticeText(n,u)}</p>)}
       <p>Nearest soft limit: {solved.result.softLimiting?`${constraintInfo[solved.result.softLimiting.key].label.toLowerCase()} at ${fmt(solved.result.softLimiting.ratio*100,0)}%`:'none'} · estimated {fmt(toDisplay(solved.result.power,'power',u),u==='imperial'?2:0)} {unit('power',u)} spindle power, {fmt(toDisplay(solved.result.deflection,'deflection',u),u==='imperial'?4:1)} {unit('deflection',u)} tool deflection.</p>
       <details data-help={wizardHelp.derivation}><summary>How this was derived</summary><ol>{solved.steps.map((s,i)=><li key={i}>{s}</li>)}</ol><p>{result.limitsBasis}</p></details>
       <div className="actions"><button className="primary" {...explain(wizardHelp.apply)} onClick={()=>apply({kind:'computed',point:solved.point})}>Start here</button></div>
@@ -139,7 +151,7 @@ export default function Wizard({libraries,experiment:e,units:u,onApply,notify}:P
       <dt>Machine</dt><dd>{result.config.machine.name}: {machineFound?`${machineFound.library.name} · ${PROVENANCE_LABEL[machineFound.item.provenance.source]}. ${machineFound.item.provenance.note??''}`:'from a file without a matching library entry.'}</dd>
       <dt>Workpiece</dt><dd>{result.config.material.name}: {builtinMaterial?`built-in example category. ${MATERIALS[materialId as keyof typeof MATERIALS].note}`:materialFound?`${materialFound.library.name} · ${PROVENANCE_LABEL[materialFound.item.provenance.source]}. ${materialFound.item.provenance.note??''}`:'from a file without a matching library entry.'}</dd>
       <dt>Cutting limits</dt><dd>{result.limitsBasis}</dd>
-      <dt>Tool</dt><dd>{toolLabel(tool,u)}: {toolItem?`${toolItem.item.name} from ${toolItem.library.name} · ${PROVENANCE_LABEL[toolItem.item.provenance.source]}. ${toolItem.item.provenance.note??''}`:'entered by you. The bending estimate uses a representative section stiffness; measure stickout and flute length on the actual tool.'}</dd>
+      <dt>Tool</dt><dd>{toolLabel(tool,u)}: {toolItem?`${toolItem.item.name} from ${toolItem.library.name} · ${PROVENANCE_LABEL[toolItem.item.provenance.source]}. ${toolItem.item.provenance.note??''}`:'entered by you. The bending estimate uses a representative section stiffness; measure stickout and flute length on the actual tool.'} {BODY_MATERIALS[tool.body].name}{tool.shankDiameter!==tool.diameter?` on a ${len(tool.shankDiameter,u==='imperial'?3:2)} shank`:''}.{geometry.modelled==='as-flat'?` ${geometry.note}`:''}</dd>
      </dl>
      <p className="caution">These are starting points for exploring, derived from example presets, library notes and a simplified forward model. They are not verified cutting recommendations. Check the Limits tab and your tool maker’s data, and start with light passes.</p>
     </>}

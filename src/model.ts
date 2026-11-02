@@ -1,11 +1,58 @@
 /** Canonical units: mm, mm/min, RPM, N, W, Nm, µm. No empirical validation implied. */
-export const MODEL_VERSION = 'illustrative-static-5';
+export const MODEL_VERSION = 'illustrative-static-6';
 export const CUTTER_MATERIALS = {
  carbide:{name:'Carbide',modulus:600},
  hss:{name:'HSS',modulus:219},
 } as const;
 export type CutterMaterial=keyof typeof CUTTER_MATERIALS;
-export interface Tool { material:CutterMaterial; diameter: number; flutes: number; stickout: number; fluteLength: number; modulus: number; stiffness: number; maxRpm?: number }
+/** What the shank and body are made of; it sets the bending modulus. Carbide-tipped and insert bits have steel bodies whatever their edges are. */
+export const BODY_MATERIALS = {
+ carbide:{name:'Solid carbide',modulus:600},
+ steel:{name:'Steel body (carbide-tipped or insert)',modulus:210},
+ hss:{name:'Solid HSS',modulus:219},
+} as const;
+export type BodyMaterial=keyof typeof BODY_MATERIALS;
+/**
+ * Cutter geometry classes. `modelled` says how far the straight-flute peripheral-milling model applies: `full` means the
+ * class is a cylinder of its cutting diameter (helix and chip direction are not modelled, but nothing is misrepresented);
+ * `as-flat` means the real cutting diameter varies with depth and the estimates refer to the nominal diameter.
+ * Notes are qualitative shop guidance, not model outputs.
+ */
+export const GEOMETRIES = {
+ flat:{label:'Flat end mill',short:'flat end mill',modelled:'full',note:'Square-end milling cutter with helical or straight flutes: the geometry Cutspace models directly.'},
+ upcut:{label:'Upcut spiral',short:'upcut',modelled:'full',note:'Spiral flutes carry chips up and out of the cut. The same lift pulls on the workpiece and can fray the top edge of wood, so hold the work down well. Modelled as a flat end mill; the helix does not change the estimates.'},
+ downcut:{label:'Downcut spiral',short:'downcut',modelled:'full',note:'Spiral flutes push chips down, leaving a clean top edge and pressing the work onto the table. Chips pack in slots and pockets, so heat and burning rise with depth: keep slot passes to about one diameter deep and clear the chips. Modelled as a flat end mill.'},
+ compression:{label:'Compression spiral',short:'compression',modelled:'full',note:'Upcut flutes at the tip and downcut flutes above them, for clean edges on both faces of sheet goods. The first pass must be deeper than the upcut section (enter it as Upcut length) or the top edge is cut upcut-style. Modelled as a flat end mill.'},
+ straight:{label:'Straight flute',short:'straight',modelled:'full',note:'Straight flutes with no helix, often carbide tips brazed to a steel body. Chips are neither lifted nor pushed, so slots clear poorly and entry is harsher than with a spiral. Cutspace’s force model already assumes straight flutes; set the body to steel for a tipped bit.'},
+ 'o-flute':{label:'O-flute',short:'O-flute',modelled:'full',note:'One (sometimes two) polished flutes with a large open gullet, for plastics and aluminium; runs heavy chiploads to keep the chip from melting. Modelled as a flat end mill with that flute count.'},
+ ball:{label:'Ball nose',short:'ball nose',modelled:'as-flat',note:'Hemispherical tip for 3D contours. Below centre height the effective cutting diameter is smaller than nominal, so the surface speed and chipload at the edge are lower than shown here. Modelled as a flat end mill of its nominal diameter.'},
+ v:{label:'V-bit',short:'V-bit',modelled:'as-flat',note:'Conical tip for engraving and V-carving. The cutting diameter grows with depth and is near zero at the point, so chipload, surface speed and %D shown here refer to the nominal (largest) diameter and overstate what the tip sees. Modelled as a flat end mill of its nominal diameter.'},
+ surfacing:{label:'Surfacing / fly cutter',short:'surfacing',modelled:'full',note:'Large-diameter head on a small shank, usually a steel body with carbide inserts or tips, for flattening spoilboards and slabs at a millimetre or two of depth. The bit’s RPM rating matters more than surface speed (enter it as Tool max RPM). Set the body to steel and the shank diameter to the actual shank.'},
+} as const satisfies Record<string,{label:string;short:string;modelled:'full'|'as-flat';note:string}>;
+export type Geometry=keyof typeof GEOMETRIES;
+/**
+ * `material` is the edge material and selects the cutting data; `body` is the shank/body material and selects the bending
+ * modulus (editable as `modulus`). `shankDiameter` may differ from the cutting `diameter`; `fluteLength` is the cutting
+ * length. `upcutLength` applies to compression spirals only.
+ */
+export interface Tool { material:CutterMaterial; geometry:Geometry; body:BodyMaterial; diameter: number; shankDiameter: number; flutes: number; stickout: number; fluteLength: number; modulus: number; stiffness: number; maxRpm?: number; upcutLength?: number }
+/** A tool with its edge material changed: a steel body stays steel, otherwise the body follows the edge and the modulus is reset to the body's default. */
+export function withCutterMaterial(tool:Tool,material:CutterMaterial):Tool{
+ if(tool.material===material)return {...tool};
+ const body:BodyMaterial=tool.body==='steel'?'steel':material;
+ return {...tool,material,body,modulus:tool.body==='steel'?tool.modulus:BODY_MATERIALS[body].modulus};
+}
+/** A tool with a new cutting diameter; a shank that matched the old cutting diameter follows it, a distinct shank stays. */
+export function withDiameter(tool:Tool,diameter:number):Tool{return {...tool,diameter,shankDiameter:tool.shankDiameter===tool.diameter?diameter:tool.shankDiameter};}
+/** A tool with its body material changed and the modulus reset to that body's default. */
+export function withBody(tool:Tool,body:BodyMaterial):Tool{return tool.body===body?{...tool}:{...tool,body,modulus:BODY_MATERIALS[body].modulus};}
+/** Notices about the tool at this cut that are not limits; today only the compression first-pass depth. The UI formats them in display units. */
+export interface ToolNotice {key:'compression-shallow';doc:number;upcutLength:number}
+export function toolNotices(s:Setup):ToolNotice[]{
+ const {tool:t,cut:c}=s,notices:ToolNotice[]=[];
+ if(t.geometry==='compression'&&t.upcutLength&&c.doc>0&&c.doc<t.upcutLength)notices.push({key:'compression-shallow',doc:c.doc,upcutLength:t.upcutLength});
+ return notices;
+}
 export interface Material { name: string; kc: number; powerFactor: number; forceFactor: number; known?: boolean }
 export interface Machine { name: string; rpmMin: number; rpmMax: number; feedMax: number; power: number; torque: number; utilization: number; known?: boolean }
 /** Operation sets how much tool bending the cut may accept; it is a multiplier on the finishing deflection allowance, not a second set of limits. */
@@ -14,7 +61,7 @@ export interface Limits { preset?:'provisional-1'; cuttingDataKnown:boolean; chi
 export interface Cut { rpm: number; feed: number; doc: number; woc: number }
 export interface Setup { tool: Tool; material: Material; machine: Machine; limits: Limits; cut: Cut }
 export const defaults: Setup = {
- tool:{material:'carbide',diameter:6,flutes:3,stickout:20,fluteLength:15,modulus:600,stiffness:.45},
+ tool:{material:'carbide',geometry:'flat',body:'carbide',diameter:6,shankDiameter:6,flutes:3,stickout:20,fluteLength:15,modulus:600,stiffness:.45},
  material:{name:'Aluminum · 6061',kc:1000,powerFactor:1.25,forceFactor:1.3,known:true},
  machine:{name:'2.2 kW spindle router (example)',rpmMin:8000,rpmMax:24000,feedMax:10000,power:2200,torque:.875,utilization:.75,known:true},
  limits:{cuttingDataKnown:true,chipMin:.008,chipMax:.055,deflection:25,surfaceMax:450,caution:.75,operation:'finishing'},
@@ -62,9 +109,21 @@ export function peakCutterLoadFactor(engagement:number,flutes:number){
  if(forceFactorCache.size>=4096)forceFactorCache.clear();
  forceFactorCache.set(key,peak);return peak;
 }
+/**
+ * Tip deflection per newton for a stepped cantilever of stickout L: the fluted segment a = min(flute length, L) has the
+ * cutting diameter, the rest has the shank diameter. δ/F = ∫₀ᴸ (L−x)²/EI dx = [a³/(E I_flute) + (L³ − a³)/(E I_shank)] / 3.
+ * The effective section factor applies to both segments, as it always has to the whole stickout, so a tool whose shank
+ * equals its cutting diameter reproduces the earlier single-cylinder estimate L³/(3 E I) exactly; the shank segment differs
+ * only by diameter. One body modulus serves both segments: carbide tips do not stiffen a steel body.
+ */
+export function steppedCompliance(t:Tool){
+ const E=t.modulus*1000,L=t.stickout,a=Math.min(t.fluteLength,L);
+ const iFlute=Math.PI*t.diameter**4/64*t.stiffness,iShank=Math.PI*t.shankDiameter**4/64*t.stiffness;
+ return (a**3/(E*iFlute)+(L**3-a**3)/(E*iShank))/3;
+}
 export function calculate(c:Cut,s:Setup){
  const {tool:t,material:mat,machine:m,limits:l}=s;
- const inputValid=Object.values(c).every(v=>Number.isFinite(v)&&v>=0)&&c.rpm>0&&Object.hasOwn(CUTTER_MATERIALS,t.material)&&[t.diameter,t.flutes,t.stickout,t.fluteLength,t.modulus,t.stiffness].every(v=>Number.isFinite(v)&&v>0)&&Number.isInteger(t.flutes);
+ const inputValid=Object.values(c).every(v=>Number.isFinite(v)&&v>=0)&&c.rpm>0&&Object.hasOwn(CUTTER_MATERIALS,t.material)&&Object.hasOwn(GEOMETRIES,t.geometry)&&Object.hasOwn(BODY_MATERIALS,t.body)&&[t.diameter,t.shankDiameter,t.flutes,t.stickout,t.fluteLength,t.modulus,t.stiffness].every(v=>Number.isFinite(v)&&v>0)&&Number.isInteger(t.flutes);
  const noCut=c.doc===0||c.woc===0||c.feed===0;
  const geometryValid=c.woc<=t.diameter;
  const surface=inputValid?Math.PI*t.diameter*c.rpm/1000:NaN;
@@ -78,8 +137,8 @@ export function calculate(c:Cut,s:Setup){
  const capacity=availablePower(c.rpm,m);
  const cutterLoad=peakCutterLoadFactor(engagement,t.flutes);
  const force=mat.known===false?NaN:noCut?0:mat.kc*c.doc*chip*cutterLoad*mat.forceFactor;
- const inertia=Math.PI*t.diameter**4/64*t.stiffness;
- const deflection=force*t.stickout**3/(3*t.modulus*1000*inertia)*1000;
+ // Tip-loaded stepped cantilever: a fluted tip segment (cutting diameter, reduced section) on a solid shank segment, one body modulus.
+ const deflection=force*steppedCompliance(t)*1000;
  const constraints:Constraint[]=[
   {key:'chipHigh',ratio:l.cuttingDataKnown?chipMax/l.chipMax:NaN},{key:'chipLow',ratio:l.cuttingDataKnown?(chipMax>0?l.chipMin/chipMax:Infinity):NaN},
   {key:'power',ratio:m.known===false?NaN:power/(m.power*m.utilization)},

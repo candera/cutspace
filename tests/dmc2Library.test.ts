@@ -30,7 +30,8 @@ test('the DMC2 library holds the fitted machine, the 17 tools from the sheet and
   const t=lib.tools.find(x=>x.id===toolId(w,d))!;assert.equal(t.tool.diameter,d);assert.equal(t.tool.flutes,FLUTES[w]);assert.equal(t.tool.material,'carbide');assert.equal(t.provenance.source,'user');
   const deepest=Math.max(...[...CHART,...AGGRESSIVE,...RAW].filter(r=>r.workpiece===w&&r.diameter===d).map(r=>r.doc));assert.ok(t.tool.fluteLength>=deepest,`${t.id} flute length covers ${deepest} mm`);
  }
- const insert=lib.tools.find(t=>t.id==='insert-mill-10mm-1f')!;assert.equal(insert.tool.flutes,1);assert.equal(insert.tool.modulus,210);
+ const insert=lib.tools.find(t=>t.id==='insert-mill-10mm-1f')!;assert.equal(insert.tool.flutes,1);assert.equal(insert.tool.modulus,210);assert.equal(insert.tool.body,'steel');assert.equal(insert.tool.material,'carbide');assert.equal(insert.tool.geometry,'flat');
+ for(const t of lib.tools)assert.equal(t.tool.shankDiameter,t.tool.diameter);
  for(const recipe of lib.recipes){
   assert.equal(recipe.snapshot.machineId,'lib:dmc2-mini/dmc2-mini');assert.equal(findMachine([lib],recipe.snapshot.machineId)?.item.id,'dmc2-mini');
   assert.ok(['aluminum','steel'].includes(recipe.snapshot.materialId));assert.equal(recipe.provenance.source,'manufacturer');assert.equal(recipe.snapshot.config.limits.operation,'roughing');

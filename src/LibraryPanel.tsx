@@ -3,7 +3,7 @@ import {ChevronDown,ChevronRight,Copy,Download,RefreshCw,Search,Trash2,Upload,X}
 import {explain} from './help';
 import {ITEM_KINDS,PERSONAL_ID,PROVENANCE_LABEL,asShared,conflictsBetween,exportLibrary,fetchLibrary,machineFromItem,machineItem,machineRefId,materialItem,mergeLibrary,parseLibrary,recipeItem,removeItem,replaceLibrary,toolItem,uniqueId,upsertLibrary,withItem} from './library';
 import type {ConflictPolicy,ItemBase,ItemKind,Library,MachineItem,MaterialItem,RecipeItem,Selection,ToolItem} from './library';
-import {KIND_FILTERS,SORT_LABEL,contentsSummary,groupLibraries,kindCounts} from './libraryView';
+import {KIND_FILTERS,SORT_LABEL,contentsSummary,groupLibraries,kindCounts,toolLabel} from './libraryView';
 import type {KindFilter,SortOrder} from './libraryView';
 import {snapshot} from './experiment';
 import type {Experiment} from './experiment';
@@ -36,11 +36,11 @@ export default function LibraryPanel({libraries,preloaded=[],experiment:e,units:
  const setSort=(s:SortOrder)=>{remembered={...remembered,sort:s};setSortState(s);};
  const update=(lib:Library)=>onChange(replaceLibrary(libraries,lib));
  const label=(fallback:string)=>name.trim()||fallback;
- const toolName=(t:Tool)=>`${fmt(toDisplay(t.diameter,'length',u),u==='imperial'?4:2)} ${unit('length',u)} · ${t.flutes} flute ${CUTTER_MATERIALS[t.material].name}`;
+ const toolName=(t:Tool)=>toolLabel(t,u);
  const describe=(kind:ItemKind,item:ItemBase)=>{
   if(kind==='machines'){const m=(item as MachineItem).machine;return `${fmt(m.rpmMin,0)}–${fmt(m.rpmMax,0)} RPM · ${fmt(toDisplay(m.power,'power',u),u==='imperial'?2:0)} ${unit('power',u)} · feed ≤ ${fmt(toDisplay(m.feedMax,'feed',u),0)} ${unit('feed',u)}`;}
   if(kind==='materials'){const m=item as MaterialItem,cutters=Object.keys(m.cutting??{}).map(k=>CUTTER_MATERIALS[k as keyof typeof CUTTER_MATERIALS].name).join(' / ');return `Kc ${fmt(m.material.kc,0)} N/mm² · power ×${fmt(m.material.powerFactor,2)} · force ×${fmt(m.material.forceFactor,2)}${cutters?` · cutting starter: ${cutters}`:' · no cutting-data starter'}`;}
-  if(kind==='tools'){const t=(item as ToolItem).tool;return `${toolName(t)} · stickout ${fmt(toDisplay(t.stickout,'length',u),u==='imperial'?3:1)} ${unit('length',u)}${t.maxRpm?` · max ${fmt(t.maxRpm,0)} RPM`:''}`;}
+  if(kind==='tools'){const t=(item as ToolItem).tool;return `${toolName(t)} · stickout ${fmt(toDisplay(t.stickout,'length',u),u==='imperial'?3:1)} ${unit('length',u)}${t.shankDiameter!==t.diameter?` · ${fmt(toDisplay(t.shankDiameter,'length',u),u==='imperial'?3:2)} ${unit('length',u)} shank`:''}${t.body==='steel'?' · steel body':''}${t.maxRpm?` · max ${fmt(t.maxRpm,0)} RPM`:''}`;}
   const r=item as RecipeItem,s=r.snapshot;return `${s.config.machine.name} · ${s.config.material.name} · ${toolName(s.config.tool)} · ${fmt(s.point.rpm,0)} RPM · ${fmt(toDisplay(s.point.feed,'feed',u),0)} ${unit('feed',u)} · ${fmt(s.point.wocRatio*100)}%D / ${fmt(s.point.docRatio*100)}%D${r.notes?` · ${r.notes}`:''}`;
  };
  function save(kind:ItemKind){

@@ -1,4 +1,4 @@
-import {MACHINES,readSnapshot} from './experiment.ts';
+import {MACHINES,readSnapshot,readTool} from './experiment.ts';
 import type {MachineId,Snapshot} from './experiment.ts';
 import {OPERATION_INFO} from './cuttingPresets.ts';
 import {CUTTER_MATERIALS} from './model.ts';
@@ -65,13 +65,8 @@ function parseMaterialCutting(v:unknown):MaterialItem['cutting']{
  }
  if(Object.keys(cutting).length===0)throw Error('Material cutting data must include Carbide or HSS values.');return cutting;
 }
-export function parseToolValues(v:unknown):Tool{
- const t=object(v,'Tool');
- if(typeof t.material!=='string'||!Object.hasOwn(CUTTER_MATERIALS,t.material))throw Error('Unsupported cutter material. Choose Carbide or HSS.');
- const tool:Tool={material:t.material as CutterMaterial,diameter:num(t,'diameter',.1,200),flutes:num(t,'flutes',1,24),stickout:num(t,'stickout',.1,500),fluteLength:num(t,'fluteLength',.1,500),modulus:num(t,'modulus',1,1000),stiffness:num(t,'stiffness',.01,1),...(t.maxRpm===undefined?{}:{maxRpm:num(t,'maxRpm',0,200000)})};
- if(!Number.isInteger(tool.flutes))throw Error('Flutes must be a whole number.');
- return tool;
-}
+/** Library tools share the experiment file's tool reader, so files from before geometry, body and shank fields existed still load as flat end mills. */
+export function parseToolValues(v:unknown):Tool{return readTool(object(v,'Tool'));}
 function parseItems<T extends ItemBase>(value:unknown,kind:ItemKind,read:(o:Record<string,unknown>,base:ItemBase)=>T):T[]{
  if(value===undefined)return [];
  if(!Array.isArray(value)||value.length>500)throw Error(`${kind} must be a list of at most 500 items.`);
@@ -100,7 +95,9 @@ const MACHINE_NOTES:Record<MachineId,string>={
  'industrial-router-example':'Generic starting point for a 4×4 or larger router with a 3 kW class spindle. Edit to match your machine.',
 };
 const machineValues=(m:Machine):MachineValues=>{const {name:_name,...values}=m;return values;};
-const starterTool=(id:string,name:string,tool:Tool,note='Example geometry; measure stickout and flute length on your actual tool.'):ToolItem=>({id,name,tool,provenance:{source:'illustrative',note},updatedAt:'2026-10-30T00:00:00.000Z'});
+type StarterTool=Omit<Tool,'geometry'|'body'|'shankDiameter'>&Partial<Pick<Tool,'geometry'|'body'|'shankDiameter'>>;
+/** Starter geometry: a flat end mill whose body matches its edge material and whose shank equals the cutting diameter unless stated. */
+const starterTool=(id:string,name:string,t:StarterTool,note='Example geometry; measure stickout and flute length on your actual tool.',updatedAt='2026-10-30T00:00:00.000Z'):ToolItem=>({id,name,tool:{geometry:'flat',body:t.material,shankDiameter:t.diameter,...t},provenance:{source:'illustrative',note},updatedAt});
 /** The built-in library is regenerated from code each load; it is never stored. */
 export function builtinLibrary(recipes:RecipeItem[]=[]):Library{
  return {schemaVersion:LIBRARY_SCHEMA,id:BUILTIN_ID,name:'Built in',kind:'builtin',readOnly:true,updatedAt:'2026-10-30T00:00:00.000Z',
@@ -113,6 +110,9 @@ export function builtinLibrary(recipes:RecipeItem[]=[]):Library{
    starterTool('eighth-2f-carbide','1/8 in · 2 flute carbide',{material:'carbide',diameter:3.175,flutes:2,stickout:15,fluteLength:12.7,modulus:600,stiffness:.45}),
    starterTool('half-2f-carbide','1/2 in · 2 flute carbide',{material:'carbide',diameter:12.7,flutes:2,stickout:38.1,fluteLength:31.75,modulus:600,stiffness:.45}),
    starterTool('quarter-2f-hss','1/4 in · 2 flute HSS',{material:'hss',diameter:6.35,flutes:2,stickout:25.4,fluteLength:19.05,modulus:219,stiffness:.45}),
+   starterTool('quarter-2f-compression','1/4 in · 2 flute compression spiral',{material:'carbide',geometry:'compression',diameter:6.35,flutes:2,stickout:32,fluteLength:22.225,upcutLength:6.35,modulus:600,stiffness:.45},'Example geometry for a solid-carbide compression bit with a 7/8 in cutting length and a 1/4 in upcut section; the first pass should be deeper than the upcut section. Measure stickout, cutting length and upcut length on your bit.','2026-11-02T00:00:00.000Z'),
+   starterTool('half-2f-straight-tipped','1/2 in · 2 flute straight · carbide-tipped · 1/4 in shank',{material:'carbide',geometry:'straight',body:'steel',diameter:12.7,shankDiameter:6.35,flutes:2,stickout:38.1,fluteLength:25.4,modulus:210,stiffness:.45},'Example geometry for a carbide-tipped straight router bit: a steel body with brazed carbide tips on a 1/4 in shank. The bending estimate uses the steel body’s modulus and the 1/4 in shank, so it is far more flexible than a solid 1/2 in carbide cutter. Measure stickout and cutting length on your bit.','2026-11-02T00:00:00.000Z'),
+   starterTool('one-inch-surfacing','1 in surfacing bit · 1/2 in shank',{material:'carbide',geometry:'surfacing',body:'steel',diameter:25.4,shankDiameter:12.7,flutes:2,stickout:40,fluteLength:6.35,maxRpm:16000,modulus:210,stiffness:.45},'Example geometry for a spoilboard surfacing bit: a 1 in steel head with two carbide tips on a 1/2 in shank, about 1/4 in of cutting length and an example 16,000 RPM rating. Use your bit’s own rating, and keep passes shallow.','2026-11-02T00:00:00.000Z'),
   ],
   recipes};
 }

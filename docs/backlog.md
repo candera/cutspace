@@ -38,9 +38,14 @@ Status: Largely superseded on 30 October 2026 by libraries (`src/library.ts`): a
 
 ## CS B03 Router bits and other cutter geometries
 
-Status: Future exploration, requested 28 October 2026. Initial cutter scope remains carbide/HSS flat end mills.
+Status: Requested 28 October 2026. Partly delivered 2 November 2026 (model illustrative-static-6): tools carry a geometry class (flat, upcut, downcut, compression, straight, O-flute, ball, V, surfacing) with shop notes, separate cutting-edge and body materials, a shank diameter and an optional upcut length; bending is a two-segment cantilever (fluted length at the cutting diameter, shank above it, body modulus), so carbide-tipped and insert bits are no longer modelled as solid-carbide cylinders; labels, search, recipe matching and the guided start use the geometry; a compression pass shallower than the upcut length is a notice. No new coefficients were introduced and older files reproduce their estimates.
 
-Separate cutter geometry and construction from substrate. Consider straight/spiral router bits, upcut/downcut/compression, carbide-tipped steel bodies, effective cutting diameter, chip evacuation and axial force. Do not model carbide-tipped router bits as homogeneous solid-carbide cantilevers. Form, ball and tapered cutters need different engagement geometry and applicable cutting data. Define scope and source model evidence before adding these options.
+Still open:
+
+- **Depth-dependent engagement.** Ball, V and tapered bits cut at an effective diameter that depends on depth. Today they are flagged as modelled at nominal diameter. Supporting them means an effective-diameter model for surface speed, chipload and the %D axes, a chip-thinning form for the ball, and a decision about what %D means for a V-bit. Design the plot semantics before changing the model.
+- **Geometry-keyed cutting data.** Manufacturer chipload charts are stated per bit series and material. `MaterialItem.cutting` is keyed by edge material only; extend it (or CS B04's catalogue) by geometry class, with provenance, before the presets learn anything geometry-specific. The provisional presets still scale by diameter and flute count only.
+- **Axial force and chip evacuation** stay qualitative notes; do not model them without evidence.
+- **Effective section factor on the shank.** The 0.45 factor is applied to the shank segment as well as the fluted one so existing estimates did not move; a solid shank is stiffer than that. Revisit together with CS B05 calibration rather than alone.
 
 ## CS B04 Qualified cutter/workpiece cutting data
 
@@ -64,7 +69,7 @@ Use the two Big Blue plywood examples documented in calibration-cases.md as init
 Status: Opened 2 November 2026 with the first Guided start release. The flow (`src/Wizard.tsx`, `src/recipeMatch.ts`, `src/startingPoint.ts`, `src/wizardApply.ts`) derives a starting point from the configured limits and matches library recipes; these are the gaps it leaves.
 
 - Material-aware engagement conventions. The seed starts every roughing cut at 50%D stepover / 100%D depth and every finishing cut at 10%D / 50%D, then backs off. Wood roughing is often deeper than one diameter and metals shallower; sourced conventions per material family would shorten the back-off and read more naturally.
-- Router-bit geometry in the tool step depends on CS B03. Beginners with downcut, compression or carbide-tipped bits currently pick the nearest flat end mill and are told so.
+- Router-bit geometry in the tool step: delivered with CS B03 on 2 November 2026 (geometry, body and shank choices; compression depth seeding). Ball and V bits are still flagged as modelled at nominal diameter.
 - Sourced starting-chipload bands (CS B07) would replace the preset-derived chipload seed with manufacturer-backed values and per-row provenance.
 - Save the derived starting point as a recipe from the result screen, carrying the derivation steps as its note.
 - Matching across cutter materials (for example a carbide recipe as context for an HSS choice) is deliberately excluded for now; revisit once CS B04 supplies qualified data.

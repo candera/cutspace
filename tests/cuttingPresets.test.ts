@@ -32,7 +32,7 @@ test('reported Big Blue plywood cut exposes inherited chip and deflection thresh
  // DOC 50%D, WOC 100%D, approximately 30 mm stickout. RC4 is a profile proxy,
  // NOT measured Big Blue capacity. 15 mm flute length remains an assumed value.
  const e=fresh();e.machineId='lib:nova-labs/big-blue';e.config.machine=novaMachine('big-blue');setWorkpieceMaterial(e,'plywood');
- Object.assign(e.config.tool,{diameter:6.35,flutes:2,stickout:30});e.point={rpm:18000,feed:7620,docRatio:.5,wocRatio:1};
+ Object.assign(e.config.tool,{diameter:6.35,shankDiameter:6.35,flutes:2,stickout:30});e.point={rpm:18000,feed:7620,docRatio:.5,wocRatio:1};
  const s=setupFor(e),r=calculate(s.cut,s);
  assert.ok(Math.abs(r.chip/25.4-300/(18000*2))<1e-12);
  assert.ok(Math.abs(r.power-320.05984375)<1e-8);assert.ok(Math.abs(r.deflection-36.48828890747707)<1e-8);

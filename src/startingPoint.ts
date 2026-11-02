@@ -69,6 +69,9 @@ export function startingPoint(config:Configuration,units:Units='metric'):Startin
  const convention=STARTING_ENGAGEMENT[l.operation],reach=Math.min(t.fluteLength,t.stickout);
  let woc=convention.woc*D,doc=Math.min(convention.doc*D,REACH_FRACTION*reach);
  steps.push(`${l.operation==='roughing'?'Roughing':'Finishing'} convention: stepover ${pct(woc)}, depth ${pct(doc)}${doc<convention.doc*D?` (held within the tool's ${len(reach)} reach)`:''}${woc/D<.5?`. At this stepover the chip thins to about ${fmt(thinning(woc/D)*100,0)}% of the chipload.`:'.'}`);
+ // A compression spiral only works as intended when the pass is deeper than its upcut section.
+ const upcut=t.geometry==='compression'&&t.upcutLength?Math.min(t.upcutLength,reach):0;
+ if(upcut>doc){doc=upcut;steps.push(`Compression spiral: depth raised to ${pct(doc)} (${len(doc)}) so the first pass is at least as deep as the ${len(t.upcutLength!)} upcut section.`);}
 
  // Feed from the chipload, within the machine's feed limit. If the limit binds, slow the spindle to keep the chipload; at the minimum speed, thin the chip instead.
  const feedCap=FEED_FRACTION*m.feedMax;
@@ -103,8 +106,10 @@ export function startingPoint(config:Configuration,units:Units='metric'):Startin
   const engagement=ratioOf(result,ENGAGEMENT_KEYS),chipHigh=ratioOf(result,['chipHigh']),chipLow=ratioOf(result,['chipLow']);
   const used=(c:{ratio:number})=>`${fmt(c.ratio*100,0)}% of its limit`;
   if(engagement.ratio>target){
-   if(doc/D>DOC_FLOOR+1e-9){const from=pct(doc);doc=Math.max(DOC_FLOOR*D,doc*BACKOFF);move(`${engagement.key}:doc`,`${label(engagement.key)} at ${used(engagement)}: depth reduced from`,from,pct(doc));}
-   else if(woc/D>WOC_FLOOR+1e-9){const from=pct(woc);woc=Math.max(WOC_FLOOR*D,woc*BACKOFF);move(`${engagement.key}:woc`,`${label(engagement.key)} at ${used(engagement)} with depth at its floor: stepover reduced from`,from,pct(woc));}
+   // A compression bit keeps its depth over the upcut section while the stepover can still give way; only then does depth go below it.
+   const holdDepth=upcut>0&&doc*BACKOFF<upcut&&woc/D>WOC_FLOOR+1e-9;
+   if(!holdDepth&&doc/D>DOC_FLOOR+1e-9){const from=pct(doc);doc=Math.max(DOC_FLOOR*D,doc*BACKOFF);move(`${engagement.key}:doc`,`${label(engagement.key)} at ${used(engagement)}: depth reduced from`,from,pct(doc));}
+   else if(woc/D>WOC_FLOOR+1e-9){const from=pct(woc);woc=Math.max(WOC_FLOOR*D,woc*BACKOFF);move(`${engagement.key}:woc`,`${label(engagement.key)} at ${used(engagement)}${holdDepth?' with depth held over the upcut section':' with depth at its floor'}: stepover reduced from`,from,pct(woc));}
    else break;
   }else if(chipHigh.ratio>target){const from=chipText(chip);chip*=1-CHIP_STEP;recomputeFeed(false);move('chipHigh',`Chipload too high at ${used(chipHigh)}: chipload reduced from`,from,chipText(chip));}
   else if(chipLow.ratio>target){
@@ -114,6 +119,7 @@ export function startingPoint(config:Configuration,units:Units='metric'):Startin
   cut={rpm,feed,doc,woc};result=evaluate(cut);
  }
  flush();track();
+ if(upcut>0&&doc<upcut-1e-9)steps.push(`Depth ended below the ${len(t.upcutLength!)} upcut length, so the downcut section of this compression bit is not engaged; the top edge will be cut upcut-style.`);
 
  const feedStep=units==='imperial'?25.4:10;
  const snap=(c:Cut):Cut=>({rpm:Math.round(c.rpm/100)*100,feed:Math.round(c.feed/feedStep)*feedStep,doc:Math.round(c.doc/D/.05)*.05*D,woc:Math.min(D,Math.round(c.woc/D/.05)*.05*D)});

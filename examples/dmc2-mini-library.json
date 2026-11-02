@@ -4,7 +4,7 @@
  "name": "DMC2 Mini · speeds and feeds",
  "kind": "personal",
  "readOnly": false,
- "updatedAt": "2026-10-31T00:00:00.000Z",
+ "updatedAt": "2026-11-02T00:00:00.000Z",
  "machines": [
   {
    "id": "dmc2-mini",
@@ -23,7 +23,7 @@
     "note": "Fitted to the operator’s DMC2 Mini test log, not a specification. 24,000 RPM and the 10,000 mm/min feed ceiling are Shariff’s published figures. The 6,000 RPM floor admits the manufacturer-chart rows down to 6,600 RPM; the slowest tested speed was 10,000 RPM and low-speed spindle cooling is not modelled. The 950 W / 0.378 N·m plateau is not the 2.2 kW nameplate: it is the effective constant-torque output under Cutspace’s constant-coefficient force model, chosen so the aggressive test cuts sit at or below usable output (3 mm aluminium at 22,000 RPM and 4 mm steel at 16,000 RPM reach about 92–95%) and the recorded high-feed spindle bog-downs at 24,000 RPM sit beyond it. It folds in thin-chip force effects and whatever the spindle really delivers. Deep, thin-radial stalls with 10–12 mm tools are not power events in this model; the per-tool deflection allowances in the recipes capture those.",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing"
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   }
  ],
  "materials": [],
@@ -33,7 +33,10 @@
    "name": "1 mm · 3 flute uncoated carbide (aluminum set)",
    "tool": {
     "material": "carbide",
+    "geometry": "flat",
+    "body": "carbide",
     "diameter": 1,
+    "shankDiameter": 1,
     "flutes": 3,
     "stickout": 6,
     "fluteLength": 3,
@@ -45,14 +48,17 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (3 mm) and 6 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0025–0.00834 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 153 µm (the model’s deflection at the heaviest successful test, aluminum profile at 24,000 RPM, 518 mm/min, 0.5 mm stepover × 3 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "al-3f-2mm",
    "name": "2 mm · 3 flute uncoated carbide (aluminum set)",
    "tool": {
     "material": "carbide",
+    "geometry": "flat",
+    "body": "carbide",
     "diameter": 2,
+    "shankDiameter": 2,
     "flutes": 3,
     "stickout": 9,
     "fluteLength": 6,
@@ -64,14 +70,17 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (6 mm) and 9 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0042–0.0516 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 384 µm (the model’s deflection at the heaviest successful test, aluminum profile at 20,000 RPM, 3,093 mm/min, 1 mm stepover × 5 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "al-3f-3mm",
    "name": "3 mm · 3 flute uncoated carbide (aluminum set)",
    "tool": {
     "material": "carbide",
+    "geometry": "flat",
+    "body": "carbide",
     "diameter": 3,
+    "shankDiameter": 3,
     "flutes": 3,
     "stickout": 12,
     "fluteLength": 9,
@@ -83,14 +92,17 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (9 mm) and 12 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0063–0.0445 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 220 µm (the model’s deflection at the heaviest successful test, aluminum profile at 22,000 RPM, 2,592 mm/min, 1.5 mm stepover × 8 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "al-3f-4mm",
    "name": "4 mm · 3 flute uncoated carbide (aluminum set)",
    "tool": {
     "material": "carbide",
+    "geometry": "flat",
+    "body": "carbide",
     "diameter": 4,
+    "shankDiameter": 4,
     "flutes": 3,
     "stickout": 18,
     "fluteLength": 12,
@@ -102,14 +114,17 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (12 mm) and 18 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0083–0.05 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 216 µm (the model’s deflection at the heaviest successful test, aluminum profile at 24,000 RPM, 2,400 mm/min, 1 mm stepover × 10 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "al-3f-6mm",
    "name": "6 mm · 3 flute uncoated carbide (aluminum set)",
    "tool": {
     "material": "carbide",
+    "geometry": "flat",
+    "body": "carbide",
     "diameter": 6,
+    "shankDiameter": 6,
     "flutes": 3,
     "stickout": 22,
     "fluteLength": 16,
@@ -121,14 +136,17 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (16 mm) and 22 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0077–0.0625 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 103 µm (the model’s deflection at the heaviest successful test, aluminum profile at 24,000 RPM, 4,147 mm/min, 0.5 mm stepover × 12 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "al-3f-8mm",
    "name": "8 mm · 3 flute uncoated carbide (aluminum set)",
    "tool": {
     "material": "carbide",
+    "geometry": "flat",
+    "body": "carbide",
     "diameter": 8,
+    "shankDiameter": 8,
     "flutes": 3,
     "stickout": 32,
     "fluteLength": 25,
@@ -140,14 +158,17 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (25 mm) and 32 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0043–0.055 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 66.3 µm (the model’s deflection at the heaviest successful test, aluminum profile at 24,000 RPM, 2,000 mm/min, 0.3 mm stepover × 24 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "al-3f-10mm",
    "name": "10 mm · 3 flute uncoated carbide (aluminum set)",
    "tool": {
     "material": "carbide",
+    "geometry": "flat",
+    "body": "carbide",
     "diameter": 10,
+    "shankDiameter": 10,
     "flutes": 3,
     "stickout": 38,
     "fluteLength": 30,
@@ -159,14 +180,17 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (30 mm) and 38 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0028–0.0594 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 43.4 µm (the model’s deflection at the heaviest successful test, aluminum profile at 22,000 RPM, 1,900 mm/min, 0.2 mm stepover × 30 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "al-3f-12mm",
    "name": "12 mm · 3 flute uncoated carbide (aluminum set)",
    "tool": {
     "material": "carbide",
+    "geometry": "flat",
+    "body": "carbide",
     "diameter": 12,
+    "shankDiameter": 12,
     "flutes": 3,
     "stickout": 45,
     "fluteLength": 35,
@@ -178,14 +202,17 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (35 mm) and 45 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0019–0.0739 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 38.2 µm (the model’s deflection at the heaviest successful test, aluminum profile at 18,000 RPM, 1,600 mm/min, 0.2 mm stepover × 35 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "st-4f-1mm",
    "name": "1 mm · 4 flute coated carbide (steel set)",
    "tool": {
     "material": "carbide",
+    "geometry": "flat",
+    "body": "carbide",
     "diameter": 1,
+    "shankDiameter": 1,
     "flutes": 4,
     "stickout": 6,
     "fluteLength": 3,
@@ -197,14 +224,17 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (3 mm) and 6 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.00073–0.00459 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 175 µm (the model’s deflection at the heaviest successful test, steel profile at 24,000 RPM, 480 mm/min, 0.3 mm stepover × 3 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "st-4f-2mm",
    "name": "2 mm · 4 flute coated carbide (steel set)",
    "tool": {
     "material": "carbide",
+    "geometry": "flat",
+    "body": "carbide",
     "diameter": 2,
+    "shankDiameter": 2,
     "flutes": 4,
     "stickout": 9,
     "fluteLength": 6,
@@ -216,14 +246,17 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (6 mm) and 9 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0018–0.025 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 268 µm (the model’s deflection at the heaviest successful test, steel profile at 16,000 RPM, 2,132 mm/min, 0.2 mm stepover × 5 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "st-4f-3mm",
    "name": "3 mm · 4 flute coated carbide (steel set)",
    "tool": {
     "material": "carbide",
+    "geometry": "flat",
+    "body": "carbide",
     "diameter": 3,
+    "shankDiameter": 3,
     "flutes": 4,
     "stickout": 12,
     "fluteLength": 9,
@@ -235,14 +268,17 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (9 mm) and 12 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0023–0.0324 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 325 µm (the model’s deflection at the heaviest successful test, steel profile at 16,000 RPM, 4,147 mm/min, 0.2 mm stepover × 8 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "st-4f-4mm",
    "name": "4 mm · 4 flute coated carbide (steel set)",
    "tool": {
     "material": "carbide",
+    "geometry": "flat",
+    "body": "carbide",
     "diameter": 4,
+    "shankDiameter": 4,
     "flutes": 4,
     "stickout": 18,
     "fluteLength": 12,
@@ -254,14 +290,17 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (12 mm) and 18 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0028–0.0407 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 546 µm (the model’s deflection at the heaviest successful test, steel profile at 16,000 RPM, 5,971 mm/min, 0.2 mm stepover × 10 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "st-4f-6mm",
    "name": "6 mm · 4 flute coated carbide (steel set)",
    "tool": {
     "material": "carbide",
+    "geometry": "flat",
+    "body": "carbide",
     "diameter": 6,
+    "shankDiameter": 6,
     "flutes": 4,
     "stickout": 22,
     "fluteLength": 16,
@@ -273,14 +312,17 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (16 mm) and 22 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0052–0.0313 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 97.9 µm (the model’s deflection at the heaviest successful test, steel profile at 16,000 RPM, 3,456 mm/min, 0.15 mm stepover × 12 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "st-4f-8mm",
    "name": "8 mm · 4 flute coated carbide (steel set)",
    "tool": {
     "material": "carbide",
+    "geometry": "flat",
+    "body": "carbide",
     "diameter": 8,
+    "shankDiameter": 8,
     "flutes": 4,
     "stickout": 32,
     "fluteLength": 25,
@@ -292,14 +334,17 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (25 mm) and 32 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.00093–0.0201 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 21.2 µm (the model’s deflection at the heaviest successful test, steel profile at 18,000 RPM, 1,100 mm/min, 0.03 mm stepover × 24 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "st-4f-10mm",
    "name": "10 mm · 4 flute coated carbide (steel set)",
    "tool": {
     "material": "carbide",
+    "geometry": "flat",
+    "body": "carbide",
     "diameter": 10,
+    "shankDiameter": 10,
     "flutes": 4,
     "stickout": 38,
     "fluteLength": 30,
@@ -311,14 +356,17 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (30 mm) and 38 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.001–0.0251 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 20.1 µm (the model’s deflection at the heaviest successful test, steel profile at 17,000 RPM, 1,000 mm/min, 0.05 mm stepover × 30 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "st-4f-12mm",
    "name": "12 mm · 4 flute coated carbide (steel set)",
    "tool": {
     "material": "carbide",
+    "geometry": "flat",
+    "body": "carbide",
     "diameter": 12,
+    "shankDiameter": 12,
     "flutes": 4,
     "stickout": 45,
     "fluteLength": 35,
@@ -330,14 +378,17 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (35 mm) and 45 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.001–0.0313 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 29.4 µm (the model’s deflection at the heaviest successful test, steel profile at 14,000 RPM, 1,000 mm/min, 0.1 mm stepover × 35 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "insert-mill-10mm-1f",
    "name": "10 mm · single-insert mill (steel body)",
    "tool": {
     "material": "carbide",
+    "geometry": "flat",
+    "body": "steel",
     "diameter": 10,
+    "shankDiameter": 10,
     "flutes": 1,
     "stickout": 35,
     "fluteLength": 8,
@@ -347,9 +398,9 @@
    "provenance": {
     "source": "user",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
-    "note": "From the DMC2 Mini test log: 10 mm indexable mill with one carbide insert. Modelled as “carbide” for the insert’s cutting data, with the modulus set to 210 GPa for its steel body. Effective flute length 8 mm and 35 mm stickout are assumed; measure both. Tests reached aluminum profile at 22,000 RPM, 800 mm/min, 0.1 mm stepover × 6 mm depth, aluminum slot at 24,000 RPM, 1,600 mm/min, 10 mm stepover × 0.6 mm depth, steel profile at 18,000 RPM, 500 mm/min, 0.02 mm stepover × 6 mm depth and steel slot at 22,000 RPM, 1,000 mm/min, 10 mm stepover × 0.4 mm depth; no chart rows exist for it, so it has no recipes."
+    "note": "From the DMC2 Mini test log: 10 mm indexable mill with one carbide insert. Carbide cutting data on a steel body (210 GPa), with the shank assumed equal to the 10 mm cutting diameter. Effective flute length 8 mm and 35 mm stickout are assumed; measure both. Tests reached aluminum profile at 22,000 RPM, 800 mm/min, 0.1 mm stepover × 6 mm depth, aluminum slot at 24,000 RPM, 1,600 mm/min, 10 mm stepover × 0.6 mm depth, steel profile at 18,000 RPM, 500 mm/min, 0.02 mm stepover × 6 mm depth and steel slot at 22,000 RPM, 1,000 mm/min, 10 mm stepover × 0.4 mm depth; no chart rows exist for it, so it has no recipes."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   }
  ],
  "recipes": [
@@ -362,7 +413,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 1,
+      "shankDiameter": 1,
       "flutes": 3,
       "stickout": 6,
       "fluteLength": 3,
@@ -410,7 +464,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-aluminum-2mm-profile",
@@ -421,7 +475,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 2,
+      "shankDiameter": 2,
       "flutes": 3,
       "stickout": 9,
       "fluteLength": 6,
@@ -469,7 +526,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-aluminum-3mm-profile",
@@ -480,7 +537,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 3,
+      "shankDiameter": 3,
       "flutes": 3,
       "stickout": 12,
       "fluteLength": 9,
@@ -528,7 +588,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-aluminum-4mm-profile",
@@ -539,7 +599,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 4,
+      "shankDiameter": 4,
       "flutes": 3,
       "stickout": 18,
       "fluteLength": 12,
@@ -587,7 +650,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-aluminum-6mm-profile",
@@ -598,7 +661,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 6,
+      "shankDiameter": 6,
       "flutes": 3,
       "stickout": 22,
       "fluteLength": 16,
@@ -646,7 +712,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-aluminum-8mm-profile",
@@ -657,7 +723,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 8,
+      "shankDiameter": 8,
       "flutes": 3,
       "stickout": 32,
       "fluteLength": 25,
@@ -705,7 +774,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-aluminum-10mm-profile",
@@ -716,7 +785,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 10,
+      "shankDiameter": 10,
       "flutes": 3,
       "stickout": 38,
       "fluteLength": 30,
@@ -764,7 +836,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-aluminum-12mm-profile",
@@ -775,7 +847,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 12,
+      "shankDiameter": 12,
       "flutes": 3,
       "stickout": 45,
       "fluteLength": 35,
@@ -823,7 +898,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-aluminum-1mm-slot",
@@ -834,7 +909,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 1,
+      "shankDiameter": 1,
       "flutes": 3,
       "stickout": 6,
       "fluteLength": 3,
@@ -882,7 +960,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-aluminum-2mm-slot",
@@ -893,7 +971,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 2,
+      "shankDiameter": 2,
       "flutes": 3,
       "stickout": 9,
       "fluteLength": 6,
@@ -941,7 +1022,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-aluminum-3mm-slot",
@@ -952,7 +1033,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 3,
+      "shankDiameter": 3,
       "flutes": 3,
       "stickout": 12,
       "fluteLength": 9,
@@ -1000,7 +1084,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-aluminum-4mm-slot",
@@ -1011,7 +1095,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 4,
+      "shankDiameter": 4,
       "flutes": 3,
       "stickout": 18,
       "fluteLength": 12,
@@ -1059,7 +1146,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-aluminum-6mm-slot",
@@ -1070,7 +1157,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 6,
+      "shankDiameter": 6,
       "flutes": 3,
       "stickout": 22,
       "fluteLength": 16,
@@ -1118,7 +1208,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-aluminum-8mm-slot",
@@ -1129,7 +1219,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 8,
+      "shankDiameter": 8,
       "flutes": 3,
       "stickout": 32,
       "fluteLength": 25,
@@ -1177,7 +1270,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-aluminum-10mm-slot",
@@ -1188,7 +1281,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 10,
+      "shankDiameter": 10,
       "flutes": 3,
       "stickout": 38,
       "fluteLength": 30,
@@ -1236,7 +1332,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-aluminum-12mm-slot",
@@ -1247,7 +1343,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 12,
+      "shankDiameter": 12,
       "flutes": 3,
       "stickout": 45,
       "fluteLength": 35,
@@ -1295,7 +1394,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-steel-1mm-profile",
@@ -1306,7 +1405,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 1,
+      "shankDiameter": 1,
       "flutes": 4,
       "stickout": 6,
       "fluteLength": 3,
@@ -1354,7 +1456,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-steel-2mm-profile",
@@ -1365,7 +1467,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 2,
+      "shankDiameter": 2,
       "flutes": 4,
       "stickout": 9,
       "fluteLength": 6,
@@ -1413,7 +1518,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-steel-3mm-profile",
@@ -1424,7 +1529,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 3,
+      "shankDiameter": 3,
       "flutes": 4,
       "stickout": 12,
       "fluteLength": 9,
@@ -1472,7 +1580,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-steel-4mm-profile",
@@ -1483,7 +1591,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 4,
+      "shankDiameter": 4,
       "flutes": 4,
       "stickout": 18,
       "fluteLength": 12,
@@ -1531,7 +1642,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-steel-6mm-profile",
@@ -1542,7 +1653,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 6,
+      "shankDiameter": 6,
       "flutes": 4,
       "stickout": 22,
       "fluteLength": 16,
@@ -1590,7 +1704,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-steel-8mm-profile",
@@ -1601,7 +1715,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 8,
+      "shankDiameter": 8,
       "flutes": 4,
       "stickout": 32,
       "fluteLength": 25,
@@ -1649,7 +1766,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-steel-10mm-profile",
@@ -1660,7 +1777,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 10,
+      "shankDiameter": 10,
       "flutes": 4,
       "stickout": 38,
       "fluteLength": 30,
@@ -1708,7 +1828,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-steel-12mm-profile",
@@ -1719,7 +1839,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 12,
+      "shankDiameter": 12,
       "flutes": 4,
       "stickout": 45,
       "fluteLength": 35,
@@ -1767,7 +1890,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-steel-1mm-slot",
@@ -1778,7 +1901,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 1,
+      "shankDiameter": 1,
       "flutes": 4,
       "stickout": 6,
       "fluteLength": 3,
@@ -1826,7 +1952,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-steel-2mm-slot",
@@ -1837,7 +1963,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 2,
+      "shankDiameter": 2,
       "flutes": 4,
       "stickout": 9,
       "fluteLength": 6,
@@ -1885,7 +2014,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-steel-3mm-slot",
@@ -1896,7 +2025,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 3,
+      "shankDiameter": 3,
       "flutes": 4,
       "stickout": 12,
       "fluteLength": 9,
@@ -1944,7 +2076,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-steel-4mm-slot",
@@ -1955,7 +2087,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 4,
+      "shankDiameter": 4,
       "flutes": 4,
       "stickout": 18,
       "fluteLength": 12,
@@ -2003,7 +2138,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-steel-6mm-slot",
@@ -2014,7 +2149,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 6,
+      "shankDiameter": 6,
       "flutes": 4,
       "stickout": 22,
       "fluteLength": 16,
@@ -2062,7 +2200,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-steel-8mm-slot",
@@ -2073,7 +2211,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 8,
+      "shankDiameter": 8,
       "flutes": 4,
       "stickout": 32,
       "fluteLength": 25,
@@ -2121,7 +2262,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-steel-10mm-slot",
@@ -2132,7 +2273,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 10,
+      "shankDiameter": 10,
       "flutes": 4,
       "stickout": 38,
       "fluteLength": 30,
@@ -2180,7 +2324,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   },
   {
    "id": "chart-steel-12mm-slot",
@@ -2191,7 +2335,10 @@
     "config": {
      "tool": {
       "material": "carbide",
+      "geometry": "flat",
+      "body": "carbide",
       "diameter": 12,
+      "shankDiameter": 12,
       "flutes": 4,
       "stickout": 45,
       "fluteLength": 35,
@@ -2239,7 +2386,7 @@
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
     "note": "Cutter manufacturer’s chart as tabulated by the DMC2 manufacturer; the limits stored with the recipe are derived from the operator’s tests, not from the chart."
    },
-   "updatedAt": "2026-10-31T00:00:00.000Z"
+   "updatedAt": "2026-11-02T00:00:00.000Z"
   }
  ]
 }
