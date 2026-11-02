@@ -139,7 +139,7 @@ function migrateMachineProfile(snapshot:Snapshot,modelVersion:unknown){
 }
 export function parseExperiment(text:string):Experiment{
  const o=object(JSON.parse(text));if(o.schemaVersion!==2)throw Error('Unsupported file version. This prototype imports version 2 experiments only.');
- const legacy=o.modelVersion==='illustrative-static-2',previous=legacy||['illustrative-static-3','illustrative-static-4','illustrative-static-5'].includes(String(o.modelVersion));
+ const legacy=o.modelVersion==='illustrative-static-2',previous=legacy||['illustrative-static-3','illustrative-static-4','illustrative-static-5','illustrative-static-6'].includes(String(o.modelVersion));
  if(!previous&&o.modelVersion!==MODEL_VERSION)throw Error('Model version does not match. No automatic reinterpretation was performed.');
  if(typeof o.name!=='string'||o.name.length>120)throw Error('Experiment name must be 120 characters or fewer.');
  if(o.units!=='metric'&&o.units!=='imperial')throw Error('Unsupported unit system.');

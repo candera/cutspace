@@ -222,7 +222,7 @@ Preserve these prototype relationships as a traceable initial model, with length
 - Estimated mechanical cutting power = Q × Kc/60 × power allowance, in W.
 - Estimated torque = power × 60/(2πn), in Nm.
 - Illustrative available output = min(power plateau, torque plateau × 2πn/60) × usable-output fraction.
-- Static deflection uses δ = FL³/(3EI), with the prototype's effective section stiffness and peak-load approximation explicitly recorded in the model version.
+- Static deflection uses a stepped cantilever with the force spread uniformly along the engaged flute over the depth of cut (δ = FL³/(8EI) for one section loaded over its whole length, FL³/(3EI) at zero depth), with the prototype's effective section stiffness and peak-load approximation explicitly recorded in the model version.
 
 Do not promote the prototype's default Kc, power/force multipliers, effective stiffness or threshold values into verified material/tool data. Preserve the conservative intent of allowances while stating that they do not prove upper bounds. The deflection model's integer engaged-tooth approximation creates steps; evaluate these with independent reference cases before changing smoothing or interpretation.
 
@@ -338,6 +338,8 @@ A compact Coarse / Standard / Fine dropdown selects contour spacing. Default to 
 Initial release supports carbide and HSS flat end mills. Cutter substrate is distinct from workpiece material and is visible in the compact setup strip, Tool inspector and comparisons. Model straight peripheral milling with homogeneous flat end mills; router-bit profiles and carbide-tipped construction are future work (CS B03).
 
 *Amended 2 November 2026 (model illustrative-static-6):* a tool now records a geometry class (flat, upcut, downcut, compression, straight, O-flute, ball, V, surfacing), separate cutting-edge and body materials, a shank diameter and, for compression spirals, an upcut length. The edge material keys cutting data; the body material (solid carbide 600 GPa, steel 210 GPa, HSS 219 GPa) sets the bending modulus; bending is a tip-loaded two-segment cantilever with the effective section factor on both segments, so files without the new fields reproduce their earlier estimates. Every geometry is still evaluated as a straight-fluted cylinder of its cutting diameter; ball and V bits are flagged as modelled at nominal diameter. Depth-dependent engagement and geometry-keyed cutting data stay in CS B03/CS B04.
+
+*Amended 2 November 2026 (model illustrative-static-7):* the bending estimate spreads the cutting force uniformly along the engaged flute from the tip over the depth of cut, clamped to the flute length, instead of applying it all at the tip. The stepped beam, section factor and body modulus are unchanged and the closed form reduces to the earlier tip-loaded compliance at zero depth. Deflection still grows with depth through the force but less than linearly, so the engagement chart favours deep, narrow cuts. The DMC2 Mini library's derived deflection allowances were regenerated; its stall and chart-row verdicts are unchanged.
 
 The prototype uses representative elastic modulus defaults (carbide 600 GPa; HSS 219 GPa), with source links and numeric override in Tool. Changing substrate replaces the modulus with its default and preserves all geometry and cutting inputs. Re-selecting the existing substrate preserves overrides. Estimates must distinguish elastic stiffness from hardness, edge strength and temperature capability; no arbitrary power or chip multiplier is introduced.
 

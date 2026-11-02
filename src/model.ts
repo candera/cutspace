@@ -1,5 +1,5 @@
 /** Canonical units: mm, mm/min, RPM, N, W, Nm, µm. No empirical validation implied. */
-export const MODEL_VERSION = 'illustrative-static-6';
+export const MODEL_VERSION = 'illustrative-static-7';
 export const CUTTER_MATERIALS = {
  carbide:{name:'Carbide',modulus:600},
  hss:{name:'HSS',modulus:219},
@@ -111,15 +111,20 @@ export function peakCutterLoadFactor(engagement:number,flutes:number){
 }
 /**
  * Tip deflection per newton for a stepped cantilever of stickout L: the fluted segment a = min(flute length, L) has the
- * cutting diameter, the rest has the shank diameter. δ/F = ∫₀ᴸ (L−x)²/EI dx = [a³/(E I_flute) + (L³ − a³)/(E I_shank)] / 3.
- * The effective section factor applies to both segments, as it always has to the whole stickout, so a tool whose shank
- * equals its cutting diameter reproduces the earlier single-cylinder estimate L³/(3 E I) exactly; the shank segment differs
- * only by diameter. One body modulus serves both segments: carbide tips do not stiffen a steel body.
+ * cutting diameter, the rest has the shank diameter. The cutting load is spread uniformly over the engaged flute length
+ * d = min(DOC, a) measured from the tip; d = 0 is the earlier tip point load. By the unit-load method, with u the distance
+ * from the tip, δ/F = (1/d) ∫₀ᵈ ∫ᵤₚᴸ (u − uₚ) u / EI du duₚ, which integrates to
+ *   δ/F = [a³/3 − d a²/4 + d³/24] / (E I_flute) + [(L³ − a³)/3 − d (L² − a²)/4] / (E I_shank).
+ * At d = 0 this is the tip-loaded [a³/(E I_flute) + (L³ − a³)/(E I_shank)] / 3; for one section loaded over its whole
+ * length it is L³/(8EI), three eighths of the tip-loaded L³/(3EI). The effective section factor applies to both segments,
+ * as it always has to the whole stickout, so a tool whose shank equals its cutting diameter reproduces the single-cylinder
+ * estimate exactly; the shank segment differs only by diameter. One body modulus serves both segments: carbide tips do
+ * not stiffen a steel body.
  */
-export function steppedCompliance(t:Tool){
- const E=t.modulus*1000,L=t.stickout,a=Math.min(t.fluteLength,L);
+export function steppedCompliance(t:Tool,loadedLength=0){
+ const E=t.modulus*1000,L=t.stickout,a=Math.min(t.fluteLength,L),d=Math.min(Math.max(loadedLength,0),a);
  const iFlute=Math.PI*t.diameter**4/64*t.stiffness,iShank=Math.PI*t.shankDiameter**4/64*t.stiffness;
- return (a**3/(E*iFlute)+(L**3-a**3)/(E*iShank))/3;
+ return (a**3/3-d*a**2/4+d**3/24)/(E*iFlute)+((L**3-a**3)/3-d*(L**2-a**2)/4)/(E*iShank);
 }
 export function calculate(c:Cut,s:Setup){
  const {tool:t,material:mat,machine:m,limits:l}=s;
@@ -137,8 +142,9 @@ export function calculate(c:Cut,s:Setup){
  const capacity=availablePower(c.rpm,m);
  const cutterLoad=peakCutterLoadFactor(engagement,t.flutes);
  const force=mat.known===false?NaN:noCut?0:mat.kc*c.doc*chip*cutterLoad*mat.forceFactor;
- // Tip-loaded stepped cantilever: a fluted tip segment (cutting diameter, reduced section) on a solid shank segment, one body modulus.
- const deflection=force*steppedCompliance(t)*1000;
+ // Stepped cantilever, fluted tip segment (cutting diameter, reduced section) on a solid shank segment, one body modulus,
+ // with the load spread along the engaged flute length, so a deep cut bends less than the same force applied at the tip.
+ const deflection=force*steppedCompliance(t,c.doc)*1000;
  const constraints:Constraint[]=[
   {key:'chipHigh',ratio:l.cuttingDataKnown?chipMax/l.chipMax:NaN},{key:'chipLow',ratio:l.cuttingDataKnown?(chipMax>0?l.chipMin/chipMax:Infinity):NaN},
   {key:'power',ratio:m.known===false?NaN:power/(m.power*m.utilization)},

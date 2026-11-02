@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { availablePower, calculate, cloneDefaults, peakCutterLoadFactor } from '../src/model.ts';
+import {availablePower, calculate, cloneDefaults, peakCutterLoadFactor, steppedCompliance} from '../src/model.ts';
 const close = (actual: number, expected: number, tolerance = 1e-9) => assert.ok(Math.abs(actual - expected) < tolerance, `${actual} != ${expected}`);
 
 test('reference cut: units for speed, feed, chip thinning, MRR, power and torque', () => {
@@ -29,12 +29,16 @@ test('mechanical capacity is continuous at constant-torque / constant-power cros
     close(Math.max(...r.constraints.filter(c => ['power', 'torque'].includes(c.key)).map(c => c.ratio)), r.power / r.capacity);
   }
 });
-test('beam bending scales with stickout cubed and effective stiffness inversely', () => {
-  const s = cloneDefaults(); const r = calculate(s.cut, s);
-  close(calculate(s.cut, {...s, tool: {...s.tool, stickout: s.tool.stickout * 2}}).deflection, r.deflection * 8);
-  close(calculate(s.cut, {...s, tool: {...s.tool, stiffness: s.tool.stiffness / 2}}).deflection, r.deflection * 2);
-  // Independent reference for the illustrative cut: F=124.8 N; I=.45*pi*6^4/64 mm^4.
-  close(r.force, 124.8); close(r.deflection, 124.8 * 20 ** 3 / (3 * 600000 * (.45 * Math.PI * 6 ** 4 / 64)) * 1000);
+test('beam bending scales with stickout cubed for a tip load, and effective stiffness inversely', () => {
+  const s = cloneDefaults(); const r = calculate(s.cut, s); const t = s.tool;
+  close(steppedCompliance({...t, stickout: t.stickout * 2}), steppedCompliance(t) * 8);
+  // With the load spread over the 3 mm depth, doubling the stickout bends by more than 8×: the spread is a smaller share of the longer beam.
+  const longer = calculate(s.cut, {...s, tool: {...t, stickout: t.stickout * 2}}).deflection;
+  assert.ok(longer > r.deflection * 8 && longer < r.deflection * 9, `${longer} vs ${r.deflection}`);
+  close(calculate(s.cut, {...s, tool: {...t, stiffness: t.stiffness / 2}}).deflection, r.deflection * 2);
+  // Independent reference for the illustrative cut: F=124.8 N; I=.45*pi*6^4/64 mm^4; load uniform over d=3 mm of a 20 mm single-section beam.
+  const EI = 600000 * (.45 * Math.PI * 6 ** 4 / 64), L = 20, d = 3;
+  close(r.force, 124.8); close(r.deflection, 124.8 * (L ** 3 / 3 - d * L ** 2 / 4 + d ** 3 / 24) / EI * 1000);
 });
 test('phase-resolved cutter load is continuous as a second flute enters at 75 percent WOC', () => {
   const s = cloneDefaults(); s.tool.flutes = 3;

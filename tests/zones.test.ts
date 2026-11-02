@@ -5,7 +5,7 @@ import {limitReading} from '../src/limitGuidance.ts';
 import {applyCuttingPreset,editLimit,fresh,parseExperiment} from '../src/experiment.ts';
 
 test('soft limits have a caution band; hard limits never do',()=>{
- const s=cloneDefaults();
+ const s=cloneDefaults();s.limits.deflection=22;// the default cut bends about 17 µm; a 22 µm allowance puts it in the caution band
  let r=calculate(s.cut,s);
  assert.equal(r.status,'inside');assert.equal(r.zone,'caution');assert.equal(r.softLimiting?.key,'deflection');
  assert.ok(r.softRatio>.75&&r.softRatio<1);assert.equal(r.hardOk,true);
@@ -14,7 +14,7 @@ test('soft limits have a caution band; hard limits never do',()=>{
  const t=cloneDefaults();t.cut.rpm=t.machine.rpmMax*.97;
  const hard=limitReading('rpm',t,calculate(t.cut,t),'metric');
  assert.equal(hard.state,'Within limit');assert.equal(hard.caution,false);assert.equal(hard.soft,false);
- const soft=limitReading('deflection',cloneDefaults(),calculate(cloneDefaults().cut,cloneDefaults()),'metric');
+ const d=cloneDefaults();d.limits.deflection=22;const soft=limitReading('deflection',d,calculate(d.cut,d),'metric');
  assert.equal(soft.state,'Caution');assert.equal(soft.caution,true);
  for(const key of ['rpm','feed','geometry'] as const)assert.equal(constraintInfo[key].kind,'hard');
 });

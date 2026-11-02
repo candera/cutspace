@@ -17,21 +17,38 @@ const BUILTIN=builtinLibrary();
 const NOVA=parseLibrary(readFileSync(new URL('../public/libraries/nova-labs.json',import.meta.url),'utf8'));
 
 test('a tool whose shank equals its cutting diameter reproduces the single-cylinder bending estimate exactly',()=>{
- const s=cloneDefaults(),t=s.tool;
- const single=t.stickout**3/(3*t.modulus*1000*(t.stiffness*Math.PI*t.diameter**4/64));
+ const s=cloneDefaults(),t=s.tool,EI=t.modulus*1000*(t.stiffness*Math.PI*t.diameter**4/64),L=t.stickout;
+ const single=L**3/(3*EI);
  close(steppedCompliance(t),single,1e-15);
- close(calculate(s.cut,s).deflection,124.8*single*1000);
+ // The cut spreads its load over the 3 mm depth: single-section δ/F = L³/3 − dL²/4 + d³/24 over EI.
+ close(calculate(s.cut,s).deflection,124.8*(L**3/3-3*L**2/4+27/24)/EI*1000);
+ close(steppedCompliance(t,3),(L**3/3-3*L**2/4+27/24)/EI,1e-15);
  // Flute length longer than the stickout also collapses to the single cylinder.
  close(steppedCompliance({...t,fluteLength:t.stickout*3}),single,1e-15);
+});
+
+test('spreading the load along the engaged flute bends less than a tip load, and never beyond the flute length',()=>{
+ const t=cloneDefaults().tool,tip=steppedCompliance(t);
+ // Uniform load over the whole length of a single-section beam: 3/8 of the tip-loaded value.
+ const whole={...t,fluteLength:t.stickout};close(steppedCompliance(whole,t.stickout)/steppedCompliance(whole),3/8,1e-12);
+ // Compliance falls monotonically with the loaded length up to the flute length, then holds.
+ let last=tip;for(const d of [1,3,6,10,15])assert.ok(steppedCompliance(t,d)<last,`d=${d}`),last=steppedCompliance(t,d);
+ close(steppedCompliance(t,15),steppedCompliance(t,40),1e-15);close(steppedCompliance(t,-5),tip,1e-15);
+ // The default 6 mm tool, 20 mm stickout and 15 mm flutes: a full-flute cut sees about half the tip-loaded compliance.
+ close(steppedCompliance(t,15)/tip,.49,.005);
+ // Deflection still rises with depth, since force is proportional to it, but sub-linearly.
+ const s=cloneDefaults(),at=(doc:number)=>calculate({...s.cut,doc},s).deflection;
+ assert.ok(at(6)>at(3)&&at(6)<2*at(3)&&at(12)>at(6)&&at(12)<2*at(6));
 });
 
 test('a shank smaller than the cutting diameter bends more, a larger shank less, and a steel body bends by the modulus ratio',()=>{
  const s=cloneDefaults(),base=calculate(s.cut,s).deflection;
  const thin=calculate(s.cut,{...s,tool:{...s.tool,shankDiameter:3}}).deflection,thick=calculate(s.cut,{...s,tool:{...s.tool,shankDiameter:12}}).deflection;
  assert.ok(thin>base&&thick<base,`${thin} > ${base} > ${thick}`);
- // Hand formula for the stepped beam: a = flute length 15 of a 20 mm stickout.
- const t={...s.tool,shankDiameter:3},E=t.modulus*1000,a=15,L=20,iF=t.stiffness*Math.PI*6**4/64,iS=t.stiffness*Math.PI*3**4/64;
- close(thin,124.8*(a**3/(E*iF)+(L**3-a**3)/(E*iS))/3*1000);
+ // Hand formula for the stepped beam: a = flute length 15 of a 20 mm stickout, load spread over the 3 mm depth.
+ const t={...s.tool,shankDiameter:3},E=t.modulus*1000,a=15,L=20,d=3,iF=t.stiffness*Math.PI*6**4/64,iS=t.stiffness*Math.PI*3**4/64;
+ close(thin,124.8*((a**3/3-d*a**2/4+d**3/24)/(E*iF)+((L**3-a**3)/3-d*(L**2-a**2)/4)/(E*iS))*1000);
+ close(steppedCompliance(t),(a**3/(E*iF)+(L**3-a**3)/(E*iS))/3,1e-15);
  const steel=withBody(s.tool,'steel');assert.equal(steel.modulus,210);assert.equal(steel.body,'steel');
  close(calculate(s.cut,{...s,tool:steel}).deflection/base,600/210,1e-12);
  for(const k of ['surface','chip','chipMax','mrr','power','torque','force'] as const)assert.equal(calculate(s.cut,{...s,tool:steel})[k],calculate(s.cut,s)[k]);

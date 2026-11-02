@@ -46,7 +46,7 @@
    "provenance": {
     "source": "user",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
-    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (3 mm) and 6 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0025–0.00834 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 153 µm (the model’s deflection at the heaviest successful test, aluminum profile at 24,000 RPM, 518 mm/min, 0.5 mm stepover × 3 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
+    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (3 mm) and 6 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0025–0.00834 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 97.7 µm (the model’s deflection at the heaviest successful test, aluminum profile at 24,000 RPM, 518 mm/min, 0.5 mm stepover × 3 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
    },
    "updatedAt": "2026-11-02T00:00:00.000Z"
   },
@@ -68,7 +68,7 @@
    "provenance": {
     "source": "user",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
-    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (6 mm) and 9 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0042–0.0516 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 384 µm (the model’s deflection at the heaviest successful test, aluminum profile at 20,000 RPM, 3,093 mm/min, 1 mm stepover × 5 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
+    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (6 mm) and 9 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0042–0.0516 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 233 µm (the model’s deflection at the heaviest successful test, aluminum profile at 20,000 RPM, 3,093 mm/min, 1 mm stepover × 5 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
    },
    "updatedAt": "2026-11-02T00:00:00.000Z"
   },
@@ -90,7 +90,7 @@
    "provenance": {
     "source": "user",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
-    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (9 mm) and 12 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0063–0.0445 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 220 µm (the model’s deflection at the heaviest successful test, aluminum profile at 22,000 RPM, 2,592 mm/min, 1.5 mm stepover × 8 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
+    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (9 mm) and 12 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0063–0.0445 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 118 µm (the model’s deflection at the heaviest successful test, aluminum profile at 22,000 RPM, 2,592 mm/min, 1.5 mm stepover × 8 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
    },
    "updatedAt": "2026-11-02T00:00:00.000Z"
   },
@@ -112,7 +112,7 @@
    "provenance": {
     "source": "user",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
-    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (12 mm) and 18 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0083–0.05 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 216 µm (the model’s deflection at the heaviest successful test, aluminum profile at 24,000 RPM, 2,400 mm/min, 1 mm stepover × 10 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
+    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (12 mm) and 18 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0083–0.05 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 131 µm (the model’s deflection at the heaviest successful test, aluminum profile at 24,000 RPM, 2,400 mm/min, 1 mm stepover × 10 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
    },
    "updatedAt": "2026-11-02T00:00:00.000Z"
   },
@@ -134,7 +134,7 @@
    "provenance": {
     "source": "user",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
-    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (16 mm) and 22 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0077–0.0625 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 103 µm (the model’s deflection at the heaviest successful test, aluminum profile at 24,000 RPM, 4,147 mm/min, 0.5 mm stepover × 12 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
+    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (16 mm) and 22 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0077–0.0625 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 62.8 µm (the model’s deflection at the heaviest successful test, aluminum profile at 24,000 RPM, 4,147 mm/min, 0.5 mm stepover × 12 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
    },
    "updatedAt": "2026-11-02T00:00:00.000Z"
   },
@@ -156,7 +156,7 @@
    "provenance": {
     "source": "user",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
-    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (25 mm) and 32 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0043–0.055 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 66.3 µm (the model’s deflection at the heaviest successful test, aluminum profile at 24,000 RPM, 2,000 mm/min, 0.3 mm stepover × 24 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
+    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (25 mm) and 32 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0043–0.055 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 32.5 µm (the model’s deflection at the heaviest successful test, aluminum profile at 24,000 RPM, 2,000 mm/min, 0.3 mm stepover × 24 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
    },
    "updatedAt": "2026-11-02T00:00:00.000Z"
   },
@@ -178,7 +178,7 @@
    "provenance": {
     "source": "user",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
-    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (30 mm) and 38 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0028–0.0594 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 43.4 µm (the model’s deflection at the heaviest successful test, aluminum profile at 22,000 RPM, 1,900 mm/min, 0.2 mm stepover × 30 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
+    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (30 mm) and 38 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0028–0.0594 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 20.4 µm (the model’s deflection at the heaviest successful test, aluminum profile at 22,000 RPM, 1,900 mm/min, 0.2 mm stepover × 30 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
    },
    "updatedAt": "2026-11-02T00:00:00.000Z"
   },
@@ -200,7 +200,7 @@
    "provenance": {
     "source": "user",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
-    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (35 mm) and 45 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0019–0.0739 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 38.2 µm (the model’s deflection at the heaviest successful test, aluminum profile at 18,000 RPM, 1,600 mm/min, 0.2 mm stepover × 35 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
+    "note": "From the DMC2 Mini test log: 3-flute uncoated carbide square end mill used for aluminum. Flute length is set to the deepest depth the tests ran (35 mm) and 45 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0019–0.0739 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 18.2 µm (the model’s deflection at the heaviest successful test, aluminum profile at 18,000 RPM, 1,600 mm/min, 0.2 mm stepover × 35 mm depth, which scales with stickout cubed), surface speed ≤ 760 m/min."
    },
    "updatedAt": "2026-11-02T00:00:00.000Z"
   },
@@ -222,7 +222,7 @@
    "provenance": {
     "source": "user",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
-    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (3 mm) and 6 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.00073–0.00459 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 175 µm (the model’s deflection at the heaviest successful test, steel profile at 24,000 RPM, 480 mm/min, 0.3 mm stepover × 3 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
+    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (3 mm) and 6 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.00073–0.00459 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 112 µm (the model’s deflection at the heaviest successful test, steel profile at 24,000 RPM, 480 mm/min, 0.3 mm stepover × 3 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
    },
    "updatedAt": "2026-11-02T00:00:00.000Z"
   },
@@ -244,7 +244,7 @@
    "provenance": {
     "source": "user",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
-    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (6 mm) and 9 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0018–0.025 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 268 µm (the model’s deflection at the heaviest successful test, steel profile at 16,000 RPM, 2,132 mm/min, 0.2 mm stepover × 5 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
+    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (6 mm) and 9 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0018–0.025 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 163 µm (the model’s deflection at the heaviest successful test, steel profile at 16,000 RPM, 2,132 mm/min, 0.2 mm stepover × 5 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
    },
    "updatedAt": "2026-11-02T00:00:00.000Z"
   },
@@ -266,7 +266,7 @@
    "provenance": {
     "source": "user",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
-    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (9 mm) and 12 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0023–0.0324 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 325 µm (the model’s deflection at the heaviest successful test, steel profile at 16,000 RPM, 4,147 mm/min, 0.2 mm stepover × 8 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
+    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (9 mm) and 12 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0023–0.0324 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 175 µm (the model’s deflection at the heaviest successful test, steel profile at 16,000 RPM, 4,147 mm/min, 0.2 mm stepover × 8 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
    },
    "updatedAt": "2026-11-02T00:00:00.000Z"
   },
@@ -288,7 +288,7 @@
    "provenance": {
     "source": "user",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
-    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (12 mm) and 18 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0028–0.0407 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 546 µm (the model’s deflection at the heaviest successful test, steel profile at 16,000 RPM, 5,971 mm/min, 0.2 mm stepover × 10 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
+    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (12 mm) and 18 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0028–0.0407 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 330 µm (the model’s deflection at the heaviest successful test, steel profile at 16,000 RPM, 5,971 mm/min, 0.2 mm stepover × 10 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
    },
    "updatedAt": "2026-11-02T00:00:00.000Z"
   },
@@ -310,7 +310,7 @@
    "provenance": {
     "source": "user",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
-    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (16 mm) and 22 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0052–0.0313 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 97.9 µm (the model’s deflection at the heaviest successful test, steel profile at 16,000 RPM, 3,456 mm/min, 0.15 mm stepover × 12 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
+    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (16 mm) and 22 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.0052–0.0313 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 59.8 µm (the model’s deflection at the heaviest successful test, steel profile at 16,000 RPM, 3,456 mm/min, 0.15 mm stepover × 12 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
    },
    "updatedAt": "2026-11-02T00:00:00.000Z"
   },
@@ -332,7 +332,7 @@
    "provenance": {
     "source": "user",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
-    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (25 mm) and 32 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.00093–0.0201 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 21.2 µm (the model’s deflection at the heaviest successful test, steel profile at 18,000 RPM, 1,100 mm/min, 0.03 mm stepover × 24 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
+    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (25 mm) and 32 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.00093–0.0201 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 10.4 µm (the model’s deflection at the heaviest successful test, steel profile at 18,000 RPM, 1,100 mm/min, 0.03 mm stepover × 24 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
    },
    "updatedAt": "2026-11-02T00:00:00.000Z"
   },
@@ -354,7 +354,7 @@
    "provenance": {
     "source": "user",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
-    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (30 mm) and 38 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.001–0.0251 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 20.1 µm (the model’s deflection at the heaviest successful test, steel profile at 17,000 RPM, 1,000 mm/min, 0.05 mm stepover × 30 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
+    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (30 mm) and 38 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.001–0.0251 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 9.44 µm (the model’s deflection at the heaviest successful test, steel profile at 17,000 RPM, 1,000 mm/min, 0.05 mm stepover × 30 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
    },
    "updatedAt": "2026-11-02T00:00:00.000Z"
   },
@@ -376,7 +376,7 @@
    "provenance": {
     "source": "user",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
-    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (35 mm) and 45 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.001–0.0313 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 29.4 µm (the model’s deflection at the heaviest successful test, steel profile at 14,000 RPM, 1,000 mm/min, 0.1 mm stepover × 35 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
+    "note": "From the DMC2 Mini test log: 4-flute coated carbide square end mill used for steel. Flute length is set to the deepest depth the tests ran (35 mm) and 45 mm stickout is assumed; measure both on the actual tool. The recipes’ limits for this tool: chip thickness 0.001–0.0313 mm (demonstrated ceiling or 1.25× the chart), roughing deflection allowance 14 µm (the model’s deflection at the heaviest successful test, steel profile at 14,000 RPM, 1,000 mm/min, 0.1 mm stepover × 35 mm depth, which scales with stickout cubed), surface speed ≤ 610 m/min."
    },
    "updatedAt": "2026-11-02T00:00:00.000Z"
   },
@@ -444,7 +444,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0025,
       "chipMax": 0.00834,
-      "deflection": 153,
+      "deflection": 97.7,
       "surfaceMax": 760,
       "caution": 0.75,
       "operation": "roughing"
@@ -506,7 +506,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0042,
       "chipMax": 0.0516,
-      "deflection": 384,
+      "deflection": 233,
       "surfaceMax": 760,
       "caution": 0.75,
       "operation": "roughing"
@@ -568,7 +568,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0063,
       "chipMax": 0.0445,
-      "deflection": 220,
+      "deflection": 118,
       "surfaceMax": 760,
       "caution": 0.75,
       "operation": "roughing"
@@ -630,7 +630,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0083,
       "chipMax": 0.05,
-      "deflection": 216,
+      "deflection": 131,
       "surfaceMax": 760,
       "caution": 0.75,
       "operation": "roughing"
@@ -644,7 +644,7 @@
     }
    },
    "units": "metric",
-   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 20,000 RPM, 2,000 mm/min, 0.4 mm stepover (10%D) × 6 mm depth (150%D), 0.0333 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check chipload too low 41%.",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 20,000 RPM, 2,000 mm/min, 0.4 mm stepover (10%D) × 6 mm depth (150%D), 0.0333 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check tool deflection 51%.",
    "provenance": {
     "source": "manufacturer",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
@@ -692,7 +692,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0077,
       "chipMax": 0.0625,
-      "deflection": 103,
+      "deflection": 62.8,
       "surfaceMax": 760,
       "caution": 0.75,
       "operation": "roughing"
@@ -706,7 +706,7 @@
     }
    },
    "units": "metric",
-   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 13,000 RPM, 1,500 mm/min, 0.6 mm stepover (10%D) × 9 mm depth (150%D), 0.0385 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check tool deflection 54%.",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 13,000 RPM, 1,500 mm/min, 0.6 mm stepover (10%D) × 9 mm depth (150%D), 0.0385 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check tool deflection 62%.",
    "provenance": {
     "source": "manufacturer",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
@@ -754,7 +754,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0043,
       "chipMax": 0.055,
-      "deflection": 66.3,
+      "deflection": 32.5,
       "surfaceMax": 760,
       "caution": 0.75,
       "operation": "roughing"
@@ -768,7 +768,7 @@
     }
    },
    "units": "metric",
-   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 10,000 RPM, 1,650 mm/min, 0.8 mm stepover (10%D) × 12 mm depth (150%D), 0.0550 mm/tooth. Outside the fitted DMC2 envelope: tool deflection 156%, spindle torque 111%. The tests never ran this tool this heavily; the heaviest success was aluminum profile at 24,000 RPM, 2,000 mm/min, 0.3 mm stepover × 24 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 10,000 RPM, 1,650 mm/min, 0.8 mm stepover (10%D) × 12 mm depth (150%D), 0.0550 mm/tooth. Outside the fitted DMC2 envelope: tool deflection 231%, spindle torque 111%. The tests never ran this tool this heavily; the heaviest success was aluminum profile at 24,000 RPM, 2,000 mm/min, 0.3 mm stepover × 24 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
    "provenance": {
     "source": "manufacturer",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
@@ -816,7 +816,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0028,
       "chipMax": 0.0594,
-      "deflection": 43.4,
+      "deflection": 20.4,
       "surfaceMax": 760,
       "caution": 0.75,
       "operation": "roughing"
@@ -830,7 +830,7 @@
     }
    },
    "units": "metric",
-   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 8,000 RPM, 1,900 mm/min, 1 mm stepover (10%D) × 15 mm depth (150%D), 0.0792 mm/tooth. Outside the fitted DMC2 envelope: tool deflection 295%, spindle torque 250%. The tests never ran this tool this heavily; the heaviest success was aluminum profile at 22,000 RPM, 1,900 mm/min, 0.2 mm stepover × 30 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 8,000 RPM, 1,900 mm/min, 1 mm stepover (10%D) × 15 mm depth (150%D), 0.0792 mm/tooth. Outside the fitted DMC2 envelope: tool deflection 446%, spindle torque 250%. The tests never ran this tool this heavily; the heaviest success was aluminum profile at 22,000 RPM, 1,900 mm/min, 0.2 mm stepover × 30 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
    "provenance": {
     "source": "manufacturer",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
@@ -878,7 +878,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0019,
       "chipMax": 0.0739,
-      "deflection": 38.2,
+      "deflection": 18.2,
       "surfaceMax": 760,
       "caution": 0.75,
       "operation": "roughing"
@@ -892,7 +892,7 @@
     }
    },
    "units": "metric",
-   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 6,600 RPM, 1,950 mm/min, 1.2 mm stepover (10%D) × 18 mm depth (150%D), 0.0985 mm/tooth. Outside the fitted DMC2 envelope: spindle torque 448%, tool deflection 400%, spindle power 123%. The tests never ran this tool this heavily; the heaviest success was aluminum profile at 18,000 RPM, 1,600 mm/min, 0.2 mm stepover × 35 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 6,600 RPM, 1,950 mm/min, 1.2 mm stepover (10%D) × 18 mm depth (150%D), 0.0985 mm/tooth. Outside the fitted DMC2 envelope: tool deflection 595%, spindle torque 448%, spindle power 123%. The tests never ran this tool this heavily; the heaviest success was aluminum profile at 18,000 RPM, 1,600 mm/min, 0.2 mm stepover × 35 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
    "provenance": {
     "source": "manufacturer",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
@@ -940,7 +940,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0025,
       "chipMax": 0.00834,
-      "deflection": 153,
+      "deflection": 97.7,
       "surfaceMax": 760,
       "caution": 0.75,
       "operation": "roughing"
@@ -1002,7 +1002,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0042,
       "chipMax": 0.0516,
-      "deflection": 384,
+      "deflection": 233,
       "surfaceMax": 760,
       "caution": 0.75,
       "operation": "roughing"
@@ -1064,7 +1064,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0063,
       "chipMax": 0.0445,
-      "deflection": 220,
+      "deflection": 118,
       "surfaceMax": 760,
       "caution": 0.75,
       "operation": "roughing"
@@ -1126,7 +1126,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0083,
       "chipMax": 0.05,
-      "deflection": 216,
+      "deflection": 131,
       "surfaceMax": 760,
       "caution": 0.75,
       "operation": "roughing"
@@ -1188,7 +1188,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0077,
       "chipMax": 0.0625,
-      "deflection": 103,
+      "deflection": 62.8,
       "surfaceMax": 760,
       "caution": 0.75,
       "operation": "roughing"
@@ -1250,7 +1250,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0043,
       "chipMax": 0.055,
-      "deflection": 66.3,
+      "deflection": 32.5,
       "surfaceMax": 760,
       "caution": 0.75,
       "operation": "roughing"
@@ -1312,7 +1312,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0028,
       "chipMax": 0.0594,
-      "deflection": 43.4,
+      "deflection": 20.4,
       "surfaceMax": 760,
       "caution": 0.75,
       "operation": "roughing"
@@ -1326,7 +1326,7 @@
     }
    },
    "units": "metric",
-   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 8,000 RPM, 950 mm/min, 10 mm stepover (100%D) × 5 mm depth (50%D), 0.0396 mm/tooth. Outside the fitted DMC2 envelope: spindle torque 417%, spindle power 139%. The tests never ran this tool this heavily; the heaviest success was aluminum profile at 22,000 RPM, 1,900 mm/min, 0.2 mm stepover × 30 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 8,000 RPM, 950 mm/min, 10 mm stepover (100%D) × 5 mm depth (50%D), 0.0396 mm/tooth. Outside the fitted DMC2 envelope: spindle torque 417%, tool deflection 157%, spindle power 139%. The tests never ran this tool this heavily; the heaviest success was aluminum profile at 22,000 RPM, 1,900 mm/min, 0.2 mm stepover × 30 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
    "provenance": {
     "source": "manufacturer",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
@@ -1374,7 +1374,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0019,
       "chipMax": 0.0739,
-      "deflection": 38.2,
+      "deflection": 18.2,
       "surfaceMax": 760,
       "caution": 0.75,
       "operation": "roughing"
@@ -1388,7 +1388,7 @@
     }
    },
    "units": "metric",
-   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 6,600 RPM, 975 mm/min, 12 mm stepover (100%D) × 6 mm depth (50%D), 0.0492 mm/tooth. Outside the fitted DMC2 envelope: spindle torque 746%, spindle power 205%, tool deflection 111%. The tests never ran this tool this heavily; the heaviest success was aluminum profile at 18,000 RPM, 1,600 mm/min, 0.2 mm stepover × 35 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "notes": "“Aluminum and aluminum alloy” column of the 3-flute chart: 6,600 RPM, 975 mm/min, 12 mm stepover (100%D) × 6 mm depth (50%D), 0.0492 mm/tooth. Outside the fitted DMC2 envelope: spindle torque 746%, tool deflection 210%, spindle power 205%. The tests never ran this tool this heavily; the heaviest success was aluminum profile at 18,000 RPM, 1,600 mm/min, 0.2 mm stepover × 35 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
    "provenance": {
     "source": "manufacturer",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
@@ -1436,7 +1436,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.00073,
       "chipMax": 0.00459,
-      "deflection": 175,
+      "deflection": 112,
       "surfaceMax": 610,
       "caution": 0.75,
       "operation": "roughing"
@@ -1498,7 +1498,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0018,
       "chipMax": 0.025,
-      "deflection": 268,
+      "deflection": 163,
       "surfaceMax": 610,
       "caution": 0.75,
       "operation": "roughing"
@@ -1560,7 +1560,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0023,
       "chipMax": 0.0324,
-      "deflection": 325,
+      "deflection": 175,
       "surfaceMax": 610,
       "caution": 0.75,
       "operation": "roughing"
@@ -1622,7 +1622,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0028,
       "chipMax": 0.0407,
-      "deflection": 546,
+      "deflection": 330,
       "surfaceMax": 610,
       "caution": 0.75,
       "operation": "roughing"
@@ -1684,7 +1684,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0052,
       "chipMax": 0.0313,
-      "deflection": 97.9,
+      "deflection": 59.8,
       "surfaceMax": 610,
       "caution": 0.75,
       "operation": "roughing"
@@ -1698,7 +1698,7 @@
     }
    },
    "units": "metric",
-   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 16,000 RPM, 1,540 mm/min, 0.3 mm stepover (5%D) × 9 mm depth (150%D), 0.0241 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check chipload too low 50%.",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 16,000 RPM, 1,540 mm/min, 0.3 mm stepover (5%D) × 9 mm depth (150%D), 0.0241 mm/tooth. Lands comfortably inside the fitted DMC2 envelope; tightest check tool deflection 54%.",
    "provenance": {
     "source": "manufacturer",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
@@ -1746,7 +1746,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.00093,
       "chipMax": 0.0201,
-      "deflection": 21.2,
+      "deflection": 10.4,
       "surfaceMax": 610,
       "caution": 0.75,
       "operation": "roughing"
@@ -1760,7 +1760,7 @@
     }
    },
    "units": "metric",
-   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 12,000 RPM, 1,540 mm/min, 0.4 mm stepover (5%D) × 12 mm depth (150%D), 0.0321 mm/tooth. Outside the fitted DMC2 envelope: tool deflection 373%. The tests never ran this tool this heavily; the heaviest success was steel profile at 18,000 RPM, 1,100 mm/min, 0.03 mm stepover × 24 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 12,000 RPM, 1,540 mm/min, 0.4 mm stepover (5%D) × 12 mm depth (150%D), 0.0321 mm/tooth. Outside the fitted DMC2 envelope: tool deflection 551%. The tests never ran this tool this heavily; the heaviest success was steel profile at 18,000 RPM, 1,100 mm/min, 0.03 mm stepover × 24 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
    "provenance": {
     "source": "manufacturer",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
@@ -1808,7 +1808,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.001,
       "chipMax": 0.0251,
-      "deflection": 20.1,
+      "deflection": 9.44,
       "surfaceMax": 610,
       "caution": 0.75,
       "operation": "roughing"
@@ -1822,7 +1822,7 @@
     }
    },
    "units": "metric",
-   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 9,600 RPM, 1,540 mm/min, 0.5 mm stepover (5%D) × 15 mm depth (150%D), 0.0401 mm/tooth. Outside the fitted DMC2 envelope: tool deflection 421%, spindle torque 152%. The tests never ran this tool this heavily; the heaviest success was steel profile at 17,000 RPM, 1,000 mm/min, 0.05 mm stepover × 30 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 9,600 RPM, 1,540 mm/min, 0.5 mm stepover (5%D) × 15 mm depth (150%D), 0.0401 mm/tooth. Outside the fitted DMC2 envelope: tool deflection 638%, spindle torque 152%. The tests never ran this tool this heavily; the heaviest success was steel profile at 17,000 RPM, 1,000 mm/min, 0.05 mm stepover × 30 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
    "provenance": {
     "source": "manufacturer",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
@@ -1870,7 +1870,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.001,
       "chipMax": 0.0313,
-      "deflection": 29.4,
+      "deflection": 14,
       "surfaceMax": 610,
       "caution": 0.75,
       "operation": "roughing"
@@ -1884,7 +1884,7 @@
     }
    },
    "units": "metric",
-   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 8,000 RPM, 1,600 mm/min, 0.6 mm stepover (5%D) × 18 mm depth (150%D), 0.0500 mm/tooth. Outside the fitted DMC2 envelope: tool deflection 345%, spindle torque 273%. The tests never ran this tool this heavily; the heaviest success was steel profile at 14,000 RPM, 1,000 mm/min, 0.1 mm stepover × 35 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 8,000 RPM, 1,600 mm/min, 0.6 mm stepover (5%D) × 18 mm depth (150%D), 0.0500 mm/tooth. Outside the fitted DMC2 envelope: tool deflection 513%, spindle torque 273%. The tests never ran this tool this heavily; the heaviest success was steel profile at 14,000 RPM, 1,000 mm/min, 0.1 mm stepover × 35 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
    "provenance": {
     "source": "manufacturer",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
@@ -1932,7 +1932,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.00073,
       "chipMax": 0.00459,
-      "deflection": 175,
+      "deflection": 112,
       "surfaceMax": 610,
       "caution": 0.75,
       "operation": "roughing"
@@ -1994,7 +1994,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0018,
       "chipMax": 0.025,
-      "deflection": 268,
+      "deflection": 163,
       "surfaceMax": 610,
       "caution": 0.75,
       "operation": "roughing"
@@ -2056,7 +2056,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0023,
       "chipMax": 0.0324,
-      "deflection": 325,
+      "deflection": 175,
       "surfaceMax": 610,
       "caution": 0.75,
       "operation": "roughing"
@@ -2118,7 +2118,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0028,
       "chipMax": 0.0407,
-      "deflection": 546,
+      "deflection": 330,
       "surfaceMax": 610,
       "caution": 0.75,
       "operation": "roughing"
@@ -2180,7 +2180,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.0052,
       "chipMax": 0.0313,
-      "deflection": 97.9,
+      "deflection": 59.8,
       "surfaceMax": 610,
       "caution": 0.75,
       "operation": "roughing"
@@ -2242,7 +2242,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.00093,
       "chipMax": 0.0201,
-      "deflection": 21.2,
+      "deflection": 10.4,
       "surfaceMax": 610,
       "caution": 0.75,
       "operation": "roughing"
@@ -2256,7 +2256,7 @@
     }
    },
    "units": "metric",
-   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 12,000 RPM, 770 mm/min, 8 mm stepover (100%D) × 2 mm depth (25%D), 0.0160 mm/tooth. Outside the fitted DMC2 envelope: spindle torque 130%. The tests never ran this tool this heavily; the heaviest success was steel profile at 18,000 RPM, 1,100 mm/min, 0.03 mm stepover × 24 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 12,000 RPM, 770 mm/min, 8 mm stepover (100%D) × 2 mm depth (25%D), 0.0160 mm/tooth. Outside the fitted DMC2 envelope: tool deflection 138%, spindle torque 130%. The tests never ran this tool this heavily; the heaviest success was steel profile at 18,000 RPM, 1,100 mm/min, 0.03 mm stepover × 24 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
    "provenance": {
     "source": "manufacturer",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
@@ -2304,7 +2304,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.001,
       "chipMax": 0.0251,
-      "deflection": 20.1,
+      "deflection": 9.44,
       "surfaceMax": 610,
       "caution": 0.75,
       "operation": "roughing"
@@ -2318,7 +2318,7 @@
     }
    },
    "units": "metric",
-   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 9,600 RPM, 770 mm/min, 10 mm stepover (100%D) × 2.5 mm depth (25%D), 0.0201 mm/tooth. Outside the fitted DMC2 envelope: spindle torque 253%, spindle power 101%. The tests never ran this tool this heavily; the heaviest success was steel profile at 17,000 RPM, 1,000 mm/min, 0.05 mm stepover × 30 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 9,600 RPM, 770 mm/min, 10 mm stepover (100%D) × 2.5 mm depth (25%D), 0.0201 mm/tooth. Outside the fitted DMC2 envelope: spindle torque 253%, tool deflection 163%, spindle power 101%. The tests never ran this tool this heavily; the heaviest success was steel profile at 17,000 RPM, 1,000 mm/min, 0.05 mm stepover × 30 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
    "provenance": {
     "source": "manufacturer",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
@@ -2366,7 +2366,7 @@
       "cuttingDataKnown": true,
       "chipMin": 0.001,
       "chipMax": 0.0313,
-      "deflection": 29.4,
+      "deflection": 14,
       "surfaceMax": 610,
       "caution": 0.75,
       "operation": "roughing"
@@ -2380,7 +2380,7 @@
     }
    },
    "units": "metric",
-   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 8,000 RPM, 800 mm/min, 12 mm stepover (100%D) × 3 mm depth (25%D), 0.0250 mm/tooth. Outside the fitted DMC2 envelope: spindle torque 455%, spindle power 152%. The tests never ran this tool this heavily; the heaviest success was steel profile at 14,000 RPM, 1,000 mm/min, 0.1 mm stepover × 35 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
+   "notes": "“Pre-hardened steel 40–50 HRC” column of the 4-flute coated chart: 8,000 RPM, 800 mm/min, 12 mm stepover (100%D) × 3 mm depth (25%D), 0.0250 mm/tooth. Outside the fitted DMC2 envelope: spindle torque 455%, spindle power 152%, tool deflection 132%. The tests never ran this tool this heavily; the heaviest success was steel profile at 14,000 RPM, 1,000 mm/min, 0.1 mm stepover × 35 mm depth. Treat the chart row as unsupported on this machine rather than as a starting point.",
    "provenance": {
     "source": "manufacturer",
     "url": "https://docs.google.com/spreadsheets/d/1Vxh8LKq3Z59RujVOuwpK9PEfAGgtIwfIzEzbZbDQ1Lk/edit?usp=sharing",
