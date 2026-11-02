@@ -4,6 +4,8 @@ All notable changes to Cutspace will be recorded here. Dates use `YYYY-MM-DD`.
 
 Cutspace remains an illustrative exploration tool, not a source of validated cutting parameters. Entries describe software behavior and the provenance carried by included data; they do not certify a machine, material, cutter, or cut.
 
+## [Unreleased]
+
 ## [0.7.0] - 2026-11-02
 
 ### Added
